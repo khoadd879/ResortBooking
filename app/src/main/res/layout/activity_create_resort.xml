@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".AdminLayout.CreateResortActivity">
+
+    <!-- Tiêu đề cố định trên cùng -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:contentDescription="Erm không biết nay ở đy chi"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button_border"
+            android:src="@drawable/baseline_arrow_back_24"/>
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="THÊM RESORT"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:paddingBottom="12dp"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:layout_marginVertical="10dp"
+        android:layout_marginEnd="30dp"/>
+    </LinearLayout>
+
+    <!-- Nội dung có thể cuộn -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/formLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="15dp"
+                android:text="Tên resort"/>
+            <EditText
+                android:id="@+id/etTenResort"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nhập tên resort" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="15dp"
+                android:text="Địa điểm"/>
+            <EditText
+                android:id="@+id/etDiaDiem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nhập địa điểm" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="15dp"
+                android:text="Mô tả"/>
+            <EditText
+                android:id="@+id/etMoTa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nhập mô tả"
+                android:minLines="3"
+                android:gravity="top" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="20dp"
+                android:textAlignment="center"
+                android:text="Ảnh đại diện"/>
+            <ImageView
+                android:id="@+id/imgResort"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:scaleType="centerCrop"
+                android:background="#cccccc"
+                android:contentDescription="Ảnh resort" />
+
+            <Button
+                android:id="@+id/btnChonAnh"
+                android:layout_marginTop="10dp"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Chọn ảnh"
+                android:layout_gravity="center"
+                android:background="@drawable/button_border_all"
+                android:textColor="@color/white"/>
+
+            <Button
+                android:id="@+id/btnThemPhong"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Thêm phòng"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center"
+                android:background="@drawable/button_border_all"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/tvDanhSachPhong"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Danh sách phòng:"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:id="@+id/layoutPhongContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btnTaoResort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tạo resort"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/button_border"
+        android:backgroundTint="@color/blue"/>
+</LinearLayout>

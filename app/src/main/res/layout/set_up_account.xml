@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+
+            <!-- Header -->
+    <LinearLayout
+                android:id="@+id/headerLayout"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:background="@drawable/header_gradient"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/welcome"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="130dp"
+                android:fontFamily="sans-serif-light"
+                android:text="Thiết lập tài khoản của bạn"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="sans-serif-light"
+                android:text="Hoàn thành tài khoản của bạn để bắt đầu chuyến đi"
+                android:textColor="#6D6D6D"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/welcome" />
+
+            <!-- Profile Image -->
+            <ImageButton
+                android:id="@+id/imageView"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/image_border"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text1" />
+
+            <TextView
+                android:id="@+id/textProfile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:fontFamily="sans-serif-light"
+                android:text="Ảnh hồ sơ"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/imageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@id/imageView"
+                app:layout_constraintTop_toTopOf="@id/imageView"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                android:id="@+id/button_pushAvt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/black"
+                android:drawableLeft="@drawable/outline_file_upload_24"
+                android:drawableTint="@color/white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="Tải lên"
+                android:background="@drawable/button_border_all"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@id/imageView"
+                app:layout_constraintTop_toBottomOf="@id/textProfile" />
+
+
+
+            <TextView
+                android:id="@+id/firstName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="sans-serif-light"
+                android:text="Tên"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView" />
+
+
+
+
+            <EditText
+                android:id="@+id/firstNameEditText"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:textSize="15sp"
+                android:background="@drawable/edit_text_border"
+                android:drawablePadding="10dp"
+                android:padding="10dp"
+                android:textColorHint="@color/nav_item_color"
+                app:layout_constraintEnd_toEndOf="@id/firstName"
+                app:layout_constraintStart_toStartOf="@id/firstName"
+                app:layout_constraintTop_toBottomOf="@id/firstName" />
+
+            <!--Birthday-->
+            <TextView
+                android:id="@+id/BirthDay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="sans-serif-light"
+                android:text="Ngày sinh"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/firstNameEditText" />
+
+            <EditText
+                android:id="@+id/BirthDayEditText"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/edit_text_border"
+                android:drawablePadding="10dp"
+                android:padding="10dp"
+                android:textColorHint="@color/nav_item_color"
+                app:layout_constraintEnd_toEndOf="@id/firstName"
+                app:layout_constraintStart_toStartOf="@id/BirthDay"
+                app:layout_constraintTop_toBottomOf="@id/BirthDay" />
+
+            <!--Phone-->
+            <TextView
+                android:id="@+id/phone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="sans-serif-light"
+                android:text="Số điện thoại"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/BirthDayEditText" />
+
+            <EditText
+                android:id="@+id/phoneEditText"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/edit_text_border"
+                android:drawablePadding="10dp"
+                android:padding="10dp"
+                android:textColorHint="@color/nav_item_color"
+                app:layout_constraintEnd_toEndOf="@id/firstName"
+                app:layout_constraintStart_toStartOf="@id/BirthDay"
+                app:layout_constraintTop_toBottomOf="@id/phone" />
+
+            <!--Position-->
+            <TextView
+                android:id="@+id/position"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="sans-serif-light"
+                android:text="Địa chỉ"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/phoneEditText" />
+
+            <EditText
+                android:id="@+id/positionEditText"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/edit_text_border"
+                android:drawablePadding="10dp"
+                android:padding="10dp"
+                android:textColorHint="@color/nav_item_color"
+                app:layout_constraintEnd_toEndOf="@id/firstName"
+                app:layout_constraintStart_toStartOf="@id/BirthDay"
+                app:layout_constraintTop_toBottomOf="@id/position" />
+
+        <TextView
+            android:id="@+id/ID_card_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="sans-serif-light"
+            android:text="Căn cước công dân"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/positionEditText" />
+
+        <EditText
+            android:id="@+id/ID_card"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/edit_text_border"
+            android:drawablePadding="10dp"
+            android:padding="10dp"
+            android:textColorHint="@color/nav_item_color"
+            app:layout_constraintEnd_toEndOf="@id/firstName"
+            app:layout_constraintStart_toStartOf="@id/BirthDay"
+            app:layout_constraintTop_toBottomOf="@id/ID_card_text" />
+
+        <TextView
+            android:id="@+id/passport_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="sans-serif-light"
+            android:text="Hộ chiếu"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ID_card" />
+
+        <EditText
+            android:id="@+id/passport"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/edit_text_border"
+            android:drawablePadding="10dp"
+            android:padding="10dp"
+            android:textColorHint="@color/nav_item_color"
+            app:layout_constraintEnd_toEndOf="@id/firstName"
+            app:layout_constraintStart_toStartOf="@id/BirthDay"
+            app:layout_constraintTop_toBottomOf="@id/passport_text" />
+
+    <TextView
+        android:id="@+id/sex_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Giới tính"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/passport" />
+
+    <EditText
+        android:id="@+id/sex"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/edit_text_border"
+        android:drawablePadding="10dp"
+        android:padding="10dp"
+        android:textColorHint="@color/nav_item_color"
+        app:layout_constraintEnd_toEndOf="@id/firstName"
+        app:layout_constraintStart_toStartOf="@id/BirthDay"
+        app:layout_constraintTop_toBottomOf="@id/sex_text" />
+
+    <TextView
+        android:id="@+id/email_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-light"
+        android:text="Email"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sex" />
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/edit_text_border"
+        android:drawablePadding="10dp"
+        android:padding="10dp"
+        android:textColorHint="@color/nav_item_color"
+        app:layout_constraintEnd_toEndOf="@id/firstName"
+        app:layout_constraintStart_toStartOf="@id/BirthDay"
+        app:layout_constraintTop_toBottomOf="@id/email_text" />
+
+    <!--Button thiet lap tai khoan-->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_setUp"
+        android:text="Bắt đầu cuộc hành trình"
+        android:textColor="@color/white"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:backgroundTint="@color/black"
+        android:padding="15dp"
+        android:background="@drawable/button_border_all"
+        app:layout_constraintEnd_toEndOf="@id/firstName"
+        app:layout_constraintStart_toStartOf="@id/BirthDay"
+        app:layout_constraintTop_toBottomOf="@id/email"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

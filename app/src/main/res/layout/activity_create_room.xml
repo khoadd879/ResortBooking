@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <!-- Tiêu đề -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:contentDescription="Erm không biết nay ở đy chi"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/button_border"
+            android:src="@drawable/baseline_arrow_back_24"/>
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="THÊM PHÒNG MỚI"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="24dp"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:layout_marginVertical="10dp"
+        android:layout_marginEnd="30dp"/>
+    </LinearLayout>
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <!-- Tên phòng -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tên phòng"
+            android:textSize="14sp"
+            android:paddingBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etTenPhong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_border"
+            android:hint="Nhập tên phòng"
+            android:padding="10dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <!-- Giá phòng -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giá phòng (VNĐ)"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etGiaPhong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_border"
+            android:hint="Nhập giá phòng"
+            android:inputType="numberDecimal"
+            android:padding="10dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <!-- Mô tả phòng -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mô tả phòng"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etMoTaPhong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập mô tả"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:maxLines="6"
+            android:gravity="top"
+            android:background="@drawable/edit_text_border"
+            android:padding="10dp" />
+
+       <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Loại phòng"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+
+        <!--Loại phòng-->
+        <Spinner
+            android:id="@+id/spinnerLoaiPhong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_border"
+            android:padding="10dp" />
+
+        <!-- Ảnh phòng -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ảnh phòng"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+
+        <ImageView
+            android:id="@+id/imgRoom"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/hotel"
+            android:background="@drawable/image_border"
+            android:contentDescription="Ảnh phòng"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnChonAnhPhong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chọn ảnh phòng"
+            android:layout_gravity="center" />
+
+        <!-- Nút Lưu -->
+        <Button
+            android:id="@+id/btnTaoPhong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lưu phòng"
+            android:layout_marginTop="24dp"
+            android:textSize="25dp"
+            android:background="@drawable/button_border"
+            android:backgroundTint="@color/blue"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+</ScrollView>
+    </LinearLayout>

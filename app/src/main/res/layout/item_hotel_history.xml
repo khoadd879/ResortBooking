@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <!-- ImageView -->
+        <ImageView
+            android:id="@+id/hotelImage"
+            android:layout_width="170dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center"
+            android:background="@drawable/image_hotel"
+            android:clipToOutline="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/hotel" />
+
+        <!-- Favorite Button -->
+        <ImageButton
+            android:id="@+id/favorite_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="8dp"
+            android:layout_alignTop="@id/hotelImage"
+            android:layout_alignEnd="@id/hotelImage"
+            android:background="@drawable/heart_background"
+            android:contentDescription="Add to favorites"
+            android:scaleType="fitCenter"
+            android:src="@drawable/baseline_favorite_border_24" />
+
+        <LinearLayout
+            android:id="@+id/linear"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/hotelImage"
+            android:orientation="vertical"
+            android:layout_margin="5dp"
+            android:padding="5dp">
+
+            <!-- Resort Name -->
+            <TextView
+                android:id="@+id/tvResortName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/hotelImage"
+                android:layout_alignBottom="@id/hotelImage"
+                android:layout_marginTop="8dp"
+                android:text="Resort Name"
+                android:textSize="13sp"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+            <!-- Location -->
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+            <!-- Price -->
+                <TextView
+                    android:id="@+id/tvLocation"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:text="Location"
+                    android:textColor="@color/white"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/ratingStar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/outline_star_24"
+                    android:text="4.5"
+                    android:textSize="11sp"
+                    android:textColor="@color/white"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</LinearLayout>

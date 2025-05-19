@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+    <!-- Tiêu đề -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:contentDescription="Erm không biết nay ở đy chi"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button_border"
+            android:src="@drawable/baseline_arrow_back_24"/>
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="THÊM NGƯỜI DÙNG"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="24dp"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:layout_marginVertical="10dp"
+        android:layout_marginEnd="30dp"/>
+    </LinearLayout>
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+
+        <!-- Họ và tên -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Họ và tên"
+            android:textSize="14sp"
+            android:paddingBottom="4dp" />
+        <EditText
+            android:id="@+id/edtFullName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập họ và tên"
+            android:background="@drawable/edit_text_border"
+            android:padding="10dp" />
+
+        <!-- Giới tính -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Giới tính"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+
+        <RadioGroup
+            android:id="@+id/radioGender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/radioMale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nam"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/radioFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nữ"
+                android:layout_marginStart="32dp" />
+        </RadioGroup>
+
+
+        <!-- Số điện thoại -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Số điện thoại"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+        <EditText
+            android:id="@+id/edtPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập số điện thoại"
+            android:inputType="phone"
+            android:background="@drawable/edit_text_border"
+            android:padding="10dp" />
+
+        <!-- Email -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+        <EditText
+            android:id="@+id/edtEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập email"
+            android:inputType="textEmailAddress"
+            android:background="@drawable/edit_text_border"
+            android:padding="10dp" />
+
+        <!-- Căn cước công dân -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Căn cước công dân"
+            android:textSize="14sp"
+            android:inputType="number"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+        <EditText
+            android:id="@+id/edtIdCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập CCCD"
+            android:background="@drawable/edit_text_border"
+            android:padding="10dp" />
+
+        <!-- Ngày sinh -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ngày sinh"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+        <EditText
+            android:id="@+id/edtDob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Chọn ngày sinh"
+            android:focusable="false"
+            android:inputType="none"
+            android:background="@drawable/edit_text_border"
+            android:padding="10dp" />
+
+        <!-- Hộ chiếu -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hộ chiếu"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+        <EditText
+            android:id="@+id/edtPassport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập số hộ chiếu"
+            android:background="@drawable/edit_text_border"
+            android:padding="10dp" />
+
+        <!-- Tài khoản -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tài khoản"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+        <EditText
+            android:id="@+id/edtAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập tài khoản"
+            android:background="@drawable/edit_text_border"
+            android:padding="10dp" />
+
+        <!-- Password -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mật khẩu"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+        <EditText
+            android:id="@+id/edtPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập mật khẩu"
+            android:background="@drawable/edit_text_border"
+            android:padding="10dp" />
+
+
+        <!-- Ảnh đại diện -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ảnh đại diện"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="4dp" />
+        <ImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/baseline_person_24"
+            android:background="@drawable/image_border"
+            android:contentDescription="Avatar"
+            android:layout_marginBottom="8dp" />
+        <Button
+            android:id="@+id/btnSelectImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chọn ảnh"
+            android:layout_gravity="center" />
+
+        <!-- Nút Lưu -->
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lưu người dùng"
+            android:layout_marginTop="24dp"
+            android:textSize="25dp"
+            android:background="@drawable/button_border_all"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</ScrollView>
+</LinearLayout>

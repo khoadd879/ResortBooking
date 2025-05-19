@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/main"
+    android:padding="16dp">
+
+    <!-- Tiêu đề -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:contentDescription="Erm không biết nay ở đy chi"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button_border"
+            android:src="@drawable/baseline_arrow_back_24"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cập nhật thông tin Phòng"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="12dp"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:layout_marginVertical="10dp"
+        android:layout_marginEnd="30dp"/>
+    </LinearLayout>
+
+    <!-- Cuộn nội dung -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Số phòng -->
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Số phòng" />
+
+            <EditText
+                android:id="@+id/editTenPhong"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:background="@drawable/edit_text_border"
+                android:hint="Nhập tên phòng" />
+
+            <!-- Giá thuê -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Giá thuê (VNĐ/ngày)" />
+
+            <EditText
+                android:id="@+id/edtGiaThue"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/edit_text_border"
+                android:hint="Nhập giá thuê"
+                android:inputType="number"
+                android:padding="10dp"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Loại phòng"
+                android:textSize="14sp"
+                android:layout_marginTop="16dp"
+                android:paddingBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/spinnerLoaiPhong"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/edit_text_border"
+                android:padding="10dp" />
+            <!-- Trạng thái -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Tình trạng" />
+
+            <Spinner
+                android:id="@+id/spinnerTinhTrang"
+                android:layout_width="match_parent"
+                android:background="@drawable/edit_text_border"
+                android:layout_marginTop="10dp"
+                android:layout_height="50dp"
+                android:padding="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Mô tả" />
+
+            <EditText
+                android:id="@+id/edtMoTaPhong"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nhập mô tả"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:layout_marginTop="10dp"
+                android:maxLines="6"
+                android:gravity="top"
+                android:background="@drawable/edit_text_border"
+                android:padding="10dp" />
+
+            <!-- Ảnh phòng -->
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ảnh phòng"
+                android:layout_marginTop="10dp"/>
+            <ImageView
+                android:id="@+id/imgRoom"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:layout_marginTop="10dp"
+                android:background="#CCCCCC" />
+            <Button
+                android:id="@+id/btnChonAnhRoom"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:text="Chọn ảnh"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                android:background="@drawable/button_border_all"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Nút cập nhật -->
+    <Button
+        android:id="@+id/btnCapNhatRoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cập nhật"
+        android:background="@drawable/button_border"
+        android:backgroundTint="@color/blue"
+        android:textColor="@color/white"/>
+</LinearLayout>

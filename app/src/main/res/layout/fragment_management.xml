@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".AdminLayout.ManagementFragment">
+
+    <!-- Tiêu đề trang -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/LayoutTitle"
+        android:orientation="horizontal">
+        <ImageButton
+            android:layout_margin="10dp"
+            android:contentDescription="Erm không biết nay ở đy chi"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button_border"
+            android:src="@drawable/baseline_arrow_back_24"/>
+
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="25dp"
+            android:text="Trang quản lý"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </LinearLayout>
+    <!-- Nút hoặc ảnh profile -->
+
+
+    <TextView
+        android:id="@+id/tvManageUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:drawableLeft="@drawable/baseline_person_24"
+        android:drawablePadding="10dp"
+        android:padding="10dp"
+        android:text="Quản lý người dùng"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:clickable="true"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"/>
+
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@color/divider"
+        app:layout_constraintTop_toBottomOf="@+id/tvManageUser"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvManageResort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/ic_resort"
+        android:drawablePadding="10dp"
+        android:padding="10dp"
+        android:text="Quản lý resort"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:clickable="true"
+        app:layout_constraintTop_toBottomOf="@+id/tvManageUser"
+        app:layout_constraintStart_toStartOf="@+id/tvManageUser" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@color/divider"
+        app:layout_constraintTop_toBottomOf="@+id/tvManageResort"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+    <TextView
+        android:id="@+id/tvManageRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@drawable/ic_role"
+        android:drawablePadding="10dp"
+        android:padding="10dp"
+        android:text="Quản lý quyền"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:clickable="true"
+        app:layout_constraintTop_toBottomOf="@+id/tvManageResort"
+        app:layout_constraintStart_toStartOf="@+id/tvManageUser" />
+
+    <!-- ProgressBar loading -->
+    <ProgressBar
+        android:id="@+id/progressBarManagement"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
