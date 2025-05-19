@@ -293,3 +293,12 @@ data class UserData(
     val role_user: List<Role>,
     val avatar: String
 )
+//dtk thêm cho dữ liệu chạy
+data class Favourite(
+    val id: String,
+    val name: String,
+    val location: String,
+    val imageUrl: String,
+    val isFavorite: Boolean,
+    val rating: Float
+)

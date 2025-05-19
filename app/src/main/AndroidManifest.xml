@@ -5,17 +5,25 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Resort_Booking"
-        android:name=".MyApp"
-        android:networkSecurityConfig="@xml/network_security_config">
-
+        android:theme="@style/Theme.Resort_Booking">
+        <activity
+            android:name=".AdminLayout.CreateExpense"
+            android:exported="false" />
+        <activity
+            android:name=".AdminLayout.CreateServiceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LauncherActivity"
+            android:exported="false" />
         <activity
             android:name=".AdminLayout.CreateRoomActivity"
             android:exported="false" />
@@ -34,6 +42,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB2Zn79Pp9pqo5N8iF9SeRo9gVHkf6CEYo" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyB2Zn79Pp9pqo5N8iF9SeRo9gVHkf6CEYo" />
 
         <activity
             android:name=".AdminLayout.CreateResortActivity"
@@ -41,47 +52,27 @@
         <activity
             android:name=".AdminLayout.UpdateRoomActivity"
             android:exported="true" />
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB2Zn79Pp9pqo5N8iF9SeRo9gVHkf6CEYo" />
-        
         <activity
-            android:name=".LauncherActivity"
+            android:name=".AdminLayout.DetailExpenseActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".AdminLayout.ResortListActivity" />
-       
-
-        <!-- Login -->
+        <activity android:name=".AdminLayout.ResortListActivity" /> <!-- Login -->
         <activity
             android:name=".signIn_layout.LoginActivity"
-            android:exported="true" />
-
-        <!-- Main -->
-
-
+            android:exported="true" /> <!-- Main -->
         <activity android:name=".signIn_layout.SignUpActivity" />
-
         <activity android:name=".signIn_layout.SetUpAccountActivity" />
-
         <activity android:name=".signIn_layout.ForgotPasswordActivity" />
-
         <activity android:name=".signIn_layout.verificationCodeActivity" />
-
         <activity android:name=".signIn_layout.ChangePasswordActivity" />
-
         <activity android:name=".AdminLayout.RoomListActivity" />
-
-        <activity android:name=".AdminLayout.UserListActivity"/>
-
-        <activity android:name=".AdminLayout.CreateUserActivity"/>
-
-        
+        <activity android:name=".AdminLayout.UserListActivity" />
+        <activity android:name=".AdminLayout.CreateUserActivity" />
     </application>
 
 </manifest>
