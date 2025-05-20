@@ -65,70 +65,98 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:orientation="horizontal"
+        android:gravity="center"
         app:layout_constraintTop_toBottomOf="@+id/search"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <RadioButton
             android:id="@+id/rating1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
             android:text="1"
+            android:textSize="16sp"
             android:button="@null"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:background="@drawable/button_border"
             android:drawableStart="@drawable/outline_star_24"
-            android:drawablePadding="4dp" />
+            android:drawablePadding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
         <RadioButton
             android:id="@+id/rating2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
             android:text="2"
+            android:textSize="16sp"
             android:button="@null"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:background="@drawable/button_border"
             android:drawableStart="@drawable/outline_star_24"
-            android:drawablePadding="4dp" />
+            android:drawablePadding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
         <RadioButton
             android:id="@+id/rating3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
             android:text="3"
+            android:textSize="16sp"
             android:button="@null"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:background="@drawable/button_border"
             android:drawableStart="@drawable/outline_star_24"
-            android:drawablePadding="4dp" />
+            android:drawablePadding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
         <RadioButton
             android:id="@+id/rating4"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
             android:text="4"
+            android:textSize="16sp"
             android:button="@null"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:background="@drawable/button_border"
             android:drawableStart="@drawable/outline_star_24"
-            android:drawablePadding="4dp" />
+            android:drawablePadding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
         <RadioButton
             android:id="@+id/rating5"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
             android:text="5"
+            android:textSize="16sp"
             android:button="@null"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:background="@drawable/button_border"
             android:drawableStart="@drawable/outline_star_24"
-            android:drawablePadding="4dp" />
+            android:drawablePadding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
     </LinearLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerHotel"
         android:layout_width="match_parent"

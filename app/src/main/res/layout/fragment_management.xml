@@ -94,14 +94,14 @@
 
 
     <TextView
-        android:id="@+id/tvManageRole"
+        android:id="@+id/tvManageService"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:drawableLeft="@drawable/ic_role"
+        android:drawableLeft="@drawable/ic_service"
         android:drawablePadding="10dp"
         android:padding="10dp"
-        android:text="Quản lý quyền"
+        android:text="Quản lý dịch vụ"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:clickable="true"
@@ -113,23 +113,10 @@
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:background="@color/divider"
-        app:layout_constraintTop_toBottomOf="@+id/tvManageRole"
+        app:layout_constraintTop_toBottomOf="@+id/tvManageService"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-    <TextView
-        android:id="@+id/tvManageService"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:drawableLeft="@drawable/ic_service"
-        android:drawablePadding="10dp"
-        android:padding="10dp"
-        android:text="Quản lý Dịch vụ"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:clickable="true"
-        app:layout_constraintTop_toBottomOf="@+id/tvManageRole"
-        app:layout_constraintStart_toStartOf="@+id/tvManageUser" />
+
     <!-- ProgressBar loading -->
     <ProgressBar
         android:id="@+id/progressBarManagement"
