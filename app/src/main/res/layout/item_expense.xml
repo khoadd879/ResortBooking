@@ -3,22 +3,43 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:id="@+id/tvExpenseId"
+            android:textSize="20dp"
+            android:text="HỘI ĐỒNG THI TOEIC"
+            android:textColor="@color/black"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvDate"
+            android:text="22/02/2025"
+            android:textColor="@color/black"
+            android:layout_gravity="end"
+            android:textAlignment="textEnd"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvCategory"
+        android:textSize="15dp"
+        android:text="Nguyễn Tiến Khang đi thi TOIEC mất 500 triệu, còn lại là làm dài ra để coi layout hihi." />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        android:textStyle="bold"
+        android:id="@+id/tvAmount"
+        android:textSize="17dp"
+        android:drawableLeft="@drawable/baseline_minus_24"
+        android:drawableTint="@color/red"
+        android:text="500,000,000"
+        android:layout_gravity="end"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvExpenseId"
-        android:text="ID_RS" android:textStyle="bold"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvCategory" android:text="CATEGORY" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvAmount" android:text="AMOUNT" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvDate" android:text="DATE" />
 </LinearLayout>

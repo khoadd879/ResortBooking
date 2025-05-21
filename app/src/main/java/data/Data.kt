@@ -302,3 +302,10 @@ data class Favourite(
     val isFavorite: Boolean,
     val rating: Float
 )
+data class ResortUser(
+    val name: String,
+    val location: String,
+    val rating: Double,
+    val imageUrl: String,
+    val isFavorite: Boolean = false
+)
