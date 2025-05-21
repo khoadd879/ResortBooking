@@ -5,10 +5,13 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.resort_booking.AdminLayout.RoomListActivity
 import com.example.resort_booking.AdminLayout.UpdateRoomActivity
+import com.example.resort_booking.HotelDetailActivity
 import com.example.resort_booking.databinding.ItemRoomBinding
 import data.Room
 import interfaceAPI.ApiService
@@ -16,7 +19,9 @@ import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RoomAdapter(private var rooms: List<Room>) : RecyclerView.Adapter<RoomAdapter.RoomViewHolder>() {
+class RoomAdapter(private var rooms: List<Room>, private val context: Context) : RecyclerView.Adapter<RoomAdapter.RoomViewHolder>() {
+
+
 
     inner class RoomViewHolder(private val binding: ItemRoomBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(room: Room) {
@@ -61,6 +66,14 @@ class RoomAdapter(private var rooms: List<Room>) : RecyclerView.Adapter<RoomAdap
                     }
                 })
             }
+
+            val sharedPref = context.getSharedPreferences("APP_PREFS", MODE_PRIVATE)
+            val role = sharedPref.getString("ROLE", "")
+
+            if(role?.contains("ROLE_USER") == true){
+                binding.btnEdit.visibility = Button.GONE
+                binding.btnDelete.visibility = Button.GONE
+            }
         }
 
     }
@@ -72,6 +85,14 @@ class RoomAdapter(private var rooms: List<Room>) : RecyclerView.Adapter<RoomAdap
 
     override fun onBindViewHolder(holder: RoomViewHolder, position: Int) {
         holder.bind(rooms[position])
+        holder.itemView.setOnClickListener {
+            holder.itemView.setOnClickListener {
+                val intent = Intent(context, HotelDetailActivity::class.java)
+                intent.putExtra("RESORT_ID", rooms[position].idRoom)
+                intent.putExtra("RESORT_NAME", rooms[position].name_room)
+                context.startActivity(intent)
+            }
+        }
     }
 
     override fun getItemCount(): Int = rooms.size

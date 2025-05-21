@@ -87,8 +87,7 @@ class ResortAdapter(
 
         holder.itemView.setOnClickListener {
             val intent = Intent(context, RoomListActivity::class.java)
-            intent.putParcelableArrayListExtra("ROOM_LIST", ArrayList(resort.rooms))
-            intent.putExtra("RESORT_ID", resort.idRs)  // truyền id resort
+            intent.putExtra("RESORT_ID", resort.idRs)
             context.startActivity(intent)
         }
     }

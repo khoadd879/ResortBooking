@@ -35,6 +35,12 @@ class HotelAdapter(
                 .error(R.drawable.load_error)
                 .into(resortImage)
 
+            if(resort.favorite == true){
+                favoriteButton.setImageResource(R.drawable.baseline_favorite_24)
+            }else{
+                favoriteButton.setImageResource(R.drawable.baseline_favorite_border_24)
+            }
+
             itemView.setOnClickListener {
                 onItemClick(resort)
             }

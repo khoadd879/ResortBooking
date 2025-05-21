@@ -5,6 +5,7 @@ import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -12,12 +13,15 @@ import retrofit2.Callback
 import androidx.appcompat.app.AppCompatActivity
 import com.example.resort_booking.AdminLayout.RoomListActivity
 import com.bumptech.glide.Glide
+import com.example.resort_booking.signIn_layout.BookingRoomActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import data.FavoriteRequest
+import data.FavoriteResponse
 import data.ResortDetailResponse
 import java.io.IOException
 import java.util.Locale
@@ -31,7 +35,7 @@ import retrofit2.Response
 class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var googleMap: GoogleMap
-    private var accessToken: String? = null
+    private var resortid: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,17 +45,51 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        val btnThemPhong = findViewById<Button>(R.id.btnThemPhong)
-        btnThemPhong.setOnClickListener {
-            val hotelId = 101  // Ví dụ, bạn có thể lấy từ intent hoặc model
-            val intent = Intent(this, RoomListActivity::class.java)
-            intent.putExtra("hotelId", hotelId)
+
+        resortid = intent.getStringExtra("RESORT_ID")
+        resortid?.let { fetchResortDetail(it) }
+
+        val btnBooking = findViewById<Button>(R.id.bookingBtn)
+        btnBooking.setOnClickListener {
+            val intent = Intent(this, BookingRoomActivity::class.java)
             startActivity(intent)
         }
-        val resortId = intent.getStringExtra("RESORT_ID")
-        if (resortId != null) {
-            fetchResortDetail(resortId, accessToken)
+
+        val btnThemPhong = findViewById<Button>(R.id.btnThemPhong)
+        btnThemPhong.setOnClickListener {
+            val intent = Intent(this, RoomListActivity::class.java)
+            intent.putExtra("RESORT_ID", resortid)
+            startActivity(intent)
         }
+
+        val NameRoom = findViewById<TextView>(R.id.RoomName)
+        NameRoom.text = intent.getStringExtra("RESORT_NAME") ?: ""
+
+        val btnFavorite = findViewById<ImageButton>(R.id.favorite_button)
+        btnFavorite.setOnClickListener {
+            val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
+            val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
+            val userId = sharedPref.getString("ID_USER", null)
+            val body = FavoriteRequest(resortid.toString(), userId.toString())
+            apiService.createFavorite(body).enqueue(object : Callback<FavoriteResponse> {
+                override fun onResponse(
+                    call: Call<FavoriteResponse?>,
+                    response: Response<FavoriteResponse?>
+                ) {
+                    if (response.isSuccessful) {
+                        btnFavorite.setImageResource(R.drawable.baseline_favorite_24)
+                        showToast("\u0110ã thêm vào yêu thích")
+                    }else{
+                        showToast("Thêm yêu thích thất bại: ${response.code()}")
+                    }
+                }
+                override fun onFailure(call: Call<FavoriteResponse?>, t: Throwable) {
+                    showToast("Lỗi mạng: ${t.message}")
+                }
+            })
+        }
+
+
     }
 
 
@@ -73,8 +111,7 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 googleMap.setOnMapClickListener {
                     // Mở Google Maps khi click
-                    val gmmIntentUri =
-                        Uri.parse("geo:${latLng.latitude},${latLng.longitude}?q=${latLng.latitude},${latLng.longitude}(Hotel)")
+                    val gmmIntentUri = Uri.parse("geo:${latLng.latitude},${latLng.longitude}?q=${latLng.latitude},${latLng.longitude}(Hotel)")
                     val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                     mapIntent.setPackage("com.google.android.apps.maps")
                     startActivity(mapIntent)
@@ -90,12 +127,13 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-    private fun fetchResortDetail(idRs: String, accessToken: String?) {
+    private fun fetchResortDetail(idRs: String) {
 
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
+        val userId = sharedPref.getString("ID_USER", null)
         val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
 
-        apiService.getResortById(idRs)
+        apiService.getResortById(idRs, userId.toString())
             .enqueue(object : Callback<ResortDetailResponse> {
                 override fun onResponse(
                     call: Call<ResortDetailResponse>,
@@ -103,6 +141,7 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                 ) {
                     if (response.isSuccessful && response.body()?.data != null) {
                         val resort = response.body()!!.data
+                        resortid = resort.idRs.toString()
                         findViewById<TextView>(R.id.NameHotel).text = resort.name_rs ?: "No name"
                         findViewById<TextView>(R.id.Location).text =
                             resort.location_rs ?: "No location"

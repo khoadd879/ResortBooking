@@ -33,6 +33,7 @@
             android:textStyle="bold"
             tools:ignore="MissingConstraints" />
     </LinearLayout>
+
     <Button
         android:id="@+id/btnThemResort"
         android:layout_width="wrap_content"
@@ -45,6 +46,8 @@
         android:padding="10dp"
         android:layout_marginStart="10dp"
         tools:ignore="RtlCompat" />
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvResortList"
