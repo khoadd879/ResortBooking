@@ -2,6 +2,7 @@ package com.example.resort_booking.AdminLayout
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resort_booking.ClassNDataCLass.ResortAdapter
 import com.example.resort_booking.R
+import com.example.resort_booking.signIn_layout.ServiceActivity
 import data.ResortResponse
 import interfaceAPI.ApiService
 import retrofit2.*
@@ -34,6 +36,7 @@ class ResortListActivity : AppCompatActivity() {
         userId = sharedPref.getString("ID_USER", null)
 
         val btnThemResort = findViewById<Button>(R.id.btnThemResort)
+
         btnThemResort.setOnClickListener {
             startActivity(Intent(this, CreateResortActivity::class.java))
         }
@@ -72,7 +75,6 @@ class ResortListActivity : AppCompatActivity() {
                         Toast.makeText(this@ResortListActivity, "Không tải được danh sách resort", Toast.LENGTH_SHORT).show()
                     }
                 }
-
                 override fun onFailure(call: Call<ResortResponse>, t: Throwable) {
                     Toast.makeText(this@ResortListActivity, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
                 }

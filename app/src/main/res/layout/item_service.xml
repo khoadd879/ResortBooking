@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
@@ -35,23 +36,111 @@
             android:orientation="horizontal"
             android:layout_marginTop="8dp">
 
-            <TextView
-                android:id="@+id/tvServicePrice"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="100.000đ"
-                android:textColor="#FF5722"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Số lượng"
+                    android:textColor="@color/nav_item_color"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/minusBtn"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/bg_circle"
+                        android:backgroundTint="@color/gray_scale50"
+                        android:gravity="center"
+                        android:text="-"
+                        android:textColor="@color/dard_blue"
+                        android:textSize="20sp" />
+
+                    <EditText
+                        android:id="@+id/Quantity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:layout_marginRight="10dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/plusBtn"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/bg_circle"
+                        android:backgroundTint="@color/dard_blue"
+                        android:textSize="20sp"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:text="+"
+                         />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng thành tiền"
+                    android:paddingTop="10dp"
+                    android:textColor="@color/nav_item_color"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvServicePrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100.000đ"
+                    android:textColor="@color/dard_blue"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/btnAddService"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="50sp"
+                android:layout_height="50sp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/baseline_add_24"
                 android:contentDescription="Add"
-                card_view:tint="@android:color/black" />
+                android:src="@drawable/baseline_add_24"
+                card_view:tint="@color/white"
+                tools:background="@drawable/bg_date_box" />
+
+            <LinearLayout
+                android:id="@+id/ManageServiceList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:orientation="vertical">
+                <ImageButton
+                    android:id="@+id/btnEdit"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/button_border"
+                    android:src="@drawable/baseline_edit_24"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+                <ImageButton
+                    android:id="@+id/btnDelete"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/button_border"
+                    android:src="@drawable/baseline_delete_24"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
