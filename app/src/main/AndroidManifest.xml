@@ -21,9 +21,7 @@
         <activity
             android:name=".AdminLayout.CreateServiceActivity"
             android:exported="false" />
-        <activity
-            android:name=".LauncherActivity"
-            android:exported="false" />
+
         <activity
             android:name=".AdminLayout.CreateRoomActivity"
             android:exported="false" />
@@ -53,7 +51,7 @@
             android:name=".AdminLayout.UpdateRoomActivity"
             android:exported="true" />
         <activity
-            android:name=".AdminLayout.DetailExpenseActivity"
+            android:name=".LauncherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

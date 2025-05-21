@@ -1,12 +1,13 @@
 package data
 
+import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import java.io.File
 
 import java.io.Serializable
-
+import java.math.BigDecimal
 
 
 data class LoginRequest(
@@ -84,35 +85,9 @@ data class RoomRequest(
     val image: String? = null
 )
 
-
-
-data class FavoriteRequest(
-    @SerializedName("id_rs")
-    val idRs: String,
-
-    @SerializedName("id_user")
-    val idUser: String
-)
-
-data class FavoriteResponse(
-    val message: String,
-    val data: CreatedAt?
-)
-
 data class CreatedAt(
     @SerializedName("created_at")
     val created_at: String?
-)
-
-data class Favorite(
-    val resortId: String,
-    val resortName: String,
-    val imageUrl: String,
-    val created_at: String
-)
-
-data class FavoriteListResponse(
-    val data: List<Favorite>?
 )
 
 data class Resort(
@@ -138,6 +113,9 @@ data class Room(
     val image: String?
 ) : Parcelable
 
+data class RoomResponse(
+    val data: List<Room>?
+)
 
 data class ResortResponse(
     val data: List<Resort>?
@@ -293,12 +271,79 @@ data class UserData(
     val role_user: List<Role>,
     val avatar: String
 )
-//dtk thêm cho dữ liệu chạy
-data class Favourite(
-    val id: String,
-    val name: String,
-    val location: String,
+
+data class FavouriteListData(
+    val resortId: String,
+    val resortName: String,
     val imageUrl: String,
-    val isFavorite: Boolean,
-    val rating: Float
+    val created_at: String?
 )
+
+data class  FavouriteResponse(
+    val data: List<FavouriteListData>?
+)
+
+data class FavoriteRequest(
+    @SerializedName("id_rs")
+    val idRs: String,
+
+    @SerializedName("id_user")
+    val idUser: String
+)
+
+data class FavoriteResponse(
+    val message: String,
+    val data: CreatedAt?
+)
+
+
+data class Service(
+    val idService: String,
+    val nameService: String,
+    val price: BigDecimal,
+    val describe_sv: String
+)
+
+data class ServiceListResponse(
+    val data: List<Service>?
+)
+
+data class CreateServiceRequest(
+    val id_rs: String,
+    val name_sv: String,
+    val price: BigDecimal,
+    val describe_service: String
+)
+
+data class CreateServiceResponse(
+    val name_sv: String,
+    val price: BigDecimal,
+    val describe_service: String
+)
+
+
+//Lưu thông tin Service với số lượng
+data class ServiceWithQuantity(
+    val id_sv: String,
+    val name: String,
+    val quantity: Int
+) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readInt()
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id_sv)
+        parcel.writeString(name)
+        parcel.writeInt(quantity)
+    }
+
+    override fun describeContents(): Int = 0
+
+    companion object CREATOR : Parcelable.Creator<ServiceWithQuantity> {
+        override fun createFromParcel(parcel: Parcel): ServiceWithQuantity = ServiceWithQuantity(parcel)
+        override fun newArray(size: Int): Array<ServiceWithQuantity?> = arrayOfNulls(size)
+    }
+}

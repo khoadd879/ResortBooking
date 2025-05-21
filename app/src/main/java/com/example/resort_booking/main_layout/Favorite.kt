@@ -1,6 +1,7 @@
 package com.example.resort_booking.main_layout
 
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,10 +10,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.resort_booking.ClassNDataCLass.FavouriteAdapter
 
 import com.example.resort_booking.ClassNDataCLass.HotelAdapter
+import com.example.resort_booking.HotelDetailActivity
 import com.example.resort_booking.R
 import data.FavoriteResponse
+import data.FavouriteResponse
+import data.FavouriteListData
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -64,22 +69,45 @@ class Favorite : Fragment() {
 
         val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
 
-        apiService.getListOfFavorite(userId).enqueue(object: Callback<FavoriteResponse>{
+        apiService.getListFavourite(userId).enqueue(object: Callback<FavouriteResponse>{
             override fun onResponse(
-                call: Call<FavoriteResponse>,
-                response: Response<FavoriteResponse>
+                call: Call<FavouriteResponse>,
+                response: Response<FavouriteResponse>
             ) {
                 if (response.isSuccessful) {
                     val favoriteList = response.body()?.data
                     if (favoriteList != null) {
-                        val adapter = HotelAdapter(favoriteList)
+                        val adapter = FavouriteAdapter(favoriteList,
+                            onItemClick = { favourite ->
+                                val intent = Intent(requireContext(), HotelDetailActivity::class.java)
+                                intent.putExtra("RESORT_ID", favourite.resortId.toString())  // convert nếu cần
+                                startActivity(intent)
+                            },
+                            onFavoriteClick = { favourite ->
+                                apiService.deleteFavorite(userId, favourite.resortId).enqueue(object : Callback<Void>{
+                                    override fun onResponse(
+                                        call: Call<Void>,
+                                        response: Response<Void>
+                                    ) {
+                                        if (response.isSuccessful){
+                                            Toast.makeText(context, "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show()
+                                        }else{
+                                            Toast.makeText(context, "Xóa yêu thích thất bại", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                                        Toast.makeText(context, "Lỗi khi kết nối server: ${t.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                                })
+                            }
+                        )
                         recyclerView.adapter = adapter
                     }else{
                         Toast.makeText(context, "Không có dữ liệu yêu thích", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
-            override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
+            override fun onFailure(call: Call<FavouriteResponse>, t: Throwable) {
                 Toast.makeText(context, "Lỗi khi kết nối server: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

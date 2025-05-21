@@ -4,9 +4,12 @@ import data.ChangePasswordRequest
 import data.ChangePasswordResponse
 import data.CreateResortResponse
 import data.CreateRoomResponse
+import data.CreateServiceRequest
+import data.CreateServiceResponse
 import data.CreateUserResponse
 import data.FavoriteRequest
 import data.FavoriteResponse
+import data.FavouriteResponse
 import data.IntrospectRequest
 import data.IntrospectResponse
 import data.ListUserResponse
@@ -17,6 +20,8 @@ import data.RegisterRequest
 import data.RegisterResponse
 import data.ResortDetailResponse
 import data.ResortResponse
+import data.RoomResponse
+import data.ServiceListResponse
 import data.TypeRoomResponse
 import data.VerifyOTPResponse
 import okhttp3.MultipartBody
@@ -61,14 +66,8 @@ interface ApiService {
     @GET("api/resort/list_resort/{idUser}")
     fun getResortList(@Path("idUser") idUser: String): Call<ResortResponse>
 
-    @POST("api/favorite_resort/create_favorite")
-    fun createFavorite(@Body request: FavoriteRequest): Call<FavoriteResponse>
-
-    @GET("api/favorite_resort/list_favorite/{idUser}")
-    fun getListOfFavorite(@Path("idUser") idUser: String): Call<FavoriteResponse>
-
-    @GET("api/resort/{idRs}")
-    fun getResortById(@Path("idRs") idRs: String): Call<ResortDetailResponse>
+    @GET("/api/resort/{idResort}/{idUser}")
+    fun getResortById(@Path("idResort") idRs: String, @Path("idUser") idUser: String): Call<ResortDetailResponse>
 
     @Multipart
     @POST("api/resort")
@@ -128,4 +127,22 @@ interface ApiService {
 
     @DELETE("api/user/delete/{idUser}")
     fun deleteUser(@Path("idUser") idUser: String): Call<Void>
+
+    @GET("api/favorite_resort/list_favorite/{idUser}")
+    fun getListFavourite(@Path("idUser") idUser: String): Call<FavouriteResponse>
+
+    @POST("api/favorite_resort/create_favorite")
+    fun createFavorite(@Body favoriteRequest: FavoriteRequest): Call<FavoriteResponse>
+
+    @DELETE("api/favorite_resort/delete_favorite/{idUser}/{idResort}")
+    fun deleteFavorite(@Path("idUser") idUser: String, @Path("idResort") idResort: String): Call<Void>
+
+    @GET("/api/room/list_room/{idResort}")
+    fun getListRoomById(@Path("idResort") idResort: String): Call<RoomResponse>
+
+    @GET("api/service/list_service")
+    fun getListService(): Call<ServiceListResponse>
+
+    @POST("api/service/create_service")
+    fun createService(@Body requestBody: CreateServiceRequest): Call<CreateServiceResponse>
 }

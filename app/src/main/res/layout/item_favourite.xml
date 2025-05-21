@@ -27,6 +27,7 @@
                 android:clipToOutline="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/hotel" />
+
             <ImageButton
                 android:id="@+id/favorite_button"
                 android:layout_width="30dp"
