@@ -36,6 +36,9 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var googleMap: GoogleMap
     private var resortid: String? = null
+    private var selectedRoomId: String? = null
+    private var selectedRoomName: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,17 +52,14 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         resortid = intent.getStringExtra("RESORT_ID")
         resortid?.let { fetchResortDetail(it) }
 
-        val btnBooking = findViewById<Button>(R.id.bookingBtn)
-        btnBooking.setOnClickListener {
-            val intent = Intent(this, BookingRoomActivity::class.java)
-            startActivity(intent)
-        }
+
 
         val btnThemPhong = findViewById<Button>(R.id.btnThemPhong)
         btnThemPhong.setOnClickListener {
             val intent = Intent(this, RoomListActivity::class.java)
             intent.putExtra("RESORT_ID", resortid)
-            startActivity(intent)
+            intent.putExtra("SELECT_MODE", true)
+            startActivityForResult(intent, 123)
         }
 
         val NameRoom = findViewById<TextView>(R.id.RoomName)
@@ -89,7 +89,21 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             })
         }
 
+        findViewById<TextView>(R.id.RoomName).text = "Chưa chọn phòng"
 
+        val btnBooking = findViewById<Button>(R.id.bookingBtn)
+        btnBooking.setOnClickListener {
+            if (selectedRoomId.isNullOrEmpty()) {
+                showToast("Vui lòng chọn phòng trước khi đặt")
+                return@setOnClickListener
+            }
+
+            val intent = Intent(this, BookingRoomActivity::class.java)
+            intent.putExtra("ROOM_ID", selectedRoomId)
+            intent.putExtra("ROOM_NAME", selectedRoomName)
+            intent.putExtra("RESORT_ID", resortid)
+            startActivity(intent)
+        }
     }
 
 
@@ -169,6 +183,15 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         googleMap = map
         googleMap.uiSettings.isZoomControlsEnabled = true
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 123 && resultCode == RESULT_OK && data != null) {
+            selectedRoomName = data.getStringExtra("ROOM_NAME")
+            selectedRoomId = data.getStringExtra("ROOM_ID")
+            findViewById<TextView>(R.id.RoomName).text = selectedRoomName ?: ""
+        }
     }
 }
 

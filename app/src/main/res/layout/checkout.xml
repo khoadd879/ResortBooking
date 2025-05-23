@@ -74,27 +74,28 @@
                 android:drawableTint="@color/nav_item_color"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
-                android:text="Ngày đặt phòng"
+                android:text="Ngày nhận phòng"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/DateBookingCheckOut"
+                android:id="@+id/DateBookingCheckIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="13-15/05/2025"
+                android:text=""
                 android:textColor="@color/black"
                 android:gravity="center_vertical"
                 android:drawablePadding="10dp"
                 android:layout_marginEnd="10dp"/>
         </LinearLayout>
-        <!--Guest-->
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -104,15 +105,15 @@
                 android:drawableTint="@color/nav_item_color"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
-                android:text="Số lượng người"
+                android:text="Ngày trả phòng"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/AmountOfGuest"
+                android:id="@+id/DateBookingCheckOut"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2"
+                android:text=""
                 android:textColor="@color/black"
                 android:gravity="center_vertical"
                 android:drawablePadding="10dp"
@@ -131,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/outline_calendar_month_24"
+                android:drawableLeft="@drawable/ic_room"
                 android:drawableTint="@color/nav_item_color"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
@@ -143,38 +144,7 @@
                 android:id="@+id/roomType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="VIP"
-                android:textColor="@color/black"
-                android:gravity="center_vertical"
-                android:drawablePadding="10dp"
-                android:layout_marginEnd="10dp"/>
-        </LinearLayout>
-
-        <!--Phone-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableLeft="@drawable/outline_calendar_month_24"
-                android:drawableTint="@color/nav_item_color"
-                android:drawablePadding="10dp"
-                android:gravity="center_vertical"
-                android:text="Số điện thoại"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/phone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1234567890"
+                android:text=""
                 android:textColor="@color/black"
                 android:gravity="center_vertical"
                 android:drawablePadding="10dp"
@@ -198,6 +168,12 @@
             android:layout_marginStart="10dp"
             android:textStyle="bold"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ServiceListCheckOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp" />
+
         <!--Total Price-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -219,9 +195,10 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/totalPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="200$"
+                android:text=""
                 android:textColor="@color/black"
                 android:gravity="center_vertical"
                 android:drawablePadding="10dp"
@@ -231,7 +208,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buttonSelectPayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Thanh toán"

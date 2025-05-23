@@ -77,6 +77,10 @@
         <activity android:name=".AdminLayout.RoomListActivity" />
         <activity android:name=".AdminLayout.UserListActivity" />
         <activity android:name=".AdminLayout.CreateUserActivity" />
+        <activity android:name=".signIn_layout.BookingRoomActivity" />
+        <activity android:name=".CheckOutActivity"/>
+        <activity android:name=".signIn_layout.ServiceActivity" />
+
     </application>
 
 </manifest>

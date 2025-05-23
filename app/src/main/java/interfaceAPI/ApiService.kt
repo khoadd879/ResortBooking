@@ -2,6 +2,10 @@ package interfaceAPI
 
 import data.ChangePasswordRequest
 import data.ChangePasswordResponse
+import data.CreateBookingRoomRequest
+import data.CreateBookingRoomResponse
+import data.CreateCheckOutRequest
+import data.CreateCheckOutResponse
 import data.CreateResortResponse
 import data.CreateRoomResponse
 import data.CreateServiceRequest
@@ -20,9 +24,12 @@ import data.RegisterRequest
 import data.RegisterResponse
 import data.ResortDetailResponse
 import data.ResortResponse
+import data.Room
 import data.RoomResponse
 import data.ServiceListResponse
 import data.TypeRoomResponse
+import data.UpdateServiceRequest
+import data.UpdateServiceResponse
 import data.VerifyOTPResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -66,8 +73,11 @@ interface ApiService {
     @GET("api/resort/list_resort/{idUser}")
     fun getResortList(@Path("idUser") idUser: String): Call<ResortResponse>
 
-    @GET("/api/resort/{idResort}/{idUser}")
+    @GET("api/resort/{idResort}/{idUser}")
     fun getResortById(@Path("idResort") idRs: String, @Path("idUser") idUser: String): Call<ResortDetailResponse>
+
+    @GET("api/resort/list_resort_created/{idOwner}")
+    fun getResortListCreated(@Path("idOwner") idOwner: String): Call<ResortResponse>
 
     @Multipart
     @POST("api/resort")
@@ -140,9 +150,24 @@ interface ApiService {
     @GET("/api/room/list_room/{idResort}")
     fun getListRoomById(@Path("idResort") idResort: String): Call<RoomResponse>
 
-    @GET("api/service/list_service")
-    fun getListService(): Call<ServiceListResponse>
+    @GET("/api/room/inf_room/{idRoom}")
+    fun getRoomById(@Path("idRoom") idRoom: String): Call<Room>
+
+    @GET("api/service/list_service/{idResort}")
+    fun getListService(@Path("idResort") idResort: String): Call<ServiceListResponse>
 
     @POST("api/service/create_service")
     fun createService(@Body requestBody: CreateServiceRequest): Call<CreateServiceResponse>
+
+    @PUT("api/service/update_service/{idService}")
+    fun updateService(@Path("idService") idService: String, @Body requestBody: UpdateServiceRequest): Call<UpdateServiceResponse>
+
+    @DELETE("api/service/delete_service/{idService}")
+    fun deleteService(@Path("idService") idService: String): Call<Void>
+
+    @POST("api/booking_room/create_bookingroom")
+    fun createBookingRoom(@Body requestBody: CreateBookingRoomRequest): Call<CreateBookingRoomResponse>
+
+    @POST("api/payment/create_payment")
+    fun createCheckOut(@Body requestBody: CreateCheckOutRequest): Call<CreateCheckOutResponse>
 }

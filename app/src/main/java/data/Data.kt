@@ -299,9 +299,9 @@ data class FavoriteResponse(
 
 data class Service(
     val idService: String,
-    val nameService: String,
+    val name_sv: String,
     val price: BigDecimal,
-    val describe_sv: String
+    val describe_service: String
 )
 
 data class ServiceListResponse(
@@ -323,27 +323,65 @@ data class CreateServiceResponse(
 
 
 //Lưu thông tin Service với số lượng
+@Parcelize
 data class ServiceWithQuantity(
     val id_sv: String,
     val name: String,
     val quantity: Int
-) : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readInt()
-    )
+) : Parcelable
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id_sv)
-        parcel.writeString(name)
-        parcel.writeInt(quantity)
-    }
+data class ServiceBookingRequest(
+    val id_sv: String,
+    val quantity: Int
+)
 
-    override fun describeContents(): Int = 0
+data class UpdateServiceRequest(
+    val name_sv: String,
+    val price: BigDecimal,
+    val describe_service: String
+)
 
-    companion object CREATOR : Parcelable.Creator<ServiceWithQuantity> {
-        override fun createFromParcel(parcel: Parcel): ServiceWithQuantity = ServiceWithQuantity(parcel)
-        override fun newArray(size: Int): Array<ServiceWithQuantity?> = arrayOfNulls(size)
-    }
-}
+data class UpdateServiceResponse(
+    val name_sv: String,
+    val price: BigDecimal,
+    val describe_service: String
+)
+
+data class CreateBookingRoomRequest(
+    val id_user: String,
+    val id_room: String,
+    val checkinday: String,
+    val checkoutday: String,
+    val services: List<ServiceBookingRequest>?
+)
+
+data class ServiceBookingRoom(
+    val nameService: String,
+    val quantity: Int,
+    val total_amount: BigDecimal
+)
+
+data class CreateBookingRoomResponse(
+    val message: String,
+    val data: BookingRoomData?
+)
+
+data class BookingRoomData(
+    val idBr: String,
+    val checkinday: String,
+    val checkoutday: String,
+    val total_amount: BigDecimal,
+    val services: List<ServiceBookingRoom>
+)
+
+data class CreateCheckOutRequest(
+    val id_br: String,
+    val payment_method: String
+)
+
+data class CreateCheckOutResponse(
+    val money: BigDecimal,
+    val create_date: String,
+    val status: String,
+    val payment_method: String
+)

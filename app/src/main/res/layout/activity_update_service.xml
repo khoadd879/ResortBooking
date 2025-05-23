@@ -43,6 +43,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -100,10 +101,11 @@
             android:id="@+id/btnSaveService"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/button_border_all"
+            android:backgroundTint="@color/dard_blue"
+            android:padding="12dp"
             android:text="Lưu dịch vụ"
-            android:backgroundTint="@color/blue"
             android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:padding="12dp" />
+            android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

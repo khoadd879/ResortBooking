@@ -1,7 +1,9 @@
 package com.example.resort_booking.signIn_layout
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -28,6 +30,7 @@ class ServiceActivity : AppCompatActivity() {
     private val selectedServices = mutableListOf<ServiceWithQuantity>()
     private lateinit var btnDat: Button
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_service)
@@ -40,41 +43,43 @@ class ServiceActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val role = sharedPref.getString("ROLE", null)
 
-        val btnThemService = findViewById<ImageButton>(R.id.btnAddService)
+        val btnThemService = findViewById<Button>(R.id.btnAddService)
         btnThemService.visibility = if (role?.contains("ROLE_USER") == true) View.GONE else View.VISIBLE
 
         btnThemService.setOnClickListener {
+            Log.d("ServiceActivity", "Dịch vụ đã chọn: $selectedServices")
             val intent = Intent(this, CreateServiceActivity::class.java)
             intent.putExtra("RESORT_ID", intent.getStringExtra("RESORT_ID"))
             startActivity(intent)
         }
 
-        val manage = findViewById<LinearLayout>(R.id.ManageServiceList)
-        manage.visibility = if (role?.contains("ROLE_USER") == true) View.GONE else View.VISIBLE
-
         apiService = com.example.resort_booking.ApiClient.create(sharedPref)
         val resortId = intent.getStringExtra("RESORT_ID")
 
         btnDat.setOnClickListener {
-            val intent = Intent(this, BookingRoomActivity::class.java)
-            intent.putParcelableArrayListExtra(
-                "SELECTED_SERVICES",
-                ArrayList(selectedServices)
-            )
-            startActivity(intent)
+            val resultIntent = Intent()
+            resultIntent.putParcelableArrayListExtra("SELECTED_SERVICES", ArrayList(selectedServices))
+            setResult(RESULT_OK, resultIntent)
+            finish()
         }
+
+        loadServiceList(resortId.toString())
     }
 
     private fun loadServiceList(resortId: String) {
-        apiService.getListService().enqueue(object : Callback<ServiceListResponse> {
+        val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
+        val role = sharedPref.getString("ROLE", null)
+
+        apiService.getListService(resortId).enqueue(object : Callback<ServiceListResponse> {
             override fun onResponse(call: Call<ServiceListResponse>, response: Response<ServiceListResponse>) {
                 if (response.isSuccessful) {
                     val serviceList = response.body()?.data ?: emptyList()
-                    adapter = ServiceAdapter(serviceList) { serviceWithQuantity ->
+                    adapter = ServiceAdapter(serviceList, { serviceWithQuantity ->
                         handleServiceSelection(serviceWithQuantity)
-                    }
+                    }, this@ServiceActivity, role)
                     recyclerView.adapter = adapter
                 } else {
+                    Log.e("ServiceActivity", "Lỗi khi tải danh sách dịch vụ: ${response.code()}")
                     Toast.makeText(this@ServiceActivity, "Không tải được danh sách dịch vụ", Toast.LENGTH_SHORT).show()
                 }
             }

@@ -1,5 +1,6 @@
 package com.example.resort_booking.ClassNDataCLass
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +11,12 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.resort_booking.R
-import data.ResortUser
+import data.Resort
 
 class ResortUserAdapter(
-    private val resorts: List<ResortUser>
+    private val resorts: List<Resort>,
+    private val context: Context,
+    private val onResortDeleted: (() -> Unit)? = null
 ) : RecyclerView.Adapter<ResortUserAdapter.ResortUserViewHolder>() {
 
     inner class ResortUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -32,24 +35,25 @@ class ResortUserAdapter(
 
     override fun onBindViewHolder(holder: ResortUserViewHolder, position: Int) {
         val resort = resorts[position]
-        holder.name.text = resort.name
-        holder.location.text = resort.location
-        holder.rating.text = resort.rating.toString()
+        holder.name.text = resort.name_rs
+        holder.location.text = resort.location_rs
+        holder.rating.text = resort.star.toString()
 
         Glide.with(holder.itemView.context)
-            .load(resort.imageUrl)
-            .placeholder(R.drawable.hotel)
+            .load(resort.image)
+            .placeholder(R.drawable.load_error)
             .into(holder.image)
 
         holder.favoriteBtn.setImageResource(
-            if (resort.isFavorite) R.drawable.baseline_favorite_24
+            if (resort.favorite) R.drawable.baseline_favorite_24
             else R.drawable.baseline_favorite_border_24
         )
 
         holder.favoriteBtn.setOnClickListener {
-            Toast.makeText(it.context, "Yêu thích: ${resort.name}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(it.context, "Yêu thích: ${resort.name_rs}", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     override fun getItemCount(): Int = resorts.size
 }

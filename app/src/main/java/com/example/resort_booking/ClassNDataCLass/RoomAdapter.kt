@@ -19,7 +19,10 @@ import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RoomAdapter(private var rooms: List<Room>, private val context: Context) : RecyclerView.Adapter<RoomAdapter.RoomViewHolder>() {
+class RoomAdapter(private var rooms: List<Room>,
+                  private val context: Context,
+    private val onItemClick: ((Room) -> Unit)? = null
+) : RecyclerView.Adapter<RoomAdapter.RoomViewHolder>() {
 
 
 
@@ -53,26 +56,39 @@ class RoomAdapter(private var rooms: List<Room>, private val context: Context) :
                 val sharedPref = context.getSharedPreferences("APP_PREFS", MODE_PRIVATE)
                 val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
 
-                apiService.deleteRoom(room.idRoom).enqueue(object: Callback<Void>{
-                    override fun onResponse(call: retrofit2.Call<Void>, response: retrofit2.Response<Void>) {
+                apiService.deleteRoom(room.idRoom).enqueue(object : Callback<Void> {
+                    override fun onResponse(
+                        call: retrofit2.Call<Void>,
+                        response: retrofit2.Response<Void>
+                    ) {
                         if (response.isSuccessful) {
-                            Toast.makeText(context, "Xóa resort thành công", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Xóa resort thành công", Toast.LENGTH_SHORT)
+                                .show()
                         } else {
-                            Toast.makeText(context, "Xóa resort thất bại: ${response.message()}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Xóa resort thất bại: ${response.message()}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
+
                     override fun onFailure(call: retrofit2.Call<Void>, t: Throwable) {
-                        Toast.makeText(context, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 })
             }
 
-            val sharedPref = context.getSharedPreferences("APP_PREFS", MODE_PRIVATE)
+            val sharedPref =
+                context.getSharedPreferences("APP_PREFS", android.content.Context.MODE_PRIVATE)
             val role = sharedPref.getString("ROLE", "")
-
-            if(role?.contains("ROLE_USER") == true){
+            if (role?.contains("ROLE_USER") == true) {
                 binding.btnEdit.visibility = Button.GONE
                 binding.btnDelete.visibility = Button.GONE
+            }
+            binding.root.setOnClickListener {
+                onItemClick?.invoke(room)
             }
         }
 
@@ -85,14 +101,7 @@ class RoomAdapter(private var rooms: List<Room>, private val context: Context) :
 
     override fun onBindViewHolder(holder: RoomViewHolder, position: Int) {
         holder.bind(rooms[position])
-        holder.itemView.setOnClickListener {
-            holder.itemView.setOnClickListener {
-                val intent = Intent(context, HotelDetailActivity::class.java)
-                intent.putExtra("RESORT_ID", rooms[position].idRoom)
-                intent.putExtra("RESORT_NAME", rooms[position].name_room)
-                context.startActivity(intent)
-            }
-        }
+
     }
 
     override fun getItemCount(): Int = rooms.size

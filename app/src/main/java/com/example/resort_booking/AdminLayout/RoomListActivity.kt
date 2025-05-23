@@ -2,6 +2,8 @@ package com.example.resort_booking.AdminLayout
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,33 +24,46 @@ class RoomListActivity : AppCompatActivity() {
     private lateinit var roomAdapter: RoomAdapter
     private lateinit var apiService: ApiService
     private var resortId: String? = null
-    private var role: String? = null
+    private var isSelectMode: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRoomListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Lấy dữ liệu từ SharedPreferences và Intent
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
-        resortId = intent.getStringExtra("RESORT_ID")
-        role = sharedPref.getString("ROLE", "")
         apiService = com.example.resort_booking.ApiClient.create(sharedPref)
+        resortId = intent.getStringExtra("RESORT_ID")
+        isSelectMode = intent.getBooleanExtra("SELECT_MODE", false)
+
         val btnDichVu = findViewById<Button>(R.id.ServiceList)
-        // Kiểm tra quyền hiển thị nút thêm phòng
-        if (role?.contains("ROLE_USER") == true) {
-            binding.btnAddRoom.visibility = Button.GONE
-            btnDichVu.visibility = Button.GONE
+        val role = sharedPref.getString("ROLE", "")
+
+        // Hiển thị nút theo role
+        if (role?.contains("ROLE_USER") == true || isSelectMode) {
+            binding.btnAddRoom.visibility = View.GONE
+            btnDichVu.visibility = View.GONE
         } else {
-            binding.btnAddRoom.visibility = Button.VISIBLE
-            btnDichVu.visibility = Button.VISIBLE
+            binding.btnAddRoom.visibility = View.VISIBLE
+            btnDichVu.visibility = View.VISIBLE
         }
 
-        roomAdapter = RoomAdapter(emptyList(), this@RoomListActivity)
+        // Adapter với click listener nếu là chế độ chọn phòng
+        roomAdapter = if (isSelectMode) {
+            RoomAdapter(emptyList(), this@RoomListActivity) { room ->
+                val resultIntent = Intent()
+                resultIntent.putExtra("ROOM_ID", room.idRoom)
+                resultIntent.putExtra("ROOM_NAME", room.name_room)
+                setResult(RESULT_OK, resultIntent)
+                finish()
+            }
+        } else {
+            RoomAdapter(emptyList(), this@RoomListActivity, null) // Không xử lý click
+        }
+
         binding.recyclerViewRooms.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewRooms.adapter = roomAdapter
 
-        // Sự kiện thêm phòng
         binding.btnAddRoom.setOnClickListener {
             val intent = Intent(this, CreateRoomActivity::class.java)
             intent.putExtra("RESORT_ID", resortId)
@@ -61,9 +76,7 @@ class RoomListActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Gọi API lần đầu
         loadRoomData()
-
     }
 
     override fun onResume() {
@@ -72,21 +85,21 @@ class RoomListActivity : AppCompatActivity() {
     }
 
     private fun loadRoomData() {
-        val id = resortId ?: return
-
-        apiService.getListRoomById(id).enqueue(object : Callback<RoomResponse> {
-            override fun onResponse(call: Call<RoomResponse>, response: Response<RoomResponse>) {
-                if (response.isSuccessful && response.body() != null) {
-                    val rooms = response.body()?.data ?: emptyList()
-                    roomAdapter.updateData(rooms)
-                } else {
-                    Toast.makeText(this@RoomListActivity, "Không tải được danh sách phòng", Toast.LENGTH_SHORT).show()
+        resortId?.let { id ->
+            apiService.getListRoomById(id).enqueue(object : Callback<RoomResponse> {
+                override fun onResponse(call: Call<RoomResponse>, response: Response<RoomResponse>) {
+                    if (response.isSuccessful && response.body() != null) {
+                        roomAdapter.updateData(response.body()!!.data ?: emptyList())
+                    } else {
+                        Log.e("RoomListActivity", "Lỗi tải danh sách phòng: ${response.message()}")
+                        Toast.makeText(this@RoomListActivity, "Không tải được danh sách phòng", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<RoomResponse>, t: Throwable) {
-                Toast.makeText(this@RoomListActivity, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+                override fun onFailure(call: Call<RoomResponse>, t: Throwable) {
+                    Toast.makeText(this@RoomListActivity, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
     }
 }
