@@ -33,6 +33,6 @@ class DetailExpenseActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
+        //TODO: get expense from api
     }
 }
