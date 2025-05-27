@@ -11,7 +11,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.resort_booking.R
-import com.example.resort_booking.signIn_layout.SetUpAccountActivity
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -78,16 +77,20 @@ class Profile : Fragment() {
             apiService.logout(request).enqueue(object : retrofit2.Callback<Void> {
                 override fun onResponse(call: retrofit2.Call<Void>, response: retrofit2.Response<Void>) {
                     // Xóa token local bất kể logout thành công hay không
-                    sharedPref.edit().clear().apply()
-                    progressBar.visibility = View.VISIBLE
+                    if(response.isSuccessful) {
+                        progressBar.visibility = View.VISIBLE
 
-                    // Quay lại màn đăng nhập
-                    val intent = android.content.Intent(requireContext(), com.example.resort_booking.signIn_layout.LoginActivity::class.java)
-                    intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    dialog.dismiss()
+                        // Quay lại màn đăng nhập
+                        val intent = android.content.Intent(requireContext(), com.example.resort_booking.signIn_layout.LoginActivity::class.java)
+                        intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        dialog.dismiss()
+                    }else{
+                        progressBar.visibility = View.VISIBLE
+                        android.widget.Toast.makeText(requireContext(), "Cant logout: ${response.code()}", android.widget.Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    }
                 }
-
                 override fun onFailure(call: retrofit2.Call<Void>, t: Throwable) {
                     progressBar.visibility = View.VISIBLE
                     android.widget.Toast.makeText(requireContext(), "Lỗi kết nối: ${t.message}", android.widget.Toast.LENGTH_SHORT).show()

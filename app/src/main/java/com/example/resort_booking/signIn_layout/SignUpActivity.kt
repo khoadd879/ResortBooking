@@ -17,6 +17,7 @@ import data.RegisterResponse
 import interfaceAPI.ApiService
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
+import com.example.resort_booking.AdminLayout.UpdateUserActivity
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -86,7 +87,7 @@ class SignUpActivity : AppCompatActivity() {
                         if (result?.success == true) {
                             Toast.makeText(this@SignUpActivity, "Đăng ký thành công", Toast.LENGTH_SHORT).show()
                             //chuyển sang Set up account
-                            startActivity(Intent(this@SignUpActivity, SetUpAccountActivity::class.java))
+                            startActivity(Intent(this@SignUpActivity, UpdateUserActivity::class.java))
                             finish()
 
                             val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)

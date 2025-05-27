@@ -70,7 +70,6 @@
             android:name=".signIn_layout.LoginActivity"
             android:exported="true" /> <!-- Main -->
         <activity android:name=".signIn_layout.SignUpActivity" />
-        <activity android:name=".signIn_layout.SetUpAccountActivity" />
         <activity android:name=".signIn_layout.ForgotPasswordActivity" />
         <activity android:name=".signIn_layout.verificationCodeActivity" />
         <activity android:name=".signIn_layout.ChangePasswordActivity" />

@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.auth0.android.jwt.JWT
+import com.example.resort_booking.ApiClient
 import com.example.resort_booking.MainActivity
 import com.example.resort_booking.R
 import data.LoginRequest
@@ -159,7 +160,8 @@ class LoginActivity : AppCompatActivity() {
                             putString("ROLE", role)
                             apply()
                         }
-
+                        ApiClient.create(sharedPref)
+                        ApiClient.authInterceptor?.scheduleAutoRefresh(refreshToken)
                         // Chuyển sang màn hình chính
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                         finish()

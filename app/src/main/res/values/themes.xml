@@ -11,4 +11,8 @@
     </style>
 
     <style name="Theme.Resort_Booking" parent="Base.Theme.Resort_Booking" />
+
+    <style name="Theme.Resort_Booking.ProgressBarTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorAccent">#2196F3</item>
+    </style>
 </resources>

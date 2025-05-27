@@ -14,6 +14,8 @@ import data.CreateUserResponse
 import data.FavoriteRequest
 import data.FavoriteResponse
 import data.FavouriteResponse
+import data.GetInfoBookingRoomResponse
+import data.GetListBookingRoomResponse
 import data.IntrospectRequest
 import data.IntrospectResponse
 import data.ListUserResponse
@@ -52,7 +54,7 @@ interface ApiService {
     @POST("https://booking-resort-final.onrender.com/api/auth/introspect")
     fun introspect(@Body request: IntrospectRequest): Call<IntrospectResponse>
 
-    @POST("https://booking-resort-final.onrender.com/api/auth/refresh-token")
+    @POST("https://booking-resort-final.onrender.com/api/auth/refresh")
     fun refreshToken(@Body request: RefreshTokenRequest): Call<LoginResponse>
 
     @POST("https://booking-resort-final.onrender.com/api/user/register")
@@ -68,13 +70,19 @@ interface ApiService {
     fun verifyOTP(@Path("otp") otp: String, @Path("email") email: String): Call<VerifyOTPResponse>
 
     @POST("https://booking-resort-final.onrender.com/forgotPassword/changePassword/{email}")
-    fun changePassword(@Path("email") email: String, @Body request: ChangePasswordRequest): Call<ChangePasswordResponse>
+    fun changePassword(
+        @Path("email") email: String,
+        @Body request: ChangePasswordRequest
+    ): Call<ChangePasswordResponse>
 
     @GET("api/resort/list_resort/{idUser}")
     fun getResortList(@Path("idUser") idUser: String): Call<ResortResponse>
 
     @GET("api/resort/{idResort}/{idUser}")
-    fun getResortById(@Path("idResort") idRs: String, @Path("idUser") idUser: String): Call<ResortDetailResponse>
+    fun getResortById(
+        @Path("idResort") idRs: String,
+        @Path("idUser") idUser: String
+    ): Call<ResortDetailResponse>
 
     @GET("api/resort/list_resort_created/{idOwner}")
     fun getResortListCreated(@Path("idOwner") idOwner: String): Call<ResortResponse>
@@ -99,8 +107,8 @@ interface ApiService {
     @Multipart
     @PUT("api/resort/update/{resortID}")
     fun updateResort(
-        @Path ("resortID") idRs: String,
-        @Part ("request") requestBody: RequestBody,
+        @Path("resortID") idRs: String,
+        @Part("request") requestBody: RequestBody,
         @Part file: MultipartBody.Part,
         @Header("Authorization") token: String
     ): Call<CreateResortResponse>
@@ -110,9 +118,11 @@ interface ApiService {
 
     @Multipart
     @PUT("api/room/update/{idRoom}")
-    fun updateRoom(@Path ("idRoom") idRoom: String,
-                  @Part ("request") requestBody: RequestBody,
-                  @Part file: MultipartBody.Part) : Call<CreateRoomResponse>
+    fun updateRoom(
+        @Path("idRoom") idRoom: String,
+        @Part("request") requestBody: RequestBody,
+        @Part file: MultipartBody.Part
+    ): Call<CreateRoomResponse>
 
     @DELETE("api/room/delete/{idRoom}")
     fun deleteRoom(@Path("idRoom") idRoom: String): Call<Void>
@@ -133,7 +143,7 @@ interface ApiService {
         @Path("idUser") idUser: String,
         @Part("request") requestBody: RequestBody,
         @Part file: MultipartBody.Part
-    ) : Call<CreateUserResponse>
+    ): Call<CreateUserResponse>
 
     @DELETE("api/user/delete/{idUser}")
     fun deleteUser(@Path("idUser") idUser: String): Call<Void>
@@ -145,7 +155,10 @@ interface ApiService {
     fun createFavorite(@Body favoriteRequest: FavoriteRequest): Call<FavoriteResponse>
 
     @DELETE("api/favorite_resort/delete_favorite/{idUser}/{idResort}")
-    fun deleteFavorite(@Path("idUser") idUser: String, @Path("idResort") idResort: String): Call<Void>
+    fun deleteFavorite(
+        @Path("idUser") idUser: String,
+        @Path("idResort") idResort: String
+    ): Call<Void>
 
     @GET("/api/room/list_room/{idResort}")
     fun getListRoomById(@Path("idResort") idResort: String): Call<RoomResponse>
@@ -160,7 +173,10 @@ interface ApiService {
     fun createService(@Body requestBody: CreateServiceRequest): Call<CreateServiceResponse>
 
     @PUT("api/service/update_service/{idService}")
-    fun updateService(@Path("idService") idService: String, @Body requestBody: UpdateServiceRequest): Call<UpdateServiceResponse>
+    fun updateService(
+        @Path("idService") idService: String,
+        @Body requestBody: UpdateServiceRequest
+    ): Call<UpdateServiceResponse>
 
     @DELETE("api/service/delete_service/{idService}")
     fun deleteService(@Path("idService") idService: String): Call<Void>
@@ -170,4 +186,10 @@ interface ApiService {
 
     @POST("api/payment/create_payment")
     fun createCheckOut(@Body requestBody: CreateCheckOutRequest): Call<CreateCheckOutResponse>
+
+    @GET("api/booking_room/list_bookingroom/{idUser}")
+    fun getListBookingRoom(@Path("idUser") idUser: String): Call<GetListBookingRoomResponse>
+
+    @GET("api/booking_room/inf_bookingroom/{idBookingRoom}")
+    fun getInfoBookingRoom(@Path("idBookingRoom") idBookingRoom: String): Call<GetInfoBookingRoomResponse>
 }

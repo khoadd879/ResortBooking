@@ -44,7 +44,9 @@ class ServiceActivity : AppCompatActivity() {
         val role = sharedPref.getString("ROLE", null)
 
         val btnThemService = findViewById<Button>(R.id.btnAddService)
-        btnThemService.visibility = if (role?.contains("ROLE_USER") == true) View.GONE else View.VISIBLE
+        if(role?.contains("ROLE_USER") == true){
+            btnThemService.visibility = View.GONE
+        }
 
         btnThemService.setOnClickListener {
             Log.d("ServiceActivity", "Dịch vụ đã chọn: $selectedServices")

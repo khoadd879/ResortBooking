@@ -90,22 +90,6 @@
                         android:text="+"
                          />
                 </LinearLayout>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tổng thành tiền"
-                    android:paddingTop="10dp"
-                    android:textColor="@color/nav_item_color"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvServicePrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="100.000đ"
-                    android:textColor="@color/dard_blue"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
             </LinearLayout>
 
             <ImageButton

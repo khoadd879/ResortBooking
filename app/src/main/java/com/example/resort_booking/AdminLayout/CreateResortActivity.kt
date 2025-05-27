@@ -16,13 +16,11 @@ import data.CreateResortResponse
 import data.CreateRoomRequest
 import data.CreateRoomResponse
 import data.RoomDraft
-import interfaceAPI.ApiService
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.*
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.FileOutputStream
 

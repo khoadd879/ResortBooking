@@ -20,15 +20,16 @@ data class LoginResponse(
 )
 
 data class TokenData(
-    val idUser: String,
+    val idUser: String?,
     val token: String,
-    val refreshToken: String,
+    val refreshToken: String?,
     val authenticated: Boolean
 )
 
 data class RefreshTokenRequest(
-    val refreshToken: String
+    val token: String
 )
+
 
 data class RegisterRequest(
     val account: String,
@@ -327,7 +328,8 @@ data class CreateServiceResponse(
 data class ServiceWithQuantity(
     val id_sv: String,
     val name: String,
-    val quantity: Int
+    val quantity: Int,
+    val price: BigDecimal
 ) : Parcelable
 
 data class ServiceBookingRequest(
@@ -385,3 +387,41 @@ data class CreateCheckOutResponse(
     val status: String,
     val payment_method: String
 )
+
+//Booking Room
+data class GetListBookingRoomResponse(
+    val data: List<DataBookingRoom>?
+)
+
+data class ResortBookingRoom(
+    val name_rs: String,
+    val location_rs: String,
+    val image: String?,
+)
+
+data class RoomBookingRoom(
+    val name_room: String,
+    val type_room: String,
+    val price: BigDecimal,
+    val image: String?
+)
+
+data class DataBookingRoom(
+    val idBr: String,
+    val idResort: String,
+    val checkinday: String,
+    val checkoutday: String,
+    val total_amount: BigDecimal,
+    val status: String,
+    val resortResponse: ResortBookingRoom,
+    val roomResponse: RoomBookingRoom,
+    val services: List<ServiceBookingRoom>
+)
+
+//Booking room detail
+data class GetInfoBookingRoomResponse(
+    val data: DataBookingRoom?
+)
+
+//Update booking room
+

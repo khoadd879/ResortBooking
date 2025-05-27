@@ -3,28 +3,26 @@ package com.example.resort_booking.signIn_layout
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.resort_booking.ClassNDataCLass.PaymentHistoryAdapter
-import com.example.resort_booking.databinding.ActivityPaymentHistoryBinding
+import com.example.resort_booking.R
+import interfaceAPI.ApiService
 
 class PaymentHistoryActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityPaymentHistoryBinding
-    private lateinit var adapter: PaymentHistoryAdapter
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var paymentHistoryAdapter: PaymentHistoryAdapter
+    private var userId: String? = null
+    private lateinit var apiService: ApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityPaymentHistoryBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.fragment_explore)
+        recyclerView = findViewById(R.id.recyclerViewPaymentHistory)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
+        userId = sharedPref.getString("ID_USER", null)
 
-        setupRecyclerView()
 
-        // Sau này bạn sẽ lấy list từ API và gọi:
-        // adapter.updateData(listFromApi)
-    }
-
-    private fun setupRecyclerView() {
-        adapter = PaymentHistoryAdapter(emptyList())
-        binding.recyclerViewPaymentHistory.layoutManager = LinearLayoutManager(this)
-        binding.recyclerViewPaymentHistory.adapter = adapter
     }
 }

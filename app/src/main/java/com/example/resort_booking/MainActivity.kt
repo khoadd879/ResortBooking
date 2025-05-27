@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         // Lấy role từ SharedPreferences
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val role = sharedPref.getString("ROLE", "ROLE_USER")
+        ApiClient.create(sharedPref)
 
         val navView = binding.bottomNavigationView
         navView.menu.clear()

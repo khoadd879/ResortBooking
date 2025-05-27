@@ -84,14 +84,9 @@ class BookingRoomActivity : AppCompatActivity() {
             startActivityForResult(intent, REQUEST_CODE_SELECT_SERVICE)
         }
 
-        val checkinFormatted = "${checkinDate.text}T14:00:00"
-        val checkoutFormatted = "${checkoutDate.text}T12:00:00"
-
         val serviceRequests = selectedServices.map {
             ServiceBookingRequest(id_sv = it.id_sv, quantity = it.quantity)
         }
-
-
 
         // Nút đặt phòng
         bookingButton.setOnClickListener {

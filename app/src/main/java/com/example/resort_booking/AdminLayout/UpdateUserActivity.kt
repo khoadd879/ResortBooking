@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -41,6 +42,7 @@ class UpdateUserActivity : AppCompatActivity() {
 
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         accessToken = sharedPref.getString("ACCESS_TOKEN", null)
+        val Role = sharedPref.getString("ROLE", null)
 
         val tenNguoiDung = findViewById<EditText>(R.id.edtFullName)
         val soDienThoai = findViewById<EditText>(R.id.edtPhone)
@@ -114,6 +116,10 @@ class UpdateUserActivity : AppCompatActivity() {
                 year, month, day)
 
             datePickerDialog.show()
+        }
+
+        if(Role?.contains("ROLE_USER") == true){
+            btnCapNhapnv.visibility = View.GONE
         }
 
         btnCapNhapnv.setOnClickListener {

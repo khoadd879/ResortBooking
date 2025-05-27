@@ -14,6 +14,7 @@ class ServiceAdapterBooking(
     class ServiceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameText: TextView = itemView.findViewById(R.id.textServiceName)
         val amountText: TextView = itemView.findViewById(R.id.textServiceAmount)
+        val totalPriceText: TextView = itemView.findViewById(R.id.textServiceTotalPrice)
     }
 
     fun updateServices(newServices: List<ServiceWithQuantity>) {
@@ -31,6 +32,7 @@ class ServiceAdapterBooking(
         val service = services[position]
         holder.nameText.text = service.name
         holder.amountText.text = "${service.quantity}"
+        holder.totalPriceText.text = "${service.price}đ"
     }
 
     override fun getItemCount(): Int = services.size
