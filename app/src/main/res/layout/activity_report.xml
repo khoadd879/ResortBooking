@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".AdminLayout.ResortListActivity">
+    tools:context=".AdminLayout.ReportActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,13 +28,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
-            <Spinner
-                android:id="@+id/spinnerTimeType"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp" />
-
+                android:text="Bộ lọc thời gian"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                android:textColor="@color/black"/>
             <Spinner
                 android:id="@+id/spinnerMonth"
                 android:layout_width="wrap_content"
@@ -46,6 +46,36 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chọn Resort"
+            android:textSize="16sp"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/loadChart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chạy dữ liệu"
+                android:textSize="16sp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/dard_blue"/>
+
+        </LinearLayout>
+        <Spinner
+            android:id="@+id/ResortSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            />
 
         <!-- Biểu đồ có thể kéo ngang -->
 
@@ -126,5 +156,17 @@
             android:textColor="#9C27B0"
             android:textSize="16sp" />
 
+
+        <Button
+            android:id="@+id/btnDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_border_all"
+            android:text="Chi tiết thu chi"
+            android:textColor="@color/white" />
     </LinearLayout>
 </ScrollView>

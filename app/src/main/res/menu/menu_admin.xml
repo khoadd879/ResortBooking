@@ -4,7 +4,7 @@
     <item android:title="Homepage" android:icon="@drawable/baseline_home_24"
     android:id="@+id/homepage"/>
     <item
-        android:id="@+id/reportFragment"
+        android:id="@+id/reportActivity"
         android:icon="@drawable/baseline_assignment_24"
         android:title="Report" />
 

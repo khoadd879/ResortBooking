@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
@@ -12,6 +12,19 @@
         android:textSize="30sp"
         android:layout_gravity="center"
         android:textAlignment="center"/>
+
+    <Button
+        android:id="@+id/btnAddExpense"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Thêm thông tin chi"
+        android:background="@drawable/button_border"
+        android:drawableLeft="@drawable/baseline_add_24"
+        android:layout_gravity="left"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_marginStart="10dp"
+        tools:ignore="RtlCompat" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTransactions"

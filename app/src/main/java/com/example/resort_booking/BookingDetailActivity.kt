@@ -23,8 +23,12 @@
     import com.google.android.gms.maps.SupportMapFragment
     import com.google.android.gms.maps.model.LatLng
     import com.google.android.gms.maps.model.MarkerOptions
+    import data.CreateBookingRoomResponse
     import data.GetInfoBookingRoomResponse
+    import data.ServiceBookingRequest
+    import data.ServiceUpdate
     import data.ServiceWithQuantity
+    import data.UpdateBookingRoom
     import retrofit2.Call
     import retrofit2.Callback
     import retrofit2.Response
@@ -38,6 +42,12 @@
         private lateinit var serviceAdapter: ServiceAdapterBooking
         private val selectedServices = mutableListOf<ServiceWithQuantity>()
         private var idResort:String ? = null
+
+        //code để gửi cho bên serviceActivity để có thể trả về update service
+        companion object {
+            const val REQUEST_CODE_UPDATE_SERVICE = 1001
+        }
+
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -57,7 +67,7 @@
             val btnEdit = findViewById<ImageButton>(R.id.btnEdit)
             val btnDelete = findViewById<ImageButton>(R.id.btnDelete)
             val serviceRecyclerView = findViewById<RecyclerView>(R.id.ServiceListBookingRoom)
-            val btnUpdateService = findViewById<Button>(R.id.btnUpdateService)
+            val btnUpdateService = findViewById<TextView>(R.id.btnUpdateService)
 
             val checkinday = findViewById<TextView>(R.id.DateBookingCheckIn)
             val checkoutday = findViewById<TextView>(R.id.DateBookingCheckout)
@@ -68,9 +78,6 @@
             btnDelete.visibility = View.GONE
             tvStatus.visibility = View.GONE
 
-            serviceAdapter = ServiceAdapterBooking(selectedServices)
-            serviceRecyclerView.adapter = serviceAdapter
-            serviceRecyclerView.layoutManager = LinearLayoutManager(this)
 
 
             val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
@@ -127,10 +134,47 @@
             btnUpdateService.setOnClickListener {
                 val intent = Intent(this, ServiceActivity::class.java)
                 intent.putExtra("RESORT_ID", idResort)
-                startActivity(intent)
+
+                intent.putParcelableArrayListExtra("SELECTED_SERVICES", ArrayList(selectedServices))
+                startActivityForResult(intent, REQUEST_CODE_UPDATE_SERVICE)
+            }
+
+            val serviceRequests = selectedServices.map {
+                ServiceUpdate(id_sv = it.id_sv, quantity = it.quantity)
+            }
+
+            val updateBookingRoomRequest = UpdateBookingRoom(
+                idBr = bookingId.toString(),
+                checkinday = checkinday.text.toString(),
+                checkoutday = checkoutday.text.toString(),
+                services = serviceRequests
+            )
+
+            val btnUpdate = findViewById<Button>(R.id.buttonUpdateBookingRoom)
+            btnUpdate.setOnClickListener {
+                apiService.updateBookingRoom(bookingId.toString(), updateBookingRoomRequest).enqueue(object : Callback<CreateBookingRoomResponse>{
+                    override fun onResponse(
+                        call: Call<CreateBookingRoomResponse?>,
+                        response: Response<CreateBookingRoomResponse?>
+                    ) {
+                        if(response.isSuccessful){
+                            Toast.makeText(this@BookingDetailActivity, "Cập nhật thành công", Toast.LENGTH_SHORT).show()
+                        }
+                        else{
+                            Log.e("BookingActivity", "Lỗi khi tải room: ${response.code()}")
+                            Toast.makeText(this@BookingDetailActivity, "Cập nhật thất bại", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<CreateBookingRoomResponse?>, t: Throwable) {
+                        Log.e("BookingActivity", "Lỗi kết nối: ${t.message}", t)
+                        Toast.makeText(this@BookingDetailActivity, "Cập nhật thất bại", Toast.LENGTH_SHORT).show()
+                    }
+                })
             }
         }
 
+        // Hiển thị địa chỉ khách sạn trên bản đồ
         private fun showAddressOnMap(addressString: String) {
             val geocoder = Geocoder(this, Locale.getDefault())
             try {
@@ -168,6 +212,21 @@
             googleMap = map
             googleMap.uiSettings.isZoomControlsEnabled = true
 
+        }
+
+        //override để có thể nhận về service khác khi update
+        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+            super.onActivityResult(requestCode, resultCode, data)
+            if (requestCode == REQUEST_CODE_UPDATE_SERVICE && resultCode == RESULT_OK) {
+                val updatedServices = data?.getParcelableArrayListExtra<ServiceWithQuantity>("SELECTED_SERVICES")
+                if (updatedServices != null) {
+                    selectedServices.clear()
+                    selectedServices.addAll(updatedServices)
+
+                    // Cập nhật lại UI
+                    serviceAdapter.notifyDataSetChanged()
+                }
+            }
         }
 
     }

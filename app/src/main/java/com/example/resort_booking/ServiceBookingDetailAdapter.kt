@@ -14,7 +14,6 @@ class ServiceBookingDetailAdapter(
     class ServiceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameText: TextView = itemView.findViewById(R.id.textServiceName)
         val amountText: TextView = itemView.findViewById(R.id.textServiceAmount)
-        val totalPrice : TextView = itemView.findViewById(R.id.textServiceTotalPrice)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): com.example.resort_booking.ServiceBookingDetailAdapter.ServiceViewHolder {
@@ -27,7 +26,7 @@ class ServiceBookingDetailAdapter(
         val service = services?.get(position)
         holder.nameText.text = service?.nameService
         holder.amountText.text = "${service?.quantity}"
-        holder.totalPrice.text = "${service?.total_amount}đ"
+
     }
 
     override fun getItemCount(): Int = services.size

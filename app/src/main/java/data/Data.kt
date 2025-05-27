@@ -328,8 +328,12 @@ data class CreateServiceResponse(
 data class ServiceWithQuantity(
     val id_sv: String,
     val name: String,
-    val quantity: Int
+    var quantity: Int,
+    val describe_service: String,
+    val price: BigDecimal
 ) : Parcelable
+
+
 
 data class ServiceBookingRequest(
     val id_sv: String,
@@ -422,5 +426,46 @@ data class GetInfoBookingRoomResponse(
     val data: DataBookingRoom?
 )
 
+data class ServiceUpdate(
+    val id_sv: String,
+    val quantity: Int
+)
 //Update booking room
+data class UpdateBookingRoom(
+    val idBr: String,
+    val checkinday: String,
+    val checkoutday: String,
+    val services: List<ServiceUpdate>?
+)
 
+data class ReportListRequest(
+    val idResort: String,
+    val reportMonth: Int,
+    val reportYear: Int
+)
+
+data class ReportListResponse(
+    val idReport: String,
+    val totalRevenue: BigDecimal,
+    val totalExpense: BigDecimal,
+    val netProfit: BigDecimal,
+)
+
+data class MonthlyReportData(
+    val month: Int,
+    val revenue: Float,
+    val expense: Float
+)
+
+data class CreateExpenseRequest(
+    val idResort: String,
+    val category: String,
+    val amount: BigDecimal
+)
+
+data class CreateExpenseResponse(
+    val idExpense: String,
+    val category: String,
+    val amount: BigDecimal,
+    val create_date: String
+)

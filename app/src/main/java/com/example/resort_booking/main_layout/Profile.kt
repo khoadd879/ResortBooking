@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.resort_booking.AdminLayout.UpdateUserActivity
 import com.example.resort_booking.R
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -43,7 +44,7 @@ class Profile : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val textProfile = view.findViewById<TextView>(R.id.textView12)
         textProfile.setOnClickListener {
-            val intent = android.content.Intent(requireContext(), SetUpAccountActivity::class.java)
+            val intent = android.content.Intent(requireContext(), UpdateUserActivity::class.java)
             startActivity(intent)
         }
         val textLogOut: TextView = view.findViewById(R.id.textLogOut)

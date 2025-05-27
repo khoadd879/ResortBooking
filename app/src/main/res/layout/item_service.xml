@@ -92,16 +92,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btnAddService"
-                android:layout_width="50sp"
-                android:layout_height="50sp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Add"
-                android:src="@drawable/baseline_add_24"
-                card_view:tint="@color/white"
-                tools:background="@drawable/bg_date_box" />
-
             <LinearLayout
                 android:id="@+id/ManageServiceList"
                 android:layout_width="wrap_content"

@@ -1,16 +1,14 @@
 package com.example.resort_booking.AdminLayout
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resort_booking.ClassNDataCLass.Earn
 import com.example.resort_booking.ClassNDataCLass.Expense
 import com.example.resort_booking.ClassNDataCLass.TransactionAdapter
-import com.example.resort_booking.ClassNDataCLass.TransactionItem
 import com.example.resort_booking.R
+
 
 class DetailExpenseActivity : AppCompatActivity() {
 
@@ -24,20 +22,17 @@ class DetailExpenseActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Fake data để test
-        val transactions = listOf(
-            TransactionItem.ExpenseItem(
-                Expense("RS001", "Chi quảng cáo", 1000000.0, "2025-05-19")
-            ),
-            TransactionItem.EarnItem(
-                Earn("RM001", "USR123", 1500000.0, "2025-05-18")
-            ),
-            TransactionItem.ExpenseItem(
-                Expense("RS002", "Sửa chữa", 500000.0, "2025-05-17")
-            )
-        )
+        val sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+        val apiService = com.example.resort_booking.ApiClient.create(sharedPreferences)
+        val resortId = intent.getStringExtra("RESORT_ID")
+        val btnAdd = findViewById<Button>(R.id.btnAddExpense)
 
-        adapter = TransactionAdapter(transactions)
-        recyclerView.adapter = adapter
+        btnAdd.setOnClickListener {
+            val intent = android.content.Intent(this, CreateExpense::class.java)
+            intent.putExtra("RESORT_ID", resortId)
+            startActivity(intent)
+        }
+
+
     }
 }

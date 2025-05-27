@@ -1,6 +1,7 @@
 package com.example.resort_booking.AdminLayout
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -53,6 +54,7 @@ class CreateServiceActivity : AppCompatActivity() {
                                 Toast.makeText(this@CreateServiceActivity, "Tạo dịch vụ thành công", Toast.LENGTH_SHORT).show()
                             }else{
                                 btnCreateService.isEnabled = true
+                                Log.e("CreateServiceActivity", "Error: ${response.code()}")
                                 Toast.makeText(this@CreateServiceActivity, "Tạo dịch vụ thất bại", Toast.LENGTH_SHORT).show()
                             }
                         }

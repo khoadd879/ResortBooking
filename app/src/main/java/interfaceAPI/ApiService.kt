@@ -6,6 +6,8 @@ import data.CreateBookingRoomRequest
 import data.CreateBookingRoomResponse
 import data.CreateCheckOutRequest
 import data.CreateCheckOutResponse
+import data.CreateExpenseRequest
+import data.CreateExpenseResponse
 import data.CreateResortResponse
 import data.CreateRoomResponse
 import data.CreateServiceRequest
@@ -24,12 +26,15 @@ import data.LoginResponse
 import data.RefreshTokenRequest
 import data.RegisterRequest
 import data.RegisterResponse
+import data.ReportListRequest
+import data.ReportListResponse
 import data.ResortDetailResponse
 import data.ResortResponse
 import data.Room
 import data.RoomResponse
 import data.ServiceListResponse
 import data.TypeRoomResponse
+import data.UpdateBookingRoom
 import data.UpdateServiceRequest
 import data.UpdateServiceResponse
 import data.VerifyOTPResponse
@@ -192,4 +197,13 @@ interface ApiService {
 
     @GET("api/booking_room/inf_bookingroom/{idBookingRoom}")
     fun getInfoBookingRoom(@Path("idBookingRoom") idBookingRoom: String): Call<GetInfoBookingRoomResponse>
+
+    @PUT("api/booking_room/change_bookingroom/{idBookingRoom}")
+    fun updateBookingRoom(@Path("idBookingRoom") idBookingRoom: String, @Body requestBody: UpdateBookingRoom): Call<CreateBookingRoomResponse>
+
+    @POST("api/report/list_report")
+    fun getListReport(@Body requestBody: ReportListRequest): Call<ReportListResponse>
+
+    @POST("api/expense/create_expense")
+    fun createExpense(@Body requestBody: CreateExpenseRequest): Call<CreateExpenseResponse>
 }

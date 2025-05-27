@@ -84,12 +84,14 @@ class BookingRoomActivity : AppCompatActivity() {
             startActivityForResult(intent, REQUEST_CODE_SELECT_SERVICE)
         }
 
-        val serviceRequests = selectedServices.map {
-            ServiceBookingRequest(id_sv = it.id_sv, quantity = it.quantity)
-        }
+
 
         // Nút đặt phòng
         bookingButton.setOnClickListener {
+
+            val serviceRequests = selectedServices.map {
+                ServiceBookingRequest(id_sv = it.id_sv, quantity = it.quantity)
+            }
 
             val checkinDateText = checkinDate.text.toString() // "2025-05-13"
             val checkoutDateText = checkoutDate.text.toString() // "2025-05-15"

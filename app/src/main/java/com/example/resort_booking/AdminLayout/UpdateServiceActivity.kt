@@ -15,6 +15,7 @@ import data.UpdateServiceResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.math.BigDecimal
 
 class UpdateServiceActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +48,7 @@ class UpdateServiceActivity : AppCompatActivity() {
 
         val updateRequest = UpdateServiceRequest(
             tenDichVu.text.toString(),
-            giaDichVu.toString().toBigDecimal(),
+            giaDichVu.text.toString().toBigDecimalOrNull() ?: BigDecimal.ZERO,
             moTaDichVu.text.toString()
         )
 

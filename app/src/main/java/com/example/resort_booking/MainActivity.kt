@@ -1,5 +1,6 @@
 package com.example.resort_booking
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -9,7 +10,7 @@ import com.example.resort_booking.main_layout.Favorite
 import com.example.resort_booking.main_layout.Homepage
 import com.example.resort_booking.main_layout.Profile
 import com.example.resort_booking.AdminLayout.ManagementFragment
-import com.example.resort_booking.AdminLayout.ReportFragment
+import com.example.resort_booking.AdminLayout.ReportActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,14 +42,18 @@ class MainActivity : AppCompatActivity() {
         navView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.homepage -> replaceFragment(Homepage())
-                R.id.explore -> replaceFragment(Explore())  // USER
-                R.id.favorite -> replaceFragment(Favorite()) // USER
-                R.id.reportFragment -> replaceFragment(ReportFragment())     // ADMIN
-                R.id.managementFragment -> replaceFragment(ManagementFragment()) // ADMIN
+                R.id.explore -> replaceFragment(Explore())
+                R.id.favorite -> replaceFragment(Favorite())
+                R.id.managementFragment -> replaceFragment(ManagementFragment())
+                R.id.reportActivity -> {
+                    val intent = Intent(this, ReportActivity::class.java)
+                    startActivity(intent)
+                }
                 R.id.profile -> replaceFragment(Profile())
             }
             true
         }
+
     }
 
     // Function to change fragments

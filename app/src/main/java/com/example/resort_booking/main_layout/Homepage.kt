@@ -32,7 +32,6 @@ class Homepage : Fragment() {
     private lateinit var recyclerBestResort: RecyclerView
     private lateinit var recyclerRecommendResort: RecyclerView
     private lateinit var recyclerFavoriteResort: RecyclerView
-    private lateinit var loadingOverlay: View
 
     private var pendingRequests = 0
 
@@ -55,7 +54,6 @@ class Homepage : Fragment() {
         recyclerRecommendResort.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         recyclerFavoriteResort.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-        loadingOverlay = view.findViewById(R.id.progressBar)
 
         val sharedPref = requireContext().getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val userId = sharedPref.getString("ID_USER", null)
@@ -79,20 +77,9 @@ class Homepage : Fragment() {
 
     private fun refreshData(apiService: ApiService, userId: String) {
         pendingRequests = 2
-        showLoading(true)
+        loadAvatar(apiService, userId)
         fetchResortList(apiService, userId)
         fetchFavouriteList(apiService, userId)
-    }
-
-    private fun showLoading(isLoading: Boolean) {
-        loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun decrementLoadingCounter() {
-        pendingRequests--
-        if (pendingRequests <= 0) {
-            showLoading(false)
-        }
     }
 
     private fun showToast(message: String) {
@@ -116,12 +103,12 @@ class Homepage : Fragment() {
                             startActivity(intent)
                         },
                         onFavoriteClick = { resort ->
-                            showLoading(true)
+
                             val body = FavoriteRequest(resort.idRs, userId)
                             apiService.createFavorite(body)
                                 .enqueue(object : Callback<FavoriteResponse> {
                                     override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
-                                        showLoading(false)
+
                                         if (response.isSuccessful) {
                                             showToast("Đã thêm vào yêu thích")
                                             refreshData(apiService, userId)
@@ -131,7 +118,7 @@ class Homepage : Fragment() {
                                     }
 
                                     override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
-                                        showLoading(false)
+
                                         showToast("Lỗi mạng: ${t.message}")
                                     }
                                 })
@@ -146,12 +133,12 @@ class Homepage : Fragment() {
                 } else {
                     showToast("Lỗi response: ${response.code()}")
                 }
-                decrementLoadingCounter()
+
             }
 
             override fun onFailure(call: Call<ResortResponse>, t: Throwable) {
                 showToast("Lỗi khi kết nối server: ${t.message}")
-                decrementLoadingCounter()
+
             }
         })
     }
@@ -170,11 +157,11 @@ class Homepage : Fragment() {
                             startActivity(intent)
                         },
                         onFavoriteClick = { fav ->
-                            showLoading(true)
+
                             apiService.deleteFavorite(userId, fav.resortId)
                                 .enqueue(object : Callback<Void> {
                                     override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                                        showLoading(false)
+
                                         if (response.isSuccessful) {
                                             showToast("Đã xóa khỏi yêu thích")
                                             fetchFavouriteList(apiService, userId)
@@ -184,7 +171,7 @@ class Homepage : Fragment() {
                                     }
 
                                     override fun onFailure(call: Call<Void>, t: Throwable) {
-                                        showLoading(false)
+
                                         showToast("Lỗi khi kết nối server: ${t.message}")
                                     }
                                 })
@@ -193,12 +180,12 @@ class Homepage : Fragment() {
                 } else {
                     showToast("Lỗi response: ${response.code()}")
                 }
-                decrementLoadingCounter()
+
             }
 
             override fun onFailure(call: Call<FavouriteResponse>, t: Throwable) {
                 showToast("Lỗi khi kết nối server: ${t.message}")
-                decrementLoadingCounter()
+
             }
         })
     }
