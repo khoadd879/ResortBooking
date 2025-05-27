@@ -328,8 +328,7 @@ data class CreateServiceResponse(
 data class ServiceWithQuantity(
     val id_sv: String,
     val name: String,
-    val quantity: Int,
-    val price: BigDecimal
+    val quantity: Int
 ) : Parcelable
 
 data class ServiceBookingRequest(

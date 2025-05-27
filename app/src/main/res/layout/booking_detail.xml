@@ -178,17 +178,30 @@
                 android:drawablePadding="10dp"
                 android:layout_marginEnd="10dp"/>
         </LinearLayout>
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_margin="10dp"
                 android:gravity="center_vertical"
                 android:text="Các dịch vụ"
+                android:layout_weight="1"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
+    <TextView
+        android:id="@+id/btnUpdateService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:text="Sửa"
+        android:textColor="@color/dard_blue" />
+
+</LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ServiceListBookingRoom"
             android:layout_width="match_parent"

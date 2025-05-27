@@ -26,7 +26,6 @@ class ServiceAdapter(
     inner class ServiceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName: TextView = itemView.findViewById(R.id.tvServiceName)
         val tvDesc: TextView = itemView.findViewById(R.id.tvServiceDesc)
-        val tvPrice: TextView = itemView.findViewById(R.id.tvServicePrice)
         val btnMinus: Button = itemView.findViewById(R.id.minusBtn)
         val btnPlus: Button = itemView.findViewById(R.id.plusBtn)
         val tvQuantity: EditText = itemView.findViewById(R.id.Quantity)
@@ -44,8 +43,6 @@ class ServiceAdapter(
         val service = serviceList[position]
         holder.tvName.text = service.name_sv
         holder.tvDesc.text = service.describe_service
-        val formattedPrice = String.format("%,.2fđ", service.price)
-        holder.tvPrice.text = formattedPrice
         holder.tvQuantity.setText("0")
 
         // Ẩn/hiện layout quản lý theo vai trò
