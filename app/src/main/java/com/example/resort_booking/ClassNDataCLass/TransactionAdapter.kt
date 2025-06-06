@@ -9,7 +9,7 @@ import com.example.resort_booking.R
 import kotlin.text.category
 
 class TransactionAdapter(
-    private val items: List<TransactionItem>
+   // private val items: List<TransactionItem>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -18,10 +18,11 @@ class TransactionAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (items[position]) {
-            is TransactionItem.ExpenseItem -> TYPE_EXPENSE
-            is TransactionItem.EarnItem -> TYPE_EARN
-        }
+//        return when (items[position]) {
+//            is TransactionItem.ExpenseItem -> TYPE_EXPENSE
+//            is TransactionItem.EarnItem -> TYPE_EARN
+//        }
+        return TODO("Provide the return value")
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -39,13 +40,13 @@ class TransactionAdapter(
         }
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = 0
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (val item = items[position]) {
-            is TransactionItem.ExpenseItem -> (holder as ExpenseViewHolder).bind(item.expense)
-            is TransactionItem.EarnItem -> (holder as EarnViewHolder).bind(item.earn)
-        }
+//        when (val item = items[position]) {
+//            is TransactionItem.ExpenseItem -> (holder as ExpenseViewHolder).bind(item.expense)
+//            is TransactionItem.EarnItem -> (holder as EarnViewHolder).bind(item.earn)
+//        }
     }
 
     class ExpenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

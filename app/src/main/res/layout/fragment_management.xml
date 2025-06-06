@@ -93,29 +93,7 @@
 
 
 
-    <TextView
-        android:id="@+id/tvManageService"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:drawableLeft="@drawable/ic_service"
-        android:drawablePadding="10dp"
-        android:padding="10dp"
-        android:text="Quản lý dịch vụ"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:clickable="true"
-        app:layout_constraintTop_toBottomOf="@+id/tvManageResort"
-        app:layout_constraintStart_toStartOf="@+id/tvManageUser" />
-    <View
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:background="@color/divider"
-        app:layout_constraintTop_toBottomOf="@+id/tvManageService"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+
 
     <!-- ProgressBar loading -->
     <ProgressBar

@@ -23,7 +23,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 class ResortAdapter(
     private val resorts: List<Resort>,
     private val context: Context,
-    private val onResortDeleted: (() -> Unit)? = null) :
+    private val onResortDeleted: (() -> Unit)? = null,
+    private val onResortClick: ((Resort) -> Unit)? = null) :
+
     RecyclerView.Adapter<ResortAdapter.ResortViewHolder>() {
 
     class ResortViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -47,6 +49,7 @@ class ResortAdapter(
         holder.tvStarRating.text = "Đánh giá: ${resort.star}"
         val btnedit = holder.itemView.findViewById<ImageView>(R.id.btnEdit)
         val btndelete = holder.itemView.findViewById<ImageView>(R.id.btnDelete)
+
 
 
         btnedit.setOnClickListener {
@@ -86,10 +89,15 @@ class ResortAdapter(
             .into(holder.imgResort)
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, RoomListActivity::class.java)
-            intent.putExtra("RESORT_ID", resort.idRs)
-            context.startActivity(intent)
+            if (onResortClick != null) {
+                onResortClick.invoke(resort)
+            } else {
+                val intent = Intent(context, RoomListActivity::class.java)
+                intent.putExtra("RESORT_ID", resort.idRs)
+                context.startActivity(intent)
+            }
         }
+
     }
     override fun getItemCount(): Int = resorts.size
 }

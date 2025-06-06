@@ -55,11 +55,7 @@ class ManagementFragment : Fragment() {
             startActivity(intent)
         }
 
-        val manageService = view.findViewById<TextView>(R.id.tvManageService)
-        manageService.setOnClickListener {
-            val intent = android.content.Intent(requireContext(), UpdateRoomActivity::class.java)
-            startActivity(intent)
-        }
+
     }
     companion object {
         /**

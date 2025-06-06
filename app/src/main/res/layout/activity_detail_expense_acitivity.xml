@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
+
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,7 +14,10 @@
         android:textSize="30sp"
         android:layout_gravity="center"
         android:textAlignment="center"/>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
     <Button
         android:id="@+id/btnAddExpense"
         android:layout_width="wrap_content"
@@ -25,6 +30,25 @@
         android:padding="10dp"
         android:layout_marginStart="10dp"
         tools:ignore="RtlCompat" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/ResortList"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Danh sách Resort"
+            android:background="@drawable/button_border"
+            android:layout_gravity="left"
+            android:gravity="center"
+            android:padding="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            tools:ignore="RtlCompat" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTransactions"

@@ -20,6 +20,7 @@ class ResortListActivity : AppCompatActivity() {
 
     private var userId: String? = null
     private lateinit var apiService: ApiService
+    private var isSelectMode: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +32,9 @@ class ResortListActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         userId = sharedPref.getString("ID_USER", null)
 
-        val btnThemResort = findViewById<Button>(R.id.btnThemResort)
+        isSelectMode = intent.getBooleanExtra("SELECT_MODE", false)
 
+        val btnThemResort = findViewById<Button>(R.id.btnThemResort)
         btnThemResort.setOnClickListener {
             startActivity(Intent(this, CreateResortActivity::class.java))
         }
@@ -43,10 +45,9 @@ class ResortListActivity : AppCompatActivity() {
         }
 
         apiService = com.example.resort_booking.ApiClient.create(sharedPref)
-
-        // Gọi lần đầu
         fetchResortsFromServer()
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -55,27 +56,34 @@ class ResortListActivity : AppCompatActivity() {
     }
 
     private fun fetchResortsFromServer() {
-        apiService.getResortListCreated(userId!!, )
+        apiService.getResortListCreated(userId!!)
             .enqueue(object : Callback<ResortResponse> {
-                override fun onResponse(
-                    call: Call<ResortResponse>,
-                    response: Response<ResortResponse>
-                ) {
+                override fun onResponse(call: Call<ResortResponse>, response: Response<ResortResponse>) {
                     if (response.isSuccessful && response.body() != null) {
                         val resortList = response.body()?.data ?: emptyList()
-                        resortAdapter = ResortAdapter(resortList, this@ResortListActivity) {
-                            fetchResortsFromServer()
-                        }
+                        resortAdapter = ResortAdapter(
+                            resortList,
+                            this@ResortListActivity,
+                            onResortDeleted = { fetchResortsFromServer() },
+                            onResortClick = if (isSelectMode) { selectedResort ->
+                                val resultIntent = Intent()
+                                resultIntent.putExtra("RESORT_ID", selectedResort.idRs)
+                                setResult(RESULT_OK, resultIntent)
+                                finish()
+                            } else null
+                        )
                         recyclerView.adapter = resortAdapter
                     } else {
                         Log.e("ResortListActivity", "Lỗi khi tải danh sách resort: ${response.code()}")
                         Toast.makeText(this@ResortListActivity, "Không tải được danh sách resort", Toast.LENGTH_SHORT).show()
                     }
                 }
+
                 override fun onFailure(call: Call<ResortResponse>, t: Throwable) {
                     Log.e("ResortListActivity", "Lỗi kết nối: ${t.message}", t)
                     Toast.makeText(this@ResortListActivity, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
     }
+
 }
