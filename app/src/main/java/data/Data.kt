@@ -444,11 +444,23 @@ data class ReportListRequest(
     val reportYear: Int
 )
 
-data class ReportListResponse(
+data class Detail(
+    val type: String,
+    val amount: BigDecimal,
+    val createDate: String
+)
+
+data class DataReportListResponse(
     val idReport: String,
     val totalRevenue: BigDecimal,
     val totalExpense: BigDecimal,
     val netProfit: BigDecimal,
+    val generatedAt: String,
+    val details: List<Detail>?
+)
+
+data class ReportListResponse(
+    val data: DataReportListResponse?
 )
 
 data class MonthlyReportData(
