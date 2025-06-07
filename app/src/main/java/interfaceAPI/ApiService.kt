@@ -23,6 +23,7 @@ import data.IntrospectResponse
 import data.ListUserResponse
 import data.LoginRequest
 import data.LoginResponse
+import data.Payment
 import data.RefreshTokenRequest
 import data.RegisterRequest
 import data.RegisterResponse
@@ -206,4 +207,7 @@ interface ApiService {
 
     @POST("api/expense/create_expense")
     fun createExpense(@Body requestBody: CreateExpenseRequest): Call<CreateExpenseResponse>
+
+        @GET("payment/list_payment/{idUser}")
+        fun getPayments(@Path("idUser") idUser: Int): Call<List<Payment>>
 }
