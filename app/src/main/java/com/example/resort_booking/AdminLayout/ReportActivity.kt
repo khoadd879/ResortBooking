@@ -11,8 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.resort_booking.databinding.ActivityReportBinding
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.*
-import data.MonthlyReportData
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import data.ReportListRequest
 import data.ReportListResponse
 import data.ResortResponse
@@ -21,6 +20,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import kotlin.collections.sumOf
+import kotlin.collections.find
+
 
 class ReportActivity : AppCompatActivity() {
 
@@ -52,14 +57,14 @@ class ReportActivity : AppCompatActivity() {
     private fun setupSpinners() {
         val monthAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, months)
         monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerMonth.adapter = monthAdapter
+
 
         val yearAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, years)
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerYear.adapter = yearAdapter
 
         // Mặc định chọn tháng và năm hiện tại
-        binding.spinnerMonth.setSelection(Calendar.getInstance().get(Calendar.MONTH))
+
         binding.spinnerYear.setSelection(years.size - 1)
     }
 
@@ -77,9 +82,9 @@ class ReportActivity : AppCompatActivity() {
     private fun setupClickEvents() {
         binding.loadChart.setOnClickListener {
             val selectedYear = binding.spinnerYear.selectedItem as Int
-            val selectedMonth = binding.spinnerMonth.selectedItem as Int
+
             resortId?.let {
-                loadChartDataForMonth(selectedMonth, selectedYear)
+                loadChartDataForMonth(selectedYear)
             }
         }
 
@@ -125,58 +130,71 @@ class ReportActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadChartDataForMonth(month: Int, year: Int) {
+    private fun loadChartDataForMonth(year: Int) {
         val id = resortId ?: return
 
         val request = ReportListRequest(
             idResort = id,
-            reportMonth = month,
             reportYear = year
         )
 
         apiService.getListReport(request).enqueue(object : Callback<ReportListResponse> {
             override fun onResponse(call: Call<ReportListResponse>, response: Response<ReportListResponse>) {
                 if (response.isSuccessful) {
-                    val reportData = response.body()?.data
-                    if (reportData != null) {
-                        // Cập nhật tổng thu, tổng chi, lợi nhuận
-                        val totalRevenue = reportData.totalRevenue?.toFloat() ?: 0f
-                        val totalExpense = reportData.totalExpense?.toFloat() ?: 0f
-                        val netProfit = reportData.netProfit?.toFloat() ?: (totalRevenue - totalExpense)
+                    val reportData = response.body()?.data ?: emptyList()
 
-                        binding.tvTongThu.text = "Tổng thu: %,d VND".format(totalRevenue.toInt())
-                        binding.tvTongChi.text = "Tổng chi: %,d VND".format(totalExpense.toInt())
-                        binding.tvLoiNhuan.text = "Lợi nhuận: %,d VND".format(netProfit.toInt())
+                    val totalRevenue = reportData.sumOf { it.totalRevenue }.toInt()
+                    val totalExpense = reportData.sumOf { it.totalExpense }.toInt()
+                    val netProfit = reportData.sumOf { it.netProfit }.toInt()
 
-                        // Tạo danh sách dữ liệu biểu đồ từ details
-                        val entriesRevenue = ArrayList<Entry>()
-                        val entriesExpense = ArrayList<Entry>()
+                    binding.tvTongThu.text = "Tổng thu: %,d VND".format(totalRevenue.toInt())
+                    binding.tvTongChi.text = "Tổng chi: %,d VND".format(totalExpense.toInt())
+                    binding.tvLoiNhuan.text = "Lợi nhuận: %,d VND".format(netProfit.toInt())
 
-                        reportData.details?.forEachIndexed { index, detail ->
-                            when(detail.type) {
-                                "Thu" -> entriesRevenue.add(Entry(index.toFloat(), detail.amount.toFloat()))
-                                "Chi" -> entriesExpense.add(Entry(index.toFloat(), detail.amount.toFloat()))
-                            }
-                        }
+                    val entriesRevenue = ArrayList<Entry>()
+                    val entriesExpense = ArrayList<Entry>()
+                    val entriesProfit = ArrayList<Entry>()
 
-                        val revenueSet = LineDataSet(entriesRevenue, "Tổng thu").apply {
-                            color = Color.parseColor("#4CAF50")
-                            setCircleColor(color)
-                            lineWidth = 2f
-                            circleRadius = 4f
-                            valueTextSize = 10f
-                        }
+                    for (i in 1..12) {
+                        val report = reportData.find { it.reportMonth == i }
 
-                        val expenseSet = LineDataSet(entriesExpense, "Tổng chi").apply {
-                            color = Color.parseColor("#F44336")
-                            setCircleColor(color)
-                            lineWidth = 2f
-                            circleRadius = 4f
-                            valueTextSize = 10f
-                        }
+                        val revenue = report?.totalRevenue?.toFloat() ?: 0f
+                        val expense = report?.totalExpense?.toFloat() ?: 0f
+                        val profit = report?.netProfit?.toFloat() ?: (revenue - expense)
 
-                        binding.lineChart.data = LineData(revenueSet, expenseSet)
-                        binding.lineChart.invalidate()
+                        entriesRevenue.add(Entry(i.toFloat(), revenue))
+                        entriesExpense.add(Entry(i.toFloat(), expense))
+                        entriesProfit.add(Entry(i.toFloat(), profit))
+                    }
+
+                    val dataSetRevenue = LineDataSet(entriesRevenue, "Tổng thu").apply {
+                        color = Color.BLUE
+                        valueTextColor = Color.BLUE
+                        circleRadius = 4f
+                        setDrawValues(false)
+                    }
+
+                    val dataSetExpense = LineDataSet(entriesExpense, "Tổng chi").apply {
+                        color = Color.RED
+                        valueTextColor = Color.RED
+                        circleRadius = 4f
+                        setDrawValues(false)
+                    }
+
+                    val dataSetProfit = LineDataSet(entriesProfit, "Lợi nhuận").apply {
+                        color = Color.GREEN
+                        valueTextColor = Color.GREEN
+                        circleRadius = 4f
+                        setDrawValues(false)
+                    }
+
+                    val lineData = LineData(dataSetRevenue, dataSetExpense, dataSetProfit)
+
+                    binding.lineChart.apply {
+                        data = lineData
+                        xAxis.valueFormatter = IndexAxisValueFormatter((1..12).map { "Tháng $it" })
+                        xAxis.labelRotationAngle = -45f
+                        invalidate()
                     }
                 } else {
                     Log.e("ReportActivity", "Lỗi API trả về dữ liệu không thành công")
@@ -188,4 +206,6 @@ class ReportActivity : AppCompatActivity() {
             }
         })
     }
+
+
 }

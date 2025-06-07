@@ -440,33 +440,26 @@ data class UpdateBookingRoom(
 
 data class ReportListRequest(
     val idResort: String,
-    val reportMonth: Int,
     val reportYear: Int
 )
 
-data class Detail(
-    val type: String,
-    val amount: BigDecimal,
-    val createDate: String
-)
+//data class Detail(
+//    val type: String,
+//    val amount: BigDecimal,
+//    val createDate: String
+//)
 
 data class DataReportListResponse(
     val idReport: String,
+    val reportMonth: Int,
+    val reportYear: Int,
     val totalRevenue: BigDecimal,
     val totalExpense: BigDecimal,
-    val netProfit: BigDecimal,
-    val generatedAt: String,
-    val details: List<Detail>?
+    val netProfit: BigDecimal
 )
 
 data class ReportListResponse(
-    val data: DataReportListResponse?
-)
-
-data class MonthlyReportData(
-    val month: Int,
-    val revenue: Float,
-    val expense: Float
+    val data: List<DataReportListResponse>?
 )
 
 data class CreateExpenseRequest(
