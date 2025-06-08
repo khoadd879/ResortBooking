@@ -9,10 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.resort_booking.AdminLayout.ResortUserActivity
 import com.example.resort_booking.ClassNDataCLass.FavouriteAdapter
 import com.example.resort_booking.ClassNDataCLass.HotelAdapter
 import com.example.resort_booking.ClassNDataCLass.HotelRecommendAdapter
@@ -22,11 +24,10 @@ import data.FavoriteRequest
 import data.FavoriteResponse
 import data.FavouriteResponse
 import data.ListUserResponse
-import data.Resort
 import data.ResortResponse
 import interfaceAPI.ApiService
 import retrofit2.*
-import retrofit2.converter.gson.GsonConverterFactory
+
 
 class Homepage : Fragment() {
 
@@ -73,6 +74,14 @@ class Homepage : Fragment() {
 
         val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
         refreshData(apiService, userId)
+
+        val seeAll = view.findViewById<TextView>(R.id.textViewAll)
+        seeAll.setOnClickListener {
+            val intent = Intent(requireContext(), ResortUserActivity::class.java)
+            intent.putExtra("ID_USER", userId)
+            startActivity(intent)
+        }
+
     }
     //show progress bar
     private fun showLoading(isLoading: Boolean) {
@@ -221,6 +230,11 @@ class Homepage : Fragment() {
                 if (response.isSuccessful) {
                     val listUser = response.body()?.data
                     val user = listUser?.find { it.idUser == userId }
+
+                    val nameuser = view?.findViewById<TextView>(R.id.text_yourName)
+
+
+                    nameuser?.text = user?.nameuser
 
                     if (user != null) {
                         val avatarUrl = user.avatar

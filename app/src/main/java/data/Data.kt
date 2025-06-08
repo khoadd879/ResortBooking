@@ -98,7 +98,7 @@ data class Resort(
     val describe_rs: String,
     val image: String?,
     val star: Double,
-    val favorite: Boolean,
+    var favorite: Boolean,
     val rooms: List<Room>,
     val evaluates: List<Evaluate>?
 )
@@ -440,21 +440,26 @@ data class UpdateBookingRoom(
 
 data class ReportListRequest(
     val idResort: String,
-    val reportMonth: Int,
     val reportYear: Int
 )
 
-data class ReportListResponse(
+//data class Detail(
+//    val type: String,
+//    val amount: BigDecimal,
+//    val createDate: String
+//)
+
+data class DataReportListResponse(
     val idReport: String,
+    val reportMonth: Int,
+    val reportYear: Int,
     val totalRevenue: BigDecimal,
     val totalExpense: BigDecimal,
-    val netProfit: BigDecimal,
+    val netProfit: BigDecimal
 )
 
-data class MonthlyReportData(
-    val month: Int,
-    val revenue: Float,
-    val expense: Float
+data class ReportListResponse(
+    val data: List<DataReportListResponse>?
 )
 
 data class CreateExpenseRequest(
@@ -469,9 +474,35 @@ data class CreateExpenseResponse(
     val amount: BigDecimal,
     val create_date: String
 )
+
+data class Earn(
+    val totalAmount: BigDecimal,
+    val roomResponse: RoomBookingRoom?
+)
+
+data class Expense(
+    val idExpense: Int,
+    val category: String,
+    val amount: BigDecimal,
+    val createDate: String
+)
+
+sealed class TransactionItem {
+    data class EarnItem(val earn: Earn) : TransactionItem()
+    data class ExpenseItem(val expense: Expense) : TransactionItem()
+}
+
+fun DataBookingRoom.toEarn(): Earn {
+    return Earn(
+        totalAmount = this.total_amount,
+        roomResponse = this.roomResponse
+    )
+}
+
 data class Payment(
     val idPayment: Int,
     val money: Double,
     val create_date: String,
     val payment_method: String
 )
+

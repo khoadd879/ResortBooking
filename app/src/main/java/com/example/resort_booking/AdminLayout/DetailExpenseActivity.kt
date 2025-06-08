@@ -55,6 +55,7 @@ class DetailExpenseActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
         val launcher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -69,3 +70,4 @@ class DetailExpenseActivity : AppCompatActivity() {
 
     }
 }
+
