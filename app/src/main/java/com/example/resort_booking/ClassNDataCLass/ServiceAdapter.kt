@@ -119,5 +119,6 @@ class ServiceAdapter(
         onAddClick(updatedService)
     }
 
+
     override fun getItemCount(): Int = serviceList.size
 }

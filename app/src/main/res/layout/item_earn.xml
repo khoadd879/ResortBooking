@@ -54,3 +54,4 @@
             android:layout_gravity="end"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
+
