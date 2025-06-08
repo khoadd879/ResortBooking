@@ -6,9 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import data.ServiceBookingRoom
+import data.ServiceWithQuantity
 
 class ServiceBookingDetailAdapter(
-    private var services: List<ServiceBookingRoom>
+    private var services: List<ServiceWithQuantity>
 ): RecyclerView.Adapter<ServiceBookingDetailAdapter.ServiceViewHolder>() {
 
     class ServiceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -16,17 +17,16 @@ class ServiceBookingDetailAdapter(
         val amountText: TextView = itemView.findViewById(R.id.textServiceAmount)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): com.example.resort_booking.ServiceBookingDetailAdapter.ServiceViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServiceViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_service_booking_detail, parent, false)
-        return com.example.resort_booking.ServiceBookingDetailAdapter.ServiceViewHolder(view)
+        return ServiceViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: com.example.resort_booking.ServiceBookingDetailAdapter.ServiceViewHolder, position: Int) {
-        val service = services?.get(position)
-        holder.nameText.text = service?.nameService
-        holder.amountText.text = "${service?.quantity}"
-
+    override fun onBindViewHolder(holder: ServiceViewHolder, position: Int) {
+        val service = services[position]
+        holder.nameText.text = service.name
+        holder.amountText.text = "${service.quantity}"
     }
 
     override fun getItemCount(): Int = services.size
