@@ -6,23 +6,28 @@
     android:background="@color/white">
 
     <!-- Header -->
-    <View
-        android:id="@+id/header"
-        android:layout_width="0dp"
-        android:layout_height="150dp"
-        android:layout_marginBottom="1dp"
-        android:background="@drawable/header_gradient"
-        app:layout_constraintBottom_toTopOf="@+id/welcome"
-        app:layout_constraintEnd_toEndOf="parent"
+    <RelativeLayout
+        android:id="@+id/viewHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/welcome">
 
+        <View
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:background="@drawable/header_gradient" />
+
+    </RelativeLayout>
     <!-- Welcome text -->
     <TextView
         android:id="@+id/welcome"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="160dp"
         android:layout_marginStart="10dp"
         android:fontFamily="sans-serif-light"
         android:text="Chào mừng!"

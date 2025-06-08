@@ -46,16 +46,19 @@ class TransactionAdapter(
 
     class ExpenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(expense: Expense) {
-            itemView.findViewById<TextView>(R.id.tvCategory).text = expense.category
-            itemView.findViewById<TextView>(R.id.tvAmount).text = "- ${expense.amount}"
-            itemView.findViewById<TextView>(R.id.tvDate).text = expense.createDate
+            itemView.findViewById<TextView>(R.id.tvCategory).text = "Category: ${expense.category}"
+            itemView.findViewById<TextView>(R.id.tvAmount).text = "Amount: ${expense.amount}"
+            itemView.findViewById<TextView>(R.id.tvDate).text = "Date: ${expense.createDate}"
+
         }
     }
 
     class EarnViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(earn: Earn) {
-            itemView.findViewById<TextView>(R.id.tvNameRoom).text = earn.roomResponse?.name_room ?: ""
-            itemView.findViewById<TextView>(R.id.tvAmount).text = "+ ${earn.totalAmount}"
+            itemView.findViewById<TextView>(R.id.tvRoomId).text = "ID_ROOM: ${earn.idRoom}"
+            itemView.findViewById<TextView>(R.id.tvTotal).text = "Total: ${earn.totalAmount}"
+            itemView.findViewById<TextView>(R.id.tvDateEarn).text = "Date: ${earn.createDate}"
+
         }
     }
 }
