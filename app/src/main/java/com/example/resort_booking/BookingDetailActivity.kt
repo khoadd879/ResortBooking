@@ -48,7 +48,6 @@
             const val REQUEST_CODE_UPDATE_SERVICE = 1001
         }
 
-
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.booking_detail)

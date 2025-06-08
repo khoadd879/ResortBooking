@@ -28,7 +28,7 @@ class DetailExpenseActivity : AppCompatActivity() {
         val apiService = com.example.resort_booking.ApiClient.create(sharedPreferences)
         val resortId = intent.getStringExtra("RESORT_ID")
         val btnAdd = findViewById<Button>(R.id.btnAddExpense)
-        val btnResort = findViewById<Button>(R.id.ResortList)
+
 
         btnAdd.setOnClickListener {
             val intent = Intent(this, CreateExpense::class.java)
@@ -36,24 +36,8 @@ class DetailExpenseActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val launcher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val resortId = result.data?.getStringExtra("RESORT_ID")
-                Log.d("DetailExpenseActivity", "Resort ID: $resortId")
-                if (resortId != null) {
-                    // TODO: sử dụng resortId để hiển thị dữ liệu chi tiêu cho resort đó
 
-                }
-            }
-        }
-
-        btnResort.setOnClickListener {
-            val intent = Intent(this, ResortListActivity::class.java)
-            intent.putExtra("SELECT_MODE", true)
-            launcher.launch(intent)
-        }
 
     }
+
 }
