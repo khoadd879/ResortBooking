@@ -7,20 +7,18 @@
     tools:context=".AdminLayout.ManagementFragment">
 
     <!-- Tiêu đề trang -->
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/LayoutTitle"
-        android:orientation="horizontal">
-        <ImageButton
-            android:layout_margin="10dp"
-            android:contentDescription="Erm không biết nay ở đy chi"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/button_border"
-            android:src="@drawable/baseline_arrow_back_24"/>
-
+        tools:ignore="MissingConstraints">
+    <View
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:alpha="0.5"
+        android:background="@drawable/header_gradient" />
+    </RelativeLayout>
 
         <TextView
             android:id="@+id/textViewTitle"
@@ -31,11 +29,12 @@
             android:textColor="@color/black"
             android:textSize="30sp"
             android:textStyle="bold"
+            android:gravity="center"
             android:layout_gravity="center"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-    </LinearLayout>
+
     <!-- Nút hoặc ảnh profile -->
 
 
@@ -51,7 +50,7 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         android:clickable="true"
-        app:layout_constraintTop_toBottomOf="@+id/LayoutTitle"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="20dp"/>
 

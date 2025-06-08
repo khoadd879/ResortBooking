@@ -92,17 +92,6 @@
         app:layout_constraintTop_toBottomOf="@+id/text_yourName"
         app:layout_constraintVertical_bias="1.0" />
 
-    <!--Thong bao-->
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/outline_notifications_24"
-        android:background="@android:color/transparent"
-        android:layout_marginRight="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/positionHomePage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/text_yourName" />
 
 
     <TextView

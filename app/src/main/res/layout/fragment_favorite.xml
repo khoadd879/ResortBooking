@@ -10,16 +10,17 @@
         android:layout_height="match_parent"
         tools:context=".main_layout.Favorite">
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/baseline_arrow_back_24"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            tools:ignore="MissingConstraints">
+        <View
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:alpha="0.5"
+            android:background="@drawable/header_gradient" />
+        </RelativeLayout>
         <TextView
             android:id="@+id/textViewMyFavorite"
             android:layout_width="wrap_content"
@@ -27,7 +28,7 @@
             android:layout_marginTop="10dp"
             android:text="Yêu thích"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="25sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

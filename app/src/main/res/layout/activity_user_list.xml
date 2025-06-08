@@ -2,18 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
-    <ImageButton
-        android:contentDescription="Erm không biết nay ở đy chi"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/button_border"
-        android:src="@drawable/baseline_arrow_back_24"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <View
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:alpha="0.5"
+        android:background="@drawable/header_gradient" />
+
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
@@ -27,6 +30,7 @@
         android:textColor="@color/black"
         android:layout_marginVertical="10dp"
         android:layout_marginEnd="30dp"/>
+    </RelativeLayout>
 </LinearLayout>
     <Button
         android:id="@+id/btnThemUser"
@@ -43,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="16dp" />
+        android:padding="16dp" />
 
 
 </LinearLayout>

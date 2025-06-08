@@ -1,47 +1,56 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="12dp"
-    android:orientation="vertical"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="140dp"
+    android:layout_margin="8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="8dp"
+    app:cardUseCompatPadding="true"
+    app:cardBackgroundColor="@color/white">
+
     <LinearLayout
+        android:padding="12dp"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:id="@+id/tvRoomId"
-            android:textSize="20dp"
-            android:text="PHÒNG TỔNG THỐNG 102"
-            android:textColor="@color/black"
-            android:textStyle="bold"/>
-        <TextView
+        android:background="?attr/selectableItemBackground">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tvDateEarn"
-            android:text="22/02/2025"
-            android:textColor="@color/black"
-            android:layout_gravity="end"
-            android:textAlignment="textEnd"/>
-    </LinearLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvUserId"
-        android:textStyle="italic"
-        android:textSize="16dp"
-        android:textColor="@color/blue"
-        android:text="Nguyễn Tiến Khang " />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/green"
-        android:textStyle="bold"
-        android:id="@+id/tvTotal"
-        android:textSize="17dp"
-        android:drawableLeft="@drawable/baseline_add_24"
-        android:drawableTint="@color/green"
-        android:text="500,000,000"
-        android:layout_gravity="end"/>
+            android:orientation="horizontal">
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/tvRoomId"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:textSize="20dp"
+                android:text="PHÒNG TỔNG THỐNG 102"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvDateEarn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="22/02/2025"
+                android:textColor="@color/black"
+                android:layout_gravity="end"
+                android:textAlignment="textEnd"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/green"
+            android:textStyle="bold"
+            android:textSize="17dp"
+            android:drawableLeft="@drawable/baseline_add_24"
+            android:drawableTint="@color/green"
+            android:text="500,000,000"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="end"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

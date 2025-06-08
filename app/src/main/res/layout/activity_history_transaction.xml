@@ -4,7 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <View
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:alpha="0.5"
+        android:background="@drawable/header_gradient" />
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
@@ -15,6 +23,7 @@
         android:padding="16dp"
         android:textColor="@color/black"
         android:textStyle="bold"/>
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPaymentHistory"

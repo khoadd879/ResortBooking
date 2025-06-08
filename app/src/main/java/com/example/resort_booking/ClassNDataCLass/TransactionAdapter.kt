@@ -51,7 +51,6 @@ class TransactionAdapter(
 
     class ExpenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(expense: Expense) {
-            itemView.findViewById<TextView>(R.id.tvExpenseId).text = "ID_RS: ${expense.idRs}"
             itemView.findViewById<TextView>(R.id.tvCategory).text = "Category: ${expense.category}"
             itemView.findViewById<TextView>(R.id.tvAmount).text = "Amount: ${expense.amount}"
             itemView.findViewById<TextView>(R.id.tvDate).text = "Date: ${expense.createDate}"
@@ -61,7 +60,6 @@ class TransactionAdapter(
     class EarnViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(earn: Earn) {
             itemView.findViewById<TextView>(R.id.tvRoomId).text = "ID_ROOM: ${earn.idRoom}"
-            itemView.findViewById<TextView>(R.id.tvUserId).text = "ID_USER: ${earn.idUser}"
             itemView.findViewById<TextView>(R.id.tvTotal).text = "Total: ${earn.totalAmount}"
             itemView.findViewById<TextView>(R.id.tvDateEarn).text = "Date: ${earn.createDate}"
         }

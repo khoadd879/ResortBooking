@@ -50,13 +50,32 @@ class PaymentHistoryAdapter(private var items: List<DataBookingRoom>) :
         holder.txtHotelName.text = "Tên: ${bookingRoom.resortResponse.name_rs}"
         holder.txtLocation.text ="Địa chỉ: ${bookingRoom.resortResponse.location_rs}"
         holder.txtPrice.text = "Tổng tiền: ${bookingRoom.total_amount}"
-        holder.txtDatesIn.text = "Ngày checkin: ${bookingRoom.checkinday}"
-        holder.txtDatesOut.text = "Ngày checkout: ${bookingRoom.checkoutday}"
+
+        // Định dạng ngày tháng
+        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
+
+        try {
+            val checkinDate = org.threeten.bp.LocalDateTime.parse(bookingRoom.checkinday, inputFormatter)
+            holder.txtDatesIn.text = "Ngày checkin: ${outputFormatter.format(checkinDate)}"
+        } catch (e: Exception) {
+            holder.txtDatesIn.text = "Ngày checkin: ${bookingRoom.checkinday}"
+        }
+
+        try {
+            val checkoutDate = org.threeten.bp.LocalDateTime.parse(bookingRoom.checkoutday, inputFormatter)
+            holder.txtDatesOut.text = "Ngày checkout: ${outputFormatter.format(checkoutDate)}"
+        } catch (e: Exception) {
+            holder.txtDatesOut.text = "Ngày checkout: ${bookingRoom.checkoutday}"
+        }
+
         holder.txtStatus.text = "Trạng thái: ${bookingRoom.status}"
+
         Glide.with(holder.imgHotel.context)
             .load(bookingRoom.resortResponse.image)
             .error(R.drawable.load_error)
             .placeholder(R.drawable.load_error)
+            .into(holder.imgHotel)
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, BookingDetailActivity::class.java)
@@ -70,7 +89,5 @@ class PaymentHistoryAdapter(private var items: List<DataBookingRoom>) :
         if(role?.contains("ROLE_USER") == true ){
             holder.btnEdit.visibility = View.GONE
         }
-
-
     }
 }
