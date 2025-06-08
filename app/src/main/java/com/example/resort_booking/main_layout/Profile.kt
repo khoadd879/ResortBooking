@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.resort_booking.AdminLayout.UpdateUserActivity
 import com.example.resort_booking.R
+import com.example.resort_booking.signIn_layout.HistoryTransactionActivity
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -51,6 +52,12 @@ class Profile : Fragment() {
         textLogOut.setOnClickListener {
             showLogoutDialog()
         }
+        val textHistoryTransaction: TextView = view.findViewById(R.id.textHistoryTransaction)
+        textHistoryTransaction.setOnClickListener {
+            val intent = android.content.Intent(requireContext(), HistoryTransactionActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun showLogoutDialog() {

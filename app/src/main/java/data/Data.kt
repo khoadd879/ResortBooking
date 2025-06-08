@@ -474,3 +474,9 @@ data class CreateExpenseResponse(
     val amount: BigDecimal,
     val create_date: String
 )
+data class Payment(
+    val idPayment: Int,
+    val money: Double,
+    val create_date: String,
+    val payment_method: String
+)
