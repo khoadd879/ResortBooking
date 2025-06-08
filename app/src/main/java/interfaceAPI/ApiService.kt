@@ -13,6 +13,8 @@ import data.CreateRoomResponse
 import data.CreateServiceRequest
 import data.CreateServiceResponse
 import data.CreateUserResponse
+import data.DataBookingRoom
+import data.Expense
 import data.FavoriteRequest
 import data.FavoriteResponse
 import data.FavouriteResponse
@@ -206,4 +208,10 @@ interface ApiService {
 
     @POST("api/expense/create_expense")
     fun createExpense(@Body requestBody: CreateExpenseRequest): Call<CreateExpenseResponse>
+
+    @GET("/api/expense/list_expense/{resortId}")
+    suspend fun getExpenses(@Path("resortId") resortId: String): Call<List<Expense>>
+
+    @GET("/api/booking_room/list_bookingroom_resort/{resortId}")
+    suspend fun getBookings(@Path("resortId") resortId: String): Call<List<DataBookingRoom>>
 }

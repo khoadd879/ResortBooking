@@ -98,7 +98,7 @@ data class Resort(
     val describe_rs: String,
     val image: String?,
     val star: Double,
-    val favorite: Boolean,
+    var favorite: Boolean,
     val rooms: List<Room>,
     val evaluates: List<Evaluate>?
 )
@@ -474,3 +474,27 @@ data class CreateExpenseResponse(
     val amount: BigDecimal,
     val create_date: String
 )
+
+data class Earn(
+    val totalAmount: BigDecimal,
+    val roomResponse: RoomBookingRoom?
+)
+
+data class Expense(
+    val idExpense: Int,
+    val category: String,
+    val amount: BigDecimal,
+    val createDate: String
+)
+
+sealed class TransactionItem {
+    data class EarnItem(val earn: Earn) : TransactionItem()
+    data class ExpenseItem(val expense: Expense) : TransactionItem()
+}
+
+fun DataBookingRoom.toEarn(): Earn {
+    return Earn(
+        totalAmount = this.total_amount,
+        roomResponse = this.roomResponse
+    )
+}

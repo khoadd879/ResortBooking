@@ -10,28 +10,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:id="@+id/tvRoomId"
+            android:id="@+id/tvNameRoom"
             android:textSize="20dp"
             android:text="PHÒNG TỔNG THỐNG 102"
             android:textColor="@color/black"
             android:textStyle="bold"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvDateEarn"
-            android:text="22/02/2025"
-            android:textColor="@color/black"
-            android:layout_gravity="end"
-            android:textAlignment="textEnd"/>
+
     </LinearLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvUserId"
-        android:textStyle="italic"
-        android:textSize="16dp"
-        android:textColor="@color/blue"
-        android:text="Nguyễn Tiến Khang " />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

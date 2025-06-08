@@ -33,8 +33,6 @@ class ReportActivity : AppCompatActivity() {
     private lateinit var apiService: ApiService
 
     private val years = (2020..Calendar.getInstance().get(Calendar.YEAR)).toList()
-    private val months = (1..12).toList()
-
     private var resortList = listOf<data.Resort>()
     private var resortId: String? = null
     private var userId: String? = null
@@ -55,15 +53,9 @@ class ReportActivity : AppCompatActivity() {
     }
 
     private fun setupSpinners() {
-        val monthAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, months)
-        monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-
         val yearAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, years)
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerYear.adapter = yearAdapter
-
-        // Mặc định chọn tháng và năm hiện tại
 
         binding.spinnerYear.setSelection(years.size - 1)
     }
