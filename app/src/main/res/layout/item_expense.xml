@@ -54,6 +54,8 @@
                 android:drawableLeft="@drawable/baseline_minus_24"
                 android:drawableTint="@color/red"
                 android:text="500,000,000"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
                 android:layout_gravity="end"/>
         </LinearLayout>
 
@@ -62,18 +64,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/btnEdit"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/baseline_edit_24"
-                android:background="@drawable/button_border"
-                tools:ignore="SpeakableTextPresentCheck" />
 
             <ImageButton
                 android:id="@+id/btnDelete"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/button_border"
                 android:src="@drawable/baseline_delete_24"
