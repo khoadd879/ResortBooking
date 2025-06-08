@@ -29,6 +29,11 @@
             android:layout_weight="1"
             android:textColor="@color/black"
             android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="18/9/2009"
+            android:id="@+id/tvCreateDate"/>
 
         <TextView
             android:id="@+id/ReviewerStar"

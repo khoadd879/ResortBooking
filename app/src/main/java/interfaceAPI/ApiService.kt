@@ -25,6 +25,7 @@ import data.IntrospectResponse
 import data.ListUserResponse
 import data.LoginRequest
 import data.LoginResponse
+import data.Payment
 import data.RefreshTokenRequest
 import data.RegisterRequest
 import data.RegisterResponse
@@ -214,4 +215,8 @@ interface ApiService {
 
     @GET("/api/booking_room/list_bookingroom_resort/{resortId}")
     suspend fun getBookings(@Path("resortId") resortId: String): Call<List<DataBookingRoom>>
+
+        @GET("payment/list_payment/{idUser}")
+        fun getPayments(@Path("idUser") idUser: Int): Call<List<Payment>>
+
 }

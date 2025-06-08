@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Resort_Booking">
         <activity
+            android:name=".signIn_layout.HistoryTransactionActivity"
+            android:exported="false" />
+        <activity
             android:name=".AdminLayout.ResortUserActivity"
             android:exported="false" />
         <activity
@@ -27,7 +30,6 @@
         <activity
             android:name=".AdminLayout.CreateServiceActivity"
             android:exported="false" />
-
         <activity
             android:name=".AdminLayout.CreateRoomActivity"
             android:exported="false" />
@@ -77,10 +79,10 @@
         <activity android:name=".AdminLayout.UserListActivity" />
         <activity android:name=".AdminLayout.CreateUserActivity" />
         <activity android:name=".signIn_layout.BookingRoomActivity" />
-        <activity android:name=".CheckOutActivity"/>
+        <activity android:name=".CheckOutActivity" />
         <activity android:name=".signIn_layout.ServiceActivity" />
-        <activity android:name=".BookingDetailActivity"/>
-        <activity android:name=".AdminLayout.DetailExpenseActivity"/>
+        <activity android:name=".BookingDetailActivity" />
+        <activity android:name=".AdminLayout.DetailExpenseActivity" />
         <activity android:name=".AdminLayout.ReportActivity" />
     </application>
 
