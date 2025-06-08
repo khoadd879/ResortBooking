@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,12 +33,15 @@ class Homepage : Fragment() {
     private lateinit var recyclerBestResort: RecyclerView
     private lateinit var recyclerRecommendResort: RecyclerView
     private lateinit var recyclerFavoriteResort: RecyclerView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var contentLayout: View
 
     private var pendingRequests = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
+
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_homepage, container, false)
@@ -45,6 +49,10 @@ class Homepage : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //Khởi tạo thành phần cho loading
+        progressBar = view.findViewById(R.id.progressBar)
+        contentLayout = view.findViewById(R.id.contentLayout)
+
 
         recyclerRecommendResort = view.findViewById(R.id.recyclerResortsRecommend)
         recyclerBestResort = view.findViewById(R.id.recyclerResortsBest)
@@ -66,6 +74,18 @@ class Homepage : Fragment() {
         val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
         refreshData(apiService, userId)
     }
+    //show progress bar
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            progressBar.visibility = View.VISIBLE
+            contentLayout.visibility = View.GONE  // Ẩn layout
+        } else {
+            progressBar.visibility = View.GONE
+            contentLayout.visibility = View.VISIBLE   // Hiện layout
+        }
+    }
+
+
 
     override fun onResume() {
         super.onResume()
@@ -89,8 +109,10 @@ class Homepage : Fragment() {
     }
 
     private fun fetchResortList(apiService: ApiService, userId: String) {
+        showLoading(true)
         apiService.getResortList(userId).enqueue(object : Callback<ResortResponse> {
             override fun onResponse(call: Call<ResortResponse>, response: Response<ResortResponse>) {
+                showLoading(false)
                 if (response.isSuccessful) {
                     val resortList = response.body()?.data ?: emptyList()
                     val top4Resorts = resortList.take(4)
@@ -118,7 +140,7 @@ class Homepage : Fragment() {
                                     }
 
                                     override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
-
+                                            showLoading(false)
                                         showToast("Lỗi mạng: ${t.message}")
                                     }
                                 })
