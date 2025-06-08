@@ -9,26 +9,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <ImageButton
-            android:contentDescription="Erm không biết nay ở đy chi"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/button_border"
-            android:src="@drawable/baseline_arrow_back_24"/>
-    <TextView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <View
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:alpha="0.5"
+            android:background="@drawable/header_gradient" />
+          <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="THÊM PHÒNG MỚI"
-        android:textSize="20sp"
+        android:textSize="25sp"
         android:textStyle="bold"
         android:gravity="center"
         android:paddingBottom="24dp"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:layout_marginVertical="10dp"
-        android:layout_marginEnd="30dp"/>
+        android:layout_marginVertical="10dp" />
+        </RelativeLayout>
     </LinearLayout>
 <ScrollView
     android:layout_width="match_parent"

@@ -70,7 +70,6 @@ class DetailReportAdapter(
             tvDate.text = detail.createDate
             tvAmount.text = String.format("%,.2f", detail.amount)
 
-            btnEdit.setOnClickListener { listener.onEdit(detail) }
             btnDelete.setOnClickListener { listener.onDelete(detail) }
         }
     }

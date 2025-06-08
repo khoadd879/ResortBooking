@@ -5,26 +5,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
+    android:orientation="vertical">
     <!-- Tiêu đề -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Chi tiết thu chi"
-        android:textSize="30sp"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:layout_marginBottom="16dp"/>
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:alpha="0.5"
+            android:background="@drawable/header_gradient" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chi tiết thu chi"
+            android:textSize="30sp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:layout_marginBottom="16dp"/>
+    </RelativeLayout>
     <!-- Bộ lọc thời gian -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="8dp"
+        android:padding="9dp">
 
         <TextView
             android:layout_width="0dp"
@@ -38,6 +49,7 @@
             android:id="@+id/spinnerMonth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_border"
             android:padding="8dp"
             android:layout_marginStart="8dp"/>
 
@@ -45,9 +57,27 @@
             android:id="@+id/spinnerYear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_border"
             android:padding="8dp"
             android:layout_marginStart="8dp"/>
     </LinearLayout>
+
+    <!-- Bộ lọc Resort -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp"
+        android:padding="6dp"/>
+
+    <!-- Nút thêm thông tin chi -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
 
 
         <Button
@@ -59,12 +89,24 @@
             android:drawableLeft="@drawable/baseline_add_24"
             android:gravity="center"
             android:padding="10dp"
+            android:layout_marginStart="10dp"
             tools:ignore="RtlCompat" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
     <!-- RecyclerView -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewTransactions"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewTransactions"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </ScrollView>
+
 </LinearLayout>

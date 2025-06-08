@@ -2,21 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
     <!-- Tiêu đề cố định -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <ImageButton
-            android:contentDescription="Erm không biết nay ở đy chi"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/button_border"
-            android:src="@drawable/baseline_arrow_back_24"/>
-    <TextView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <View
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:alpha="0.5"
+            android:background="@drawable/header_gradient" />
+
+ <TextView
         android:id="@+id/tvTieuDe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,13 +32,15 @@
         android:textColor="@color/black"
         android:layout_marginVertical="10dp"
         android:layout_marginEnd="30dp"/>
+        </RelativeLayout>
     </LinearLayout>
 
     <!-- Cuộn nội dung -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -106,6 +111,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center"
                 android:background="@drawable/button_border_all"
+                android:backgroundTint="@color/dard_blue"
                 android:textColor="@color/white" />
 
         </LinearLayout>

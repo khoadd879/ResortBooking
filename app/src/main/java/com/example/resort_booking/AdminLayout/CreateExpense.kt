@@ -27,7 +27,7 @@ class CreateExpense : AppCompatActivity() {
             insets
         }
 
-        val sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val apiService = com.example.resort_booking.ApiClient.create(sharedPreferences)
         val resortId = intent.getStringExtra("RESORT_ID")
 
