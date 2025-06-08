@@ -1,5 +1,6 @@
 package interfaceAPI
 
+import data.ApiResponseWrapper
 import data.ChangePasswordRequest
 import data.ChangePasswordResponse
 import data.CreateBookingRoomRequest
@@ -31,6 +32,8 @@ import data.RegisterRequest
 import data.RegisterResponse
 import data.ReportListRequest
 import data.ReportListResponse
+import data.ReportRequest
+import data.ReportResponse
 import data.ResortDetailResponse
 import data.ResortResponse
 import data.Room
@@ -216,7 +219,9 @@ interface ApiService {
     @GET("/api/booking_room/list_bookingroom_resort/{resortId}")
     suspend fun getBookings(@Path("resortId") resortId: String): Call<List<DataBookingRoom>>
 
-        @GET("payment/list_payment/{idUser}")
-        fun getPayments(@Path("idUser") idUser: Int): Call<List<Payment>>
+    @GET("payment/list_payment/{idUser}")
+    fun getPayments(@Path("idUser") idUser: Int): Call<List<Payment>>
 
+    @POST("api/report/inf_report")
+    fun getReport(@Body request: ReportRequest): Call<ApiResponseWrapper<ReportResponse>>
 }

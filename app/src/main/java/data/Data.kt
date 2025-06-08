@@ -506,3 +506,36 @@ data class Payment(
     val payment_method: String
 )
 
+data class ApiResponseWrapper<T>(
+    val data: T
+)
+
+data class ReportRequest(
+    val idResort: String,
+    val reportMonth: Int,
+    val reportYear: Int
+)
+
+data class ReportResponse(
+    val idReport: String,
+    val nameReport: String,
+    val reportMonth: Int,
+    val reportYear: Int,
+    val totalRevenue: Double,
+    val totalExpense: Double,
+    val netProfit: Double,
+    val generatedAt: String,
+    val details: List<ReportDetail>
+)
+
+data class ReportDetail(
+    val type: String,
+    val titleOfExpense: String,
+    val titleOfIncome: String,
+    val amount: Double,
+    val createDate: String,
+    val roomId: String? = null,
+    val userId: String? = null,
+    val category: String? = null
+)
+

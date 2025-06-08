@@ -82,7 +82,7 @@ class ReportActivity : AppCompatActivity() {
 
         binding.btnDetail.setOnClickListener {
             resortId?.let {
-                val intent = Intent(this, DetailExpenseActivity::class.java)
+                val intent = Intent(this, DetailReportActivity::class.java)
                 intent.putExtra("RESORT_ID", it)
                 startActivity(intent)
             }

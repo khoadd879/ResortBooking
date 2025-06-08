@@ -82,7 +82,7 @@
         <activity android:name=".CheckOutActivity" />
         <activity android:name=".signIn_layout.ServiceActivity" />
         <activity android:name=".BookingDetailActivity" />
-        <activity android:name=".AdminLayout.DetailExpenseActivity" />
+        <activity android:name=".AdminLayout.DetailReportActivity" />
         <activity android:name=".AdminLayout.ReportActivity" />
     </application>
 
