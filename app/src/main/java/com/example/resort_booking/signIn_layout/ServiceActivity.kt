@@ -1,6 +1,7 @@
 package com.example.resort_booking.signIn_layout
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resort_booking.AdminLayout.CreateServiceActivity
+import com.example.resort_booking.ApiClient
 import com.example.resort_booking.ClassNDataCLass.ServiceAdapter
 import com.example.resort_booking.R
 import data.ServiceListResponse
@@ -19,14 +21,18 @@ import interfaceAPI.ApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.math.BigDecimal
 
 class ServiceActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ServiceAdapter
     private lateinit var apiService: ApiService
-    private val selectedServices = mutableListOf<ServiceWithQuantity>()
-    private lateinit var btnDat: Button
+    private lateinit var btnConfirm: Button
+
+    // This list will hold the final, updated selections with full data
+    private var selectedServices = mutableListOf<ServiceWithQuantity>()
+
     private var role: String? = null
     private var resortId: String? = null
 
@@ -35,101 +41,109 @@ class ServiceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_service)
 
+        // Initialize Views
         recyclerView = findViewById(R.id.recyclerService)
+        btnConfirm = findViewById(R.id.btnConfirmService)
+        val btnAddService = findViewById<Button>(R.id.btnAddService)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        btnDat = findViewById(R.id.btnConfirmService)
 
+        // Get data from SharedPreferences and Intent
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         role = sharedPref.getString("ROLE", null)
-
         resortId = intent.getStringExtra("RESORT_ID")
 
-        // Lấy danh sách dịch vụ đã chọn từ intent, nếu có
-        val existingServices = intent.getParcelableArrayListExtra<ServiceWithQuantity>("SELECTED_SERVICES")
-        existingServices?.let {
-            selectedServices.clear()
-            selectedServices.addAll(it)
-        }
+        // CORE FIX: Get the initial selections passed from BookingDetailActivity
+        val initialSelections = intent.getParcelableArrayListExtra<ServiceWithQuantity>("SELECTED_SERVICES") ?: arrayListOf()
 
-        val btnThemService = findViewById<Button>(R.id.btnAddService)
-        btnThemService.visibility = if (role?.contains("ROLE_USER") == true) View.GONE else View.VISIBLE
+        // Setup API service
+        apiService = ApiClient.create(sharedPref)
 
-        btnThemService.setOnClickListener {
-            Log.d("ServiceActivity", "Dịch vụ đã chọn hiện tại: $selectedServices")
+        // Setup button visibility based on user role
+        btnAddService.visibility = if (role?.contains("ROLE_USER") == true) View.GONE else View.VISIBLE
+
+        // Setup Click Listeners
+        btnAddService.setOnClickListener {
             val intent = Intent(this, CreateServiceActivity::class.java)
             intent.putExtra("RESORT_ID", resortId)
             startActivity(intent)
         }
 
-        apiService = com.example.resort_booking.ApiClient.create(sharedPref)
-
-        btnDat.setOnClickListener {
-            // Khi bấm đặt mới gửi selectedServices về
-            Log.d("ServiceActivity", "Sending services: $selectedServices")
+        btnConfirm.setOnClickListener {
+            Log.d("ServiceActivity", "Sending back updated services: $selectedServices")
             val resultIntent = Intent().apply {
                 putParcelableArrayListExtra("SELECTED_SERVICES", ArrayList(selectedServices))
             }
-
-            setResult(RESULT_OK, resultIntent)
+            setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
 
-        resortId?.let { loadServiceList(it) }
+        // Load the full service list and merge it with initial selections
+        if (resortId != null) {
+            loadAndMergeServiceList(resortId!!, initialSelections)
+        } else {
+            Toast.makeText(this, "Lỗi: Không có ID của resort", Toast.LENGTH_LONG).show()
+            finish()
+        }
     }
 
-    private fun loadServiceList(resortId: String) {
+    private fun loadAndMergeServiceList(resortId: String, initialSelections: List<ServiceWithQuantity>) {
         apiService.getListService(resortId).enqueue(object : Callback<ServiceListResponse> {
             override fun onResponse(call: Call<ServiceListResponse>, response: Response<ServiceListResponse>) {
                 if (response.isSuccessful) {
-                    val serviceList = response.body()?.data ?: emptyList()
+                    val fullApiList = response.body()?.data ?: emptyList()
 
-                    // Map danh sách dịch vụ với số lượng nếu có trong selectedServices
-                    val serviceDisplayList = serviceList.map { service ->
-                        val matched = selectedServices.find { it.id_sv == service.idService }
+                    // CORE FIX: Merge the full API list with the initial selections.
+                    // The full list from the API is the source of truth for name, price, description.
+                    // The initial selections provide the starting quantity.
+                    val displayList = fullApiList.map { serviceFromApi ->
+                        val matchedSelection = initialSelections.find { it.id_sv == serviceFromApi.idService }
                         ServiceWithQuantity(
-                            id_sv = service.idService,
-                            name = service.name_sv,
-                            price = service.price,
-                            describe_service = service.describe_service,
-                            quantity = matched?.quantity ?: 0
+                            id_sv = serviceFromApi.idService ?: "",
+                            name = serviceFromApi.name_sv ?: "Không rõ",
+                            price = serviceFromApi.price ?: BigDecimal.ZERO,
+                            describe_service = serviceFromApi.describe_service ?: "",
+                            quantity = matchedSelection?.quantity ?: 0 // Use initial quantity if matched
                         )
                     }
 
-                    adapter = ServiceAdapter(serviceDisplayList, { serviceWithQuantity ->
-                        handleServiceSelection(serviceWithQuantity)
-                    }, this@ServiceActivity, role)
+                    // Populate the activity's selectedServices list with items that are initially selected
+                    selectedServices = displayList.filter { it.quantity > 0 }.toMutableList()
 
+                    adapter = ServiceAdapter(displayList, { service -> handleServiceSelection(service) }, this@ServiceActivity, role)
                     recyclerView.adapter = adapter
                 } else {
-                    Log.e("ServiceActivity", "Lỗi khi tải danh sách dịch vụ: ${response.code()}")
+                    Log.e("ServiceActivity", "Lỗi response: ${response.code()}")
                     Toast.makeText(this@ServiceActivity, "Không tải được danh sách dịch vụ", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ServiceListResponse>, t: Throwable) {
+                Log.e("ServiceActivity", "Lỗi kết nối: ${t.message}", t)
                 Toast.makeText(this@ServiceActivity, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
+    // This function's logic was already correct and needs no changes.
+    // It correctly modifies the `selectedServices` list based on user interaction.
     private fun handleServiceSelection(service: ServiceWithQuantity) {
-        val existingIndex = selectedServices.indexOfFirst { it.id_sv == service.id_sv }
+        val index = selectedServices.indexOfFirst { it.id_sv == service.id_sv }
 
         if (service.quantity > 0) {
-            if (existingIndex >= 0) {
-                selectedServices[existingIndex] = service
+            // If service exists, update it. If not, add it.
+            if (index != -1) {
+                selectedServices[index] = service
             } else {
                 selectedServices.add(service)
             }
         } else {
-            if (existingIndex >= 0) {
-                selectedServices.removeAt(existingIndex)
+            // If quantity is 0 and it exists in the list, remove it.
+            if (index != -1) {
+                selectedServices.removeAt(index)
             }
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
-        resortId?.let { loadServiceList(it) }
+        Log.d("ServiceActivity", "Selection updated: ${service.name}, New Quantity: ${service.quantity}")
+        Log.d("ServiceActivity", "Current selections count: ${selectedServices.size}")
     }
 }

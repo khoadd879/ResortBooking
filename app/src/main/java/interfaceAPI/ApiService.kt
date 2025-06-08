@@ -224,4 +224,7 @@ interface ApiService {
 
     @POST("api/report/inf_report")
     fun getReport(@Body request: ReportRequest): Call<ApiResponseWrapper<ReportResponse>>
+
+    @DELETE("api/expense/delete_expense/{idExpense}")
+    fun deleteExpense(@Path("idExpense") idExpense: String): Call<Void>
 }
