@@ -1,5 +1,6 @@
 package com.example.resort_booking.AdminLayout
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resort_booking.ClassNDataCLass.ResortAdapter
 import com.example.resort_booking.ClassNDataCLass.ResortUserAdapter
+import com.example.resort_booking.HotelDetailActivity
 import com.example.resort_booking.R
 import data.ResortResponse
 import interfaceAPI.ApiService
@@ -20,6 +22,7 @@ class ResortUserActivity : AppCompatActivity() {
     private lateinit var adapter: ResortUserAdapter
     private lateinit var apiService: ApiService
     private var userId: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +48,18 @@ class ResortUserActivity : AppCompatActivity() {
                     val resortResponse = response.body()
                     if (resortResponse != null) {
                         val resortList = response.body()?.data ?: emptyList()
-                        adapter = ResortUserAdapter(resortList, this@ResortUserActivity) {
-                            fetchResortsForUser(userId)
-                        }
+                        adapter = ResortUserAdapter(resortList, this@ResortUserActivity,
+                            onFavoriteChanged = {
+                                fetchResortsForUser(userId)
+                            },
+                            onResortClick = { resort ->
+                                // Xử lý khi click vào resort
+                                val intent = Intent(this@ResortUserActivity, HotelDetailActivity::class.java).apply {
+                                    putExtra("RESORT_ID", resort.idRs)
+                                }
+                                startActivity(intent)
+                            }
+                        )
                         recyclerView.adapter = adapter
                     } else {
                         Toast.makeText(this@ResortUserActivity, "No resorts found for the user.", Toast.LENGTH_SHORT).show()

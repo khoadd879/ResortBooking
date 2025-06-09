@@ -97,6 +97,7 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
                     val report = response.body()?.data
 
                     if (report == null || report.details.isEmpty()) {
+                        // Không có dữ liệu
                         recyclerView.adapter = null
                         Toast.makeText(this@DetailReportActivity, "Không có dữ liệu cho tháng/năm này", Toast.LENGTH_SHORT).show()
                     } else {
@@ -105,6 +106,7 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
                     }
 
                 } else if (response.code() == 404) {
+                    // Trường hợp 404 do không có dữ liệu
                     recyclerView.adapter = null
                     Toast.makeText(this@DetailReportActivity, "Không có dữ liệu", Toast.LENGTH_SHORT).show()
                 } else {
@@ -119,9 +121,6 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
     }
 
 
-    override fun onEdit(detail: ReportDetail) {
-        Toast.makeText(this, "Sửa mục: ${detail.category ?: detail.titleOfIncome ?: detail.titleOfExpense}", Toast.LENGTH_SHORT).show()
-    }
 
     override fun onDelete(detail: ReportDetail) {
         val idExpense = detail.idExpense
@@ -163,5 +162,4 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
             Toast.makeText(this, "Không xác định loại dữ liệu để xóa", Toast.LENGTH_SHORT).show()
         }
     }
-
 }

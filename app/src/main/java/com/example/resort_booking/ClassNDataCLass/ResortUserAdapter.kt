@@ -1,6 +1,7 @@
 package com.example.resort_booking.ClassNDataCLass
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.resort_booking.AdminLayout.RoomListActivity
 import com.example.resort_booking.ApiClient
+import com.example.resort_booking.HotelDetailActivity
 import com.example.resort_booking.R
 import data.FavoriteRequest
 import data.FavoriteResponse
@@ -22,7 +25,8 @@ import retrofit2.Response
 class ResortUserAdapter(
     private val resorts: List<Resort>,
     private val context: Context,
-    private val onFavoriteChanged: (() -> Unit)? = null // Cho phép callback khi có thay đổi
+    private val onFavoriteChanged: (() -> Unit)? = null,
+    private val onResortClick: ((Resort) -> Unit)? = null// Cho phép callback khi có thay đổi
 ) : RecyclerView.Adapter<ResortUserAdapter.ResortUserViewHolder>() {
 
     inner class ResortUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -108,6 +112,16 @@ class ResortUserAdapter(
                         Toast.makeText(context, "Lỗi mạng: ${t.message}", Toast.LENGTH_SHORT).show()
                     }
                 })
+            }
+        }
+
+        holder.itemView.setOnClickListener {
+            if (onResortClick != null) {
+                onResortClick.invoke(resort)
+            } else {
+                val intent = Intent(context, HotelDetailActivity::class.java)
+                intent.putExtra("RESORT_ID", resort.idRs)
+                context.startActivity(intent)
             }
         }
     }
