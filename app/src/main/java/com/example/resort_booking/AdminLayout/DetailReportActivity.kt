@@ -118,6 +118,7 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
         })
     }
 
+
     override fun onEdit(detail: ReportDetail) {
         Toast.makeText(this, "Sửa mục: ${detail.category ?: detail.titleOfIncome ?: detail.titleOfExpense}", Toast.LENGTH_SHORT).show()
     }
@@ -162,4 +163,5 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
             Toast.makeText(this, "Không xác định loại dữ liệu để xóa", Toast.LENGTH_SHORT).show()
         }
     }
+
 }

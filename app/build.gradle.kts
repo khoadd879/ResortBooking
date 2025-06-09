@@ -43,9 +43,13 @@ android {
 dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.google.android.gms:play-services-base:18.2.0")
+    implementation("com.google.firebase:firebase-analytics:22.1.0")
+    implementation ("com.google.android.gms:play-services-auth:20.7.0") // hoặc phiên bản mới nhất
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.4")
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.google.android.material:material:1.12.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
