@@ -226,13 +226,9 @@ interface ApiService {
     @POST("api/report/inf_report")
     fun getReport(@Body request: ReportRequest): Call<ApiResponseWrapper<ReportResponse>>
 
-    @DELETE("/api/expense/delete_expense/{id}")
-    fun deleteExpense(@Path("id") id: String): Call<Void>
-
-    @DELETE("/api/booking_room/delete_bookingroom/{id}")
-    fun deleteBookingRoom(@Path("id") id: String): Call<Void>
-
 //    @GET("oauth2/authorization/google")
 //    fun loginWithGoogle(): Call<GoogleLoginResponse>
 
+    @DELETE("api/expense/delete_expense/{idExpense}")
+    fun deleteExpense(@Path("idExpense") idExpense: String): Call<Void>
 }
