@@ -81,6 +81,7 @@ class BookingRoomActivity : AppCompatActivity() {
         allServiceTextView.setOnClickListener {
             val intent = Intent(this, ServiceActivity::class.java)
             intent.putExtra("RESORT_ID", resortId)
+            intent.putParcelableArrayListExtra("SELECTED_SERVICES", ArrayList(selectedServices)) // Truyền dữ liệu hiện tại
             startActivityForResult(intent, REQUEST_CODE_SELECT_SERVICE)
         }
 

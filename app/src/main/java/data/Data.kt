@@ -317,6 +317,7 @@ data class CreateServiceRequest(
 )
 
 data class CreateServiceResponse(
+    @SerializedName("nameService")
     val name_sv: String,
     val price: BigDecimal,
     val describe_service: String
@@ -347,9 +348,10 @@ data class UpdateServiceRequest(
 )
 
 data class UpdateServiceResponse(
-    val name_sv: String,
-    val price: BigDecimal,
-    val describe_service: String
+    val idService: String?,
+    @SerializedName("nameService")
+    val nameService: String?,
+    val quantity: Int?,
 )
 
 data class CreateBookingRoomRequest(
@@ -361,6 +363,9 @@ data class CreateBookingRoomRequest(
 )
 
 data class ServiceBookingRoom(
+    @SerializedName("idSV")
+    val idService: String,
+
     val nameService: String,
     val quantity: Int,
     val total_amount: BigDecimal
@@ -435,6 +440,7 @@ data class UpdateBookingRoom(
     val idBr: String,
     val checkinday: String,
     val checkoutday: String,
+    val status: String,
     val services: List<ServiceUpdate>?
 )
 
@@ -475,29 +481,12 @@ data class CreateExpenseResponse(
     val create_date: String
 )
 
-data class Earn(
-    val totalAmount: BigDecimal,
-    val roomResponse: RoomBookingRoom?
-)
-
 data class Expense(
-    val idExpense: Int,
+    val idExpense: String,
     val category: String,
     val amount: BigDecimal,
     val createDate: String
 )
-
-sealed class TransactionItem {
-    data class EarnItem(val earn: Earn) : TransactionItem()
-    data class ExpenseItem(val expense: Expense) : TransactionItem()
-}
-
-fun DataBookingRoom.toEarn(): Earn {
-    return Earn(
-        totalAmount = this.total_amount,
-        roomResponse = this.roomResponse
-    )
-}
 
 data class Payment(
     val idPayment: Int,
