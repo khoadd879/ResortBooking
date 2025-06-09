@@ -120,12 +120,8 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
         })
     }
 
-
-    override fun onEdit(detail: ReportDetail) {
-        Toast.makeText(this, "Sửa mục: ${detail.category ?: detail.titleOfIncome ?: detail.titleOfExpense}", Toast.LENGTH_SHORT).show()
-    }
-
     override fun onDelete(detail: ReportDetail) {
         Toast.makeText(this, "Xóa mục: ${detail.category ?: detail.titleOfExpense ?: detail.titleOfIncome}", Toast.LENGTH_SHORT).show()
     }
+
 }

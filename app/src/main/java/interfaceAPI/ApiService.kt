@@ -56,6 +56,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -227,4 +228,7 @@ interface ApiService {
 
     @DELETE("api/expense/delete_expense/{idExpense}")
     fun deleteExpense(@Path("idExpense") idExpense: String): Call<Void>
+
+//    @GET("oauth2/authorization/google")
+//    fun loginWithGoogle(): Call<GoogleLoginResponse>
 }
