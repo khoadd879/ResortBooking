@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import retrofit2.Callback
@@ -48,7 +49,13 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-
+        //menu popup
+        val menuButton = findViewById<ImageButton>(R.id.editMenuBtn)
+        menuButton.setOnClickListener {
+            val popup = PopupMenu(this, menuButton)
+            popup.menuInflater.inflate(R.menu.menu_3_dot, popup.menu)
+            popup.show()
+        }
         resortid = intent.getStringExtra("RESORT_ID")
         resortid?.let { fetchResortDetail(it) }
 
