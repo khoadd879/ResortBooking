@@ -120,7 +120,7 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val role = sharedPref.getString("ROLE", "")
         if (role?.contains("ROLE_USER") == true) {
-            linearStatus.visibility = View.GONE
+            linearStatus.isEnabled = false
         }
 
         val options = listOf("Chờ xác nhận", "Đã xác nhận", "Hủy")
