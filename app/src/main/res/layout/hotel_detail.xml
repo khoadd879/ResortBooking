@@ -162,14 +162,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"/>
 
-                <ImageButton
-                    android:id="@+id/editMenuBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="200dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Menu"
-                    android:src="@drawable/baseline_more_vert_24" />
+
             </LinearLayout>
 
             <!-- Nhập bình luận -->
@@ -259,23 +252,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/LayoutThemPhong"/>
 
-            <TextView
-                android:id="@+id/ReviewBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:clickable="true"
-                android:text="Xem tất cả"
-                android:textColor="@color/blue"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/ReviewText" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                app:layout_constraintTop_toBottomOf="@+id/ReviewText"
+                app:layout_constraintTop_toBottomOf="@+id/commentSection"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

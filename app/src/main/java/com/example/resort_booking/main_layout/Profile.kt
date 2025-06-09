@@ -2,6 +2,7 @@ package com.example.resort_booking.main_layout
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -40,14 +41,12 @@ class Profile : Fragment() {
         val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
         val idUser = sharedPref.getString("ID_USER", "") ?: ""
 
-        apiService.getUserByID(idUser).enqueue(object : Callback<UserResponse> {
+        apiService.getUserByID().enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     currentUser = response.body()?.data
-
-                    // Cập nhật UI nếu cần, ví dụ:
-                    textProfile.text = currentUser?.nameuser ?: "Hồ sơ"
                 } else {
+                    Log.e("Profile", "Lỗi lấy thông tin người dùng: ${response.code()}")
                     android.widget.Toast.makeText(requireContext(), "Lỗi lấy thông tin người dùng", android.widget.Toast.LENGTH_SHORT).show()
                 }
             }

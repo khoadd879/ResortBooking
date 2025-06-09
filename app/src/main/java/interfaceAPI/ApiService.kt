@@ -7,6 +7,7 @@ import data.CreateBookingRoomRequest
 import data.CreateBookingRoomResponse
 import data.CreateCheckOutRequest
 import data.CreateCheckOutResponse
+import data.CreateEvaluateRequest
 import data.CreateExpenseRequest
 import data.CreateExpenseResponse
 import data.CreateResortResponse
@@ -14,6 +15,7 @@ import data.CreateRoomResponse
 import data.CreateServiceRequest
 import data.CreateServiceResponse
 import data.CreateUserResponse
+import data.EvaluateResponse
 import data.FavoriteRequest
 import data.FavoriteResponse
 import data.FavouriteResponse
@@ -39,6 +41,8 @@ import data.RoomResponse
 import data.ServiceListResponse
 import data.TypeRoomResponse
 import data.UpdateBookingRoom
+import data.UpdateEvaluateRequest
+import data.UpdateEvaluateResponse
 import data.UpdateServiceRequest
 import data.UpdateServiceResponse
 import data.User
@@ -230,8 +234,17 @@ interface ApiService {
     @DELETE("/api/booking_room/delete_bookingroom/{idBookingRoom}")
     fun deleteBookingRoom(@Path("idBookingRoom") idBookingRoom: String): Call<Void>
 
-    @GET("api/user/{{userID}}")
-    fun getUserByID(@Path("userID") userID: String): Call<UserResponse>
+    @GET("/api/user/inf")
+    fun getUserByID(): Call<UserResponse>
+
+    @POST("/api/evaluate/create_evaluate")
+    fun createEvaluate(@Body requestBody: CreateEvaluateRequest): Call<EvaluateResponse>
+
+    @PUT("/api/evaluate/change_evaluate/{idEvaluate}")
+    fun updateEvaluate(@Path("idEvaluate") idEvaluate: String, @Body requestBody: UpdateEvaluateRequest): Call<UpdateEvaluateResponse>
+
+    @DELETE("/api/evaluate/delete_evaluate/{idEvaluate}")
+    fun deleteEvaluate(@Path("idEvaluate") idEvaluate: String): Call<Void>
 
 //    @GET("oauth2/authorization/google")
 //    fun loginWithGoogle(): Call<GoogleLoginResponse>

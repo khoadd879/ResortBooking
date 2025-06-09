@@ -112,12 +112,7 @@ data class ResortResponse(
     val data: List<Resort>?
 )
 
-data class Evaluate(
-    val idEvaluate: String,
-    val user_comment: String,
-    val star_rating: Double,
-    val created_date: String
-)
+
 
 data class ResortDetailResponse(
     val message: String,
@@ -131,7 +126,18 @@ data class ResortDetail(
     val describe_rs: String,
     val image: String?,
     val star: Double,
-    val favorite: Boolean
+    val favorite: Boolean,
+    val evaluates: List<Evaluate>?
+)
+
+data class Evaluate(
+    val idEvaluate: String,
+    val idUser: String,
+    val nameuser: String,
+    val avatar: String,
+    val user_comment: String,
+    val star_rating: Double,
+    val created_date: String
 )
 
 data class CreateResortRequest(
@@ -542,4 +548,28 @@ data class ReportDetail(
     val roomId: String? = null,
     val userId: String? = null,
     val category: String? = null
+)
+
+data class CreateEvaluateRequest(
+    val id_user: String,
+    val id_rs: String,
+    val star_rating: Double,
+    val user_comment: String
+)
+
+data class EvaluateResponse(
+    val success: Boolean,
+    val message: String,
+    val data: CreateEvaluateRequest?
+)
+
+data class UpdateEvaluateRequest(
+    val star_rating: Double,
+    val user_comment: String
+)
+
+data class UpdateEvaluateResponse(
+    val star_rating: Double,
+    val user_comment: String,
+    val created_date: String
 )
