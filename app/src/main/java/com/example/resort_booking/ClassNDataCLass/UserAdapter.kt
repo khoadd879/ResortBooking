@@ -3,25 +3,27 @@ package com.example.resort_booking.AdminLayout.adapter
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.resort_booking.AdminLayout.UpdateResortActivity
 import com.example.resort_booking.AdminLayout.UpdateUserActivity
 import com.example.resort_booking.R
 import com.example.resort_booking.databinding.ItemUserBinding
 import data.User
 import interfaceAPI.ApiService
+import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.Response
 
-class UserAdapter(private val userList: List<User>,
-                  private val context: Context,) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
+class UserAdapter(
+    private val userList: List<User>,
+    private val context: Context
+) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
+    private val apiService: ApiService = com.example.resort_booking.ApiClient.create(
+        context.getSharedPreferences("APP_PREFS", Context.MODE_PRIVATE)
+    )
 
     inner class UserViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -32,60 +34,56 @@ class UserAdapter(private val userList: List<User>,
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val user = userList[position]
-        with(holder.binding) {
-            tvFullName.text = "Họ tên: ${user.nameuser}"
-            tvGender.text = "Giới tính: ${user.sex}"
-            tvPhone.text = "SĐT: ${user.phone}"
-            tvDOB.text = "Mật khẩu: ${user.dob}"
-            Glide.with(imgAvatar.context)
-                .load(user.avatar)
-                .placeholder(R.drawable.load_error)
-                .error(R.drawable.hotel)
-                .into(imgAvatar)
-        }
+        val binding = holder.binding
 
-        val sharedPref = context.getSharedPreferences("APP_PREFS", Context.MODE_PRIVATE)
+        // Set user info
+        binding.tvFullName.text = "Họ tên: ${user.nameuser ?: ""}"
+        binding.tvGender.text = "Giới tính: ${user.sex ?: ""}"
+        binding.tvPhone.text = "SĐT: ${user.phone ?: ""}"
+        binding.tvDOB.text = "Ngày sinh: ${user.dob ?: ""}"
 
+        // Load avatar
+        Glide.with(binding.imgAvatar.context)
+            .load(user.avatar)
+            .placeholder(R.drawable.load_error)
+            .error(R.drawable.hotel)
+            .into(binding.imgAvatar)
 
-        val btnedit = holder.itemView.findViewById<ImageView>(R.id.btnEdit)
-
-        btnedit.setOnClickListener {
-            val intent = Intent(context, UpdateUserActivity::class.java)
-            intent.putExtra("id", user.idUser)
-            intent.putExtra("name", user.nameuser)
-            intent.putExtra("avatar", user.avatar)
-            intent.putExtra("phone", user.phone)
-            intent.putExtra("dob", user.dob)
-            intent.putExtra("idCard", user.identificationCard)
-            intent.putExtra("sex", user.sex)
-            intent.putExtra("passport", user.passport)
-            intent.putExtra("email", user.email)
-            intent.putExtra("account", user.account)
-            intent.putExtra("role_user", user.role_user)
-
+        // Edit action
+        binding.btnEdit.setOnClickListener {
+            val intent = Intent(context, UpdateUserActivity::class.java).apply {
+                putExtra("id", user.idUser)
+                putExtra("name", user.nameuser)
+                putExtra("avatar", user.avatar)
+                putExtra("phone", user.phone)
+                putExtra("dob", user.dob)
+                putExtra("idCard", user.identificationCard)
+                putExtra("sex", user.sex)
+                putExtra("passport", user.passport)
+                putExtra("email", user.email)
+                putExtra("account", user.account)
+                putStringArrayListExtra("role_user", ArrayList(user.role_user ?: emptyList()))
+            }
             context.startActivity(intent)
-
         }
 
-        val btndelete = holder.itemView.findViewById<ImageView>(R.id.btnDelete)
-        btndelete.setOnClickListener {
-
-            val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
-
-            apiService.deleteUser(user.idUser).enqueue(object: Callback<Void>{
-                override fun onResponse(call: retrofit2.Call<Void>, response: retrofit2.Response<Void>) {
+        // Delete action
+        binding.btnDelete.setOnClickListener {
+            apiService.deleteUser(user.idUser).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
                         Toast.makeText(context, "Xóa user thành công", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(context, "Xóa user thất bại: ${response.message()}", Toast.LENGTH_SHORT).show()
                     }
                 }
-                override fun onFailure(call: retrofit2.Call<Void>, t: Throwable) {
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
                     Toast.makeText(context, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
         }
     }
 
-    override fun getItemCount() = userList.size
+    override fun getItemCount(): Int = userList.size
 }

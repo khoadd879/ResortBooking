@@ -97,7 +97,6 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
                     val report = response.body()?.data
 
                     if (report == null || report.details.isEmpty()) {
-                        // Không có dữ liệu
                         recyclerView.adapter = null
                         Toast.makeText(this@DetailReportActivity, "Không có dữ liệu cho tháng/năm này", Toast.LENGTH_SHORT).show()
                     } else {
@@ -106,7 +105,6 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
                     }
 
                 } else if (response.code() == 404) {
-                    // Trường hợp 404 do không có dữ liệu
                     recyclerView.adapter = null
                     Toast.makeText(this@DetailReportActivity, "Không có dữ liệu", Toast.LENGTH_SHORT).show()
                 } else {
@@ -120,12 +118,48 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
         })
     }
 
-
     override fun onEdit(detail: ReportDetail) {
         Toast.makeText(this, "Sửa mục: ${detail.category ?: detail.titleOfIncome ?: detail.titleOfExpense}", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDelete(detail: ReportDetail) {
-        Toast.makeText(this, "Xóa mục: ${detail.category ?: detail.titleOfExpense ?: detail.titleOfIncome}", Toast.LENGTH_SHORT).show()
+        val idExpense = detail.idExpense
+        val idBookingRoom = detail.idIncome
+
+        if (!idExpense.isNullOrEmpty()) {
+            // Là chi tiêu
+            apiService.deleteExpense(idExpense).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@DetailReportActivity, "Đã xóa chi tiêu", Toast.LENGTH_SHORT).show()
+                        loadReport()
+                    } else {
+                        Toast.makeText(this@DetailReportActivity, "Xóa thất bại: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@DetailReportActivity, "Lỗi mạng khi xóa chi tiêu", Toast.LENGTH_SHORT).show()
+                }
+            })
+        } else if (!idBookingRoom.isNullOrEmpty()) {
+            // Là khoản thu
+            apiService.deleteBookingRoom(idBookingRoom).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@DetailReportActivity, "Đã xóa khoản thu", Toast.LENGTH_SHORT).show()
+                        loadReport()
+                    } else {
+                        Toast.makeText(this@DetailReportActivity, "Xóa thất bại: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@DetailReportActivity, "Lỗi mạng khi xóa khoản thu", Toast.LENGTH_SHORT).show()
+                }
+            })
+        } else {
+            Toast.makeText(this, "Không xác định loại dữ liệu để xóa", Toast.LENGTH_SHORT).show()
+        }
     }
 }

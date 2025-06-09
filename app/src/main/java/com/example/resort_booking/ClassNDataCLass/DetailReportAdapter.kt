@@ -50,11 +50,14 @@ class DetailReportAdapter(
         private val tvRoom = itemView.findViewById<TextView>(R.id.tvRoomId)
         private val tvDate = itemView.findViewById<TextView>(R.id.tvDateEarn)
         private val tvTotal = itemView.findViewById<TextView>(R.id.tvTotal)
+        private val btnDeleteEarn = itemView.findViewById<ImageButton>(R.id.btnDeleteEarn)
 
         fun bind(detail: ReportDetail) {
             tvRoom.text = detail.titleOfIncome ?: "Không có phòng"
-            tvDate.text = detail.createDate // sử dụng createDate để hiển thị ngày
+            tvDate.text = detail.createDate
             tvTotal.text = String.format("%,.2f", detail.amount)
+
+            btnDeleteEarn.setOnClickListener { listener.onDelete(detail) }
         }
     }
 
@@ -62,7 +65,7 @@ class DetailReportAdapter(
         private val tvExpense = itemView.findViewById<TextView>(R.id.tvExpenseId)
         private val tvDate = itemView.findViewById<TextView>(R.id.tvDate)
         private val tvAmount = itemView.findViewById<TextView>(R.id.tvAmount)
-        private val btnEdit = itemView.findViewById<ImageButton>(R.id.btnEdit)
+
         private val btnDelete = itemView.findViewById<ImageButton>(R.id.btnDelete)
 
         fun bind(detail: ReportDetail) {

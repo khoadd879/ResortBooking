@@ -84,6 +84,7 @@
         <activity android:name=".BookingDetailActivity" />
         <activity android:name=".AdminLayout.DetailReportActivity" />
         <activity android:name=".AdminLayout.ReportActivity" />
+        <activity android:name=".AdminLayout.BookingRoomList" />
     </application>
 
 </manifest>

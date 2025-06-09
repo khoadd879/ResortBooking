@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         val navView = binding.bottomNavigationView
         navView.menu.clear()
-        if (role?.contains("ROLE_ADMIN") == true) {
+        if (role?.contains("ROLE_ADMIN") == true || role?.contains("ROLE_MANAGER") == true) {
             navView.inflateMenu(R.menu.menu_admin)
         } else {
             navView.inflateMenu(R.menu.menu)

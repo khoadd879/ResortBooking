@@ -273,6 +273,7 @@
                 app:layout_constraintTop_toTopOf="@+id/ReviewText" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"

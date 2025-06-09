@@ -8,9 +8,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -56,7 +58,8 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var checkoutday: TextView
     private lateinit var total: TextView
     private lateinit var serviceRecyclerView: RecyclerView
-    private var bookingStatus: String? = null
+    private lateinit var statusSpinner: Spinner // <<< THÊM: Khai báo Spinner ở cấp lớp
+    private var currentBookingStatus: String? = null // <<< THAY ĐỔI: Đổi tên để rõ ràng hơn
 
     // Activity Result Launcher for getting result from ServiceActivity
     private val updateServiceLauncher = registerForActivityResult(
@@ -66,10 +69,8 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             val updatedServices = result.data?.getParcelableArrayListExtra<ServiceWithQuantity>("SELECTED_SERVICES")
             if (updatedServices != null) {
                 selectedServices.clear()
-                // Danh sách trả về từ ServiceActivity đã sạch và đầy đủ
                 selectedServices.addAll(updatedServices)
                 serviceAdapter.notifyDataSetChanged()
-                // Optional: Recalculate total price here if needed
             }
         }
     }
@@ -78,7 +79,6 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.booking_detail)
 
-        // Initialize UI
         initializeViews()
 
         val mapFragment = supportFragmentManager
@@ -114,8 +114,20 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         checkinday = findViewById(R.id.DateBookingCheckIn)
         checkoutday = findViewById(R.id.DateBookingCheckout)
         total = findViewById(R.id.total)
+        statusSpinner = findViewById(R.id.statusOption)
+        val linearStatus = findViewById<View>(R.id.linearStatus)
 
-        // Hide unused buttons
+        val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
+        val role = sharedPref.getString("ROLE", "")
+        if (role?.contains("ROLE_USER") == true) {
+            linearStatus.visibility = View.GONE
+        }
+
+        val options = listOf("Chờ xác nhận", "Đã xác nhận", "Hủy")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, options)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        statusSpinner.adapter = adapter // <<< THAY ĐỔI: Sử dụng biến lớp
+
         btnEdit.visibility = View.GONE
         btnDelete.visibility = View.GONE
         tvStatus.visibility = View.GONE
@@ -134,7 +146,6 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (response.isSuccessful && response.body()?.data != null) {
                     val bookingRoomDetail = response.body()!!.data!!
 
-                    // Populate UI with booking details
                     tvRoomName.text = bookingRoomDetail.roomResponse.name_room
                     tvPrice.text = bookingRoomDetail.roomResponse.price.toString()
                     tvTyperoom.text = bookingRoomDetail.roomResponse.type_room
@@ -150,23 +161,21 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                     total.text = bookingRoomDetail.total_amount.toString()
                     idResort = bookingRoomDetail.idResort
 
-                    bookingStatus = bookingRoomDetail.status ?: "PENDING"
+                    currentBookingStatus = bookingRoomDetail.status ?: "PENDING" // Lấy status hiện tại
 
                     // CORE FIX: Filter out services with null/blank IDs and map them
                     val validServices = bookingRoomDetail.services
                         .filter { !it.idService.isNullOrBlank() }
                         .map { sbRoom ->
                             ServiceWithQuantity(
-                                id_sv = sbRoom.idService!!, // Safe to use non-null assertion
+                                id_sv = sbRoom.idService!!,
                                 name = sbRoom.nameService ?: "Không rõ",
                                 quantity = sbRoom.quantity ?: 0,
-
                                 describe_service = "",
                                 price = BigDecimal.ZERO
                             )
                         }
 
-                    // Log any services that were discarded for debugging purposes
                     val invalidServiceCount = bookingRoomDetail.services.size - validServices.size
                     if (invalidServiceCount > 0) {
                         Log.w("BookingDetailActivity", "$invalidServiceCount dịch vụ từ API đã bị loại bỏ do thiếu ID.")
@@ -193,7 +202,6 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         findViewById<TextView>(R.id.btnUpdateService).setOnClickListener {
             val intent = Intent(this, ServiceActivity::class.java).apply {
                 putExtra("RESORT_ID", idResort)
-                // Pass the current list of selected services (now clean) to ServiceActivity
                 putParcelableArrayListExtra("SELECTED_SERVICES", ArrayList(selectedServices))
             }
             updateServiceLauncher.launch(intent)
@@ -209,18 +217,31 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             ServiceUpdate(id_sv = it.id_sv, quantity = it.quantity)
         }
 
+        val selectedStatusVietnamese = statusSpinner.selectedItem.toString()
+
+        val apiStatus = when (selectedStatusVietnamese) {
+            "Chờ xác nhận" -> "Chờ Xác Nhận"
+            "Đã xác nhận" -> "Đã Xác Nhận"
+            "Hủy" -> "Hủy"
+            else -> currentBookingStatus ?: "Chờ xác nhận"
+        }
+
+
         val updateRequest = UpdateBookingRoom(
             idBr = bookingId!!,
             checkinday = checkinday.text.toString(),
             checkoutday = checkoutday.text.toString(),
             services = serviceRequests,
-            status = bookingStatus.toString()
+            status = apiStatus
         )
+
+
 
         apiService.updateBookingRoom(bookingId!!, updateRequest).enqueue(object : Callback<CreateBookingRoomResponse> {
             override fun onResponse(call: Call<CreateBookingRoomResponse>, response: Response<CreateBookingRoomResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@BookingDetailActivity, "Cập nhật booking thành công", Toast.LENGTH_SHORT).show()
+                    // Tải lại chi tiết để hiển thị dữ liệu mới nhất
                     fetchBookingDetails(apiService)
                 } else {
                     Log.e("BookingDetailActivity", "Lỗi khi cập nhật: ${response.code()} - ${response.message()}")
