@@ -153,6 +153,7 @@
 
         <!--Phone-->
         <LinearLayout
+            android:id="@+id/linearStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -163,23 +164,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_service"
-                android:drawablePadding="10dp"
-                android:drawableTint="@color/nav_item_color"
                 android:gravity="center_vertical"
-                android:text="Tổng giá dịch vụ"
+                android:text="Trạng thái"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/serviceTotal"
+            <Spinner
+                android:id="@+id/statusOption"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/black"
-                android:gravity="center_vertical"
-                android:drawablePadding="10dp"
-                android:layout_marginEnd="10dp"/>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 <LinearLayout
     android:layout_width="match_parent"

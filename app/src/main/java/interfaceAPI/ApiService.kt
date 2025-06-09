@@ -14,8 +14,6 @@ import data.CreateRoomResponse
 import data.CreateServiceRequest
 import data.CreateServiceResponse
 import data.CreateUserResponse
-import data.DataBookingRoom
-import data.Expense
 import data.FavoriteRequest
 import data.FavoriteResponse
 import data.FavouriteResponse
@@ -26,7 +24,7 @@ import data.IntrospectResponse
 import data.ListUserResponse
 import data.LoginRequest
 import data.LoginResponse
-import data.Payment
+import data.PaymentResponse
 import data.RefreshTokenRequest
 import data.RegisterRequest
 import data.RegisterResponse
@@ -43,6 +41,8 @@ import data.TypeRoomResponse
 import data.UpdateBookingRoom
 import data.UpdateServiceRequest
 import data.UpdateServiceResponse
+import data.User
+import data.UserResponse
 import data.VerifyOTPResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -154,7 +154,7 @@ interface ApiService {
     fun updateUser(
         @Path("idUser") idUser: String,
         @Part("request") requestBody: RequestBody,
-        @Part file: MultipartBody.Part
+        @Part file: MultipartBody.Part?
     ): Call<CreateUserResponse>
 
     @DELETE("api/user/delete/{idUser}")
@@ -214,20 +214,24 @@ interface ApiService {
     @POST("api/expense/create_expense")
     fun createExpense(@Body requestBody: CreateExpenseRequest): Call<CreateExpenseResponse>
 
-    @GET("/api/expense/list_expense/{resortId}")
-    suspend fun getExpenses(@Path("resortId") resortId: String): Call<List<Expense>>
-
-    @GET("/api/booking_room/list_bookingroom_resort/{resortId}")
-    suspend fun getBookings(@Path("resortId") resortId: String): Call<List<DataBookingRoom>>
-
-    @GET("payment/list_payment/{idUser}")
-    fun getPayments(@Path("idUser") idUser: Int): Call<List<Payment>>
+    @GET("/api/payment/list_payment/{idUser}")
+    fun getPayments(@Path("idUser") idUser: String): Call<PaymentResponse>
 
     @POST("api/report/inf_report")
     fun getReport(@Body request: ReportRequest): Call<ApiResponseWrapper<ReportResponse>>
 
     @DELETE("api/expense/delete_expense/{idExpense}")
     fun deleteExpense(@Path("idExpense") idExpense: String): Call<Void>
+
+
+    @GET("/api/booking_room/list_bookingroom_resort/{idResort}")
+    fun getBookingsOfResort(@Path("idResort") idResort: String): Call<GetListBookingRoomResponse>
+
+    @DELETE("/api/booking_room/delete_bookingroom/{idBookingRoom}")
+    fun deleteBookingRoom(@Path("idBookingRoom") idBookingRoom: String): Call<Void>
+
+    @GET("api/user/{{userID}}")
+    fun getUserByID(@Path("userID") userID: String): Call<UserResponse>
 
 //    @GET("oauth2/authorization/google")
 //    fun loginWithGoogle(): Call<GoogleLoginResponse>

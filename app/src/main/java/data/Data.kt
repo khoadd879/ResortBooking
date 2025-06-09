@@ -76,16 +76,6 @@ data class ChangePasswordResponse(
     val statusCodeValue: Int
 )
 
-data class RoomRequest(
-    val id_rs: String,
-    val id_type: String,
-    val name_room: String,
-    val price: Double,
-    val status: String,
-    val describe_room: String,
-    val image: String? = null
-)
-
 data class CreatedAt(
     @SerializedName("created_at")
     val created_at: String?
@@ -212,9 +202,34 @@ data class User(
     val dob: String?,
     val passport: String?,
     val account: String,
-    val role_user: String?,
+    val role_user: List<String>?,
     val avatar: String?
 )
+
+data class UserResponseData(
+    val idUser: String,
+    val nameuser: String?,
+    val sex: String?,
+    val email: String,
+    val phone: String?,
+    val identificationCard: String?,
+    val dob: String?,
+    val passport: String?,
+    val account: String,
+    val role_user: List<RoleUser>?,
+    val avatar: String?
+)
+
+data class UserResponse(
+    val data: UserResponseData?
+)
+
+data class RoleUser(
+    val name: String,
+    val description: String,
+    val permissions: List<String> // Nếu permissions là [] thì vẫn hợp lệ
+)
+
 
 data class ListUserResponse(
     val data: List<User>?
@@ -431,6 +446,8 @@ data class GetInfoBookingRoomResponse(
     val data: DataBookingRoom?
 )
 
+
+
 data class ServiceUpdate(
     val id_sv: String,
     val quantity: Int
@@ -481,16 +498,13 @@ data class CreateExpenseResponse(
     val create_date: String
 )
 
-data class Expense(
-    val idExpense: String,
-    val category: String,
-    val amount: BigDecimal,
-    val createDate: String
+data class PaymentResponse(
+    val data: List<Payment>
 )
 
 data class Payment(
-    val idPayment: Int,
-    val money: Double,
+    val idPayment: String,
+    val money: BigDecimal,
     val create_date: String,
     val payment_method: String
 )
@@ -521,6 +535,8 @@ data class ReportDetail(
     val type: String,
     val titleOfExpense: String,
     val titleOfIncome: String,
+    val idExpense: String,
+    val idIncome: String,
     val amount: Double,
     val createDate: String,
     val roomId: String? = null,

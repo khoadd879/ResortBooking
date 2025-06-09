@@ -67,7 +67,7 @@ class UpdateUserActivity : AppCompatActivity() {
         val avatar = intent.getStringExtra("avatar") ?: ""
         val sex = intent.getStringExtra("sex") ?: ""
         val account = intent.getStringExtra("account") ?: ""
-        val role = intent.getStringExtra("role_user") ?: ""
+
         val name = intent.getStringExtra("name") ?: ""
 
         // Gán dữ liệu vào form
@@ -84,12 +84,6 @@ class UpdateUserActivity : AppCompatActivity() {
             .error(R.drawable.load_error)
             .placeholder(R.drawable.ic_launcher_background)
             .into(imgAvatar)
-
-        when (role) {
-            "USER" -> radioRole.check(R.id.radioUser)
-            "MANAGER" -> radioRole.check(R.id.radioManager)
-            "ADMIN" -> radioRole.check(R.id.radioAdmin)
-        }
 
         when (sex) {
             "Nam" -> radioGender.check(R.id.radioMale)
@@ -119,7 +113,7 @@ class UpdateUserActivity : AppCompatActivity() {
         }
 
         if(Role?.contains("ROLE_USER") == true){
-            btnCapNhapnv.visibility = View.GONE
+            radioRole.visibility = View.GONE
         }
 
         btnCapNhapnv.setOnClickListener {
@@ -152,7 +146,7 @@ class UpdateUserActivity : AppCompatActivity() {
                 hoChieu = hoChieu.text.toString(),
                 matKhau = matKhau.text.toString(),
                 imgAvatar = imgAvatar,
-                avatarUrl = avatar // 👉 truyền avatar gốc vào
+                avatarUrl = avatar
             )
         }
     }
@@ -206,7 +200,7 @@ class UpdateUserActivity : AppCompatActivity() {
         hoChieu: String,
         matKhau: String,
         imgAvatar: ImageView,
-        avatarUrl: String? // 👈 avatar truyền vào
+        avatarUrl: String?
     ) {
         val requestUser = UpdateUserRequest(
             nameuser = tenNguoiDung,
@@ -227,25 +221,17 @@ class UpdateUserActivity : AppCompatActivity() {
             return
         }
 
-        val imagePart: MultipartBody.Part? = if (selectedImageUri != null) {
-            prepareFilePart("file", selectedImageUri!!)
-        } else {
-            prepareFilePartFromUrl(avatarUrl ?: "")
-        }
-
-        if (imagePart == null) {
-            Toast.makeText(this, "Không thể sử dụng ảnh đại diện", Toast.LENGTH_SHORT).show()
-            return
+        val imagePart: MultipartBody.Part? = selectedImageUri?.let {
+            prepareFilePart("file", it)
         }
 
         val resortJson = Gson().toJson(requestUser)
         val resortRequestBody = resortJson.toRequestBody("application/json".toMediaTypeOrNull())
-        val tokenHeader = "Bearer $accessToken"
 
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
 
-        apiService.updateUser(idUser, resortRequestBody, imagePart).enqueue(object :
+        apiService.updateUser(idUser, resortRequestBody, imagePart?: null).enqueue(object :
             retrofit2.Callback<CreateUserResponse> {
             override fun onResponse(
                 call: Call<CreateUserResponse?>,

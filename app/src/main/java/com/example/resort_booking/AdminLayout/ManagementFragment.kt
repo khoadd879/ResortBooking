@@ -44,6 +44,10 @@ class ManagementFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val manageResort = view.findViewById<TextView>(R.id.tvManageResort)
+        val sharedPref = requireContext().getSharedPreferences("APP_PREFS", android.content.Context.MODE_PRIVATE)
+        val role = sharedPref.getString("ROLE", null)
+        val viewDivide = view.findViewById<View>(R.id.idk)
+
         manageResort.setOnClickListener {
             val intent = android.content.Intent(requireContext(), ResortListActivity::class.java)
             startActivity(intent)
@@ -55,6 +59,16 @@ class ManagementFragment : Fragment() {
             startActivity(intent)
         }
 
+        val manageBookingRoom = view.findViewById<TextView>(R.id.tvManageBookingRoom)
+        manageBookingRoom.setOnClickListener {
+            val intent = android.content.Intent(requireContext(), BookingRoomList::class.java)
+            startActivity(intent)
+        }
+
+        if(role?.contains("ROLE_MANAGER") == true){
+            manageUser.visibility = View.GONE
+            viewDivide.visibility = View.GONE
+        }
 
     }
     companion object {

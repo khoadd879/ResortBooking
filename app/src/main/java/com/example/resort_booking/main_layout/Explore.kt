@@ -84,7 +84,9 @@ class Explore : Fragment() {
             ) {
                if(response.isSuccessful && response.body() != null){
                    val bookingRoomList = response.body()?.data?: emptyList()
-                       paymentHistoryAdapter = PaymentHistoryAdapter(bookingRoomList)
+                       paymentHistoryAdapter = PaymentHistoryAdapter(bookingRoomList){
+                           fetchBookingRoomList(apiService, userId)
+                       }
                        recyclerViewExplore?.adapter = paymentHistoryAdapter
                    } else {
                        Log.e("Explore", "Không có dữ liệu đặt phòng: ${response.code()}")

@@ -13,25 +13,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.resort_booking.AdminLayout.UpdateUserActivity
 import com.example.resort_booking.R
 import com.example.resort_booking.signIn_layout.HistoryTransactionActivity
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import data.UserResponse
+import data.UserResponseData
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class Profile : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var currentUser: UserResponseData? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,24 +30,67 @@ class Profile : Fragment() {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val textProfile = view.findViewById<TextView>(R.id.textView12)
+        val textLogOut = view.findViewById<TextView>(R.id.textLogOut)
+        val textHistoryTransaction = view.findViewById<TextView>(R.id.textHistoryTransaction)
+
+        val sharedPref = requireContext().getSharedPreferences("APP_PREFS", AppCompatActivity.MODE_PRIVATE)
+        val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
+        val idUser = sharedPref.getString("ID_USER", "") ?: ""
+
+        apiService.getUserByID(idUser).enqueue(object : Callback<UserResponse> {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                if (response.isSuccessful && response.body() != null) {
+                    currentUser = response.body()?.data
+
+                    // Cập nhật UI nếu cần, ví dụ:
+                    textProfile.text = currentUser?.nameuser ?: "Hồ sơ"
+                } else {
+                    android.widget.Toast.makeText(requireContext(), "Lỗi lấy thông tin người dùng", android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                android.widget.Toast.makeText(requireContext(), "Lỗi kết nối: ${t.message}", android.widget.Toast.LENGTH_SHORT).show()
+            }
+        })
+
         textProfile.setOnClickListener {
-            val intent = android.content.Intent(requireContext(), UpdateUserActivity::class.java)
+            if (currentUser == null) {
+                android.widget.Toast.makeText(requireContext(), "Chưa tải xong dữ liệu người dùng", android.widget.Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val intent = android.content.Intent(requireContext(), UpdateUserActivity::class.java).apply {
+                putExtra("id", currentUser?.idUser)
+                putExtra("name", currentUser?.nameuser)
+                putExtra("avatar", currentUser?.avatar)
+                putExtra("phone", currentUser?.phone)
+                putExtra("dob", currentUser?.dob)
+                putExtra("idCard", currentUser?.identificationCard)
+                putExtra("sex", currentUser?.sex)
+                putExtra("passport", currentUser?.passport)
+                putExtra("email", currentUser?.email)
+                putExtra("account", currentUser?.account)
+
+                // Nếu role_user là List<RoleUser>, chỉ truyền name
+                val roleNames = currentUser?.role_user?.map { it.name } ?: emptyList()
+                putStringArrayListExtra("role_user", ArrayList(roleNames))
+            }
+
             startActivity(intent)
         }
-        val textLogOut: TextView = view.findViewById(R.id.textLogOut)
+
         textLogOut.setOnClickListener {
             showLogoutDialog()
         }
-        val textHistoryTransaction: TextView = view.findViewById(R.id.textHistoryTransaction)
+
         textHistoryTransaction.setOnClickListener {
             val intent = android.content.Intent(requireContext(), HistoryTransactionActivity::class.java)
             startActivity(intent)
         }
-
     }
 
     private fun showLogoutDialog() {
@@ -66,7 +99,6 @@ class Profile : Fragment() {
         val dialogLayout = inflater.inflate(R.layout.dialog_log_out, null)
 
         builder.setView(dialogLayout)
-
         val dialog = builder.create()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
@@ -77,36 +109,25 @@ class Profile : Fragment() {
         btnLogout.setOnClickListener {
             val sharedPref = requireContext().getSharedPreferences("APP_PREFS", AppCompatActivity.MODE_PRIVATE)
             val refreshToken = sharedPref.getString("REFRESH_TOKEN", "") ?: ""
-
             val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
 
             val request = data.RefreshTokenRequest(refreshToken)
 
-            apiService.logout(request).enqueue(object : retrofit2.Callback<Void> {
-                override fun onResponse(call: retrofit2.Call<Void>, response: retrofit2.Response<Void>) {
-                    // Xóa token local bất kể logout thành công hay không
-                    if(response.isSuccessful) {
-                        progressBar.visibility = View.VISIBLE
-
-                        // Quay lại màn đăng nhập
-                        val intent = android.content.Intent(requireContext(), com.example.resort_booking.signIn_layout.LoginActivity::class.java)
-                        intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-                        dialog.dismiss()
-                    }else{
-                        progressBar.visibility = View.VISIBLE
-                        android.widget.Toast.makeText(requireContext(), "Cant logout: ${response.code()}", android.widget.Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
-                    }
+            apiService.logout(request).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    progressBar.visibility = View.VISIBLE
+                    val intent = android.content.Intent(requireContext(), com.example.resort_booking.signIn_layout.LoginActivity::class.java)
+                    intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    dialog.dismiss()
                 }
-                override fun onFailure(call: retrofit2.Call<Void>, t: Throwable) {
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
                     progressBar.visibility = View.VISIBLE
                     android.widget.Toast.makeText(requireContext(), "Lỗi kết nối: ${t.message}", android.widget.Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 }
             })
-
-            dialog.dismiss()
         }
 
         btnCancel.setOnClickListener {
@@ -114,16 +135,5 @@ class Profile : Fragment() {
         }
 
         dialog.show()
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Profile().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }

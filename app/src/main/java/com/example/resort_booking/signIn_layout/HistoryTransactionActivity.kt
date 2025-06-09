@@ -11,6 +11,7 @@ import com.example.resort_booking.adapter.HistoryTransactionAdapter
 import com.example.resort_booking.ApiClient
 import com.example.resort_booking.databinding.ActivityHistoryTransactionBinding
 import data.Payment
+import data.PaymentResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,34 +27,34 @@ class HistoryTransactionActivity : AppCompatActivity() {
         binding = ActivityHistoryTransactionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
 
-        val idUser = intent.getIntExtra("idUser", -1)
-        if (idUser == -1) {
+        val idUser = sharedPreferences.getString("ID_USER", null)
+        if (idUser == "") {
             Toast.makeText(this, "Không tìm thấy ID người dùng", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
         binding.rvPaymentHistory.layoutManager = LinearLayoutManager(this)
-        fetchPayments(idUser)
+        fetchPayments(idUser.toString())
     }
 
-    private fun fetchPayments(idUser: Int) {
+    private fun fetchPayments(idUser: String) {
         val apiService = ApiClient.create(sharedPreferences)
 
-        apiService.getPayments(idUser).enqueue(object : Callback<List<Payment>> {
-            override fun onResponse(call: Call<List<Payment>>, response: Response<List<Payment>>) {
+        apiService.getPayments(idUser).enqueue(object : Callback<PaymentResponse> {
+            override fun onResponse(call: Call<PaymentResponse>, response: Response<PaymentResponse>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val payments = response.body()!!
+                    val payments = response.body()!!.data
                     paymentAdapter = HistoryTransactionAdapter(payments)
                     binding.rvPaymentHistory.adapter = paymentAdapter
                 } else {
-                    Toast.makeText(this@HistoryTransactionActivity, "Không có dữ liệu", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@HistoryTransactionActivity, "Không có dữ liệu: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onFailure(call: Call<List<Payment>>, t: Throwable) {
+            override fun onFailure(call: Call<PaymentResponse>, t: Throwable) {
                 Log.e("PaymentHistory", "Lỗi API: ${t.message}")
                 Toast.makeText(this@HistoryTransactionActivity, "Lỗi kết nối", Toast.LENGTH_SHORT).show()
             }

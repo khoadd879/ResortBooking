@@ -2,11 +2,10 @@ package com.example.resort_booking.ClassNDataCLass
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,16 +15,18 @@ import com.example.resort_booking.BookingDetailActivity
 import com.example.resort_booking.R
 import com.example.resort_booking.databinding.ItemPaymentHistoryBinding
 import data.DataBookingRoom
-import data.GetListBookingRoomResponse
 import org.threeten.bp.format.DateTimeFormatter
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
-class PaymentHistoryAdapter(private var items: List<DataBookingRoom>) :
-    RecyclerView.Adapter<PaymentHistoryAdapter.ViewHolder>() {
+class PaymentHistoryAdapter(
+    private var items: List<DataBookingRoom>,
+    private val onDeleteSuccess: () -> Unit // callback để reload sau khi xóa
+) : RecyclerView.Adapter<PaymentHistoryAdapter.ViewHolder>() {
 
-    private val formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm", Locale.getDefault())
-
-    inner class ViewHolder(val binding: ItemPaymentHistoryBinding) : RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(val binding: ItemPaymentHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
         val txtHotelName: TextView = binding.txtHotelName
         val txtLocation: TextView = binding.txtLocation
         val txtPrice: TextView = binding.txtPrice
@@ -33,8 +34,7 @@ class PaymentHistoryAdapter(private var items: List<DataBookingRoom>) :
         val txtDatesOut: TextView = binding.txtDatesOut
         val txtStatus: TextView = binding.txtStatus
         val imgHotel: ImageView = binding.imgHotel
-        val btnEdit : ImageButton = binding.btnEdit
-        val btnDelete : ImageButton = binding.btnDelete
+        val btnDelete: ImageButton = binding.btnDelete
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -44,14 +44,16 @@ class PaymentHistoryAdapter(private var items: List<DataBookingRoom>) :
 
     override fun getItemCount() = items.size
 
-    @SuppressLint("CheckResult", "SetTextI18n")
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val bookingRoom = items[position]
-        holder.txtHotelName.text = "Tên: ${bookingRoom.resortResponse.name_rs}"
-        holder.txtLocation.text ="Địa chỉ: ${bookingRoom.resortResponse.location_rs}"
-        holder.txtPrice.text = "Tổng tiền: ${bookingRoom.total_amount}"
 
-        // Định dạng ngày tháng
+        holder.txtHotelName.text = "Tên: ${bookingRoom.resortResponse.name_rs}"
+        holder.txtLocation.text = "Địa chỉ: ${bookingRoom.resortResponse.location_rs}"
+        holder.txtPrice.text = "Tổng tiền: ${bookingRoom.total_amount}"
+        holder.txtStatus.text = "Trạng thái: ${bookingRoom.status}"
+
+        // Format ngày
         val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
 
@@ -69,14 +71,14 @@ class PaymentHistoryAdapter(private var items: List<DataBookingRoom>) :
             holder.txtDatesOut.text = "Ngày checkout: ${bookingRoom.checkoutday}"
         }
 
-        holder.txtStatus.text = "Trạng thái: ${bookingRoom.status}"
-
+        // Load ảnh
         Glide.with(holder.imgHotel.context)
             .load(bookingRoom.resortResponse.image)
             .error(R.drawable.load_error)
             .placeholder(R.drawable.load_error)
             .into(holder.imgHotel)
 
+        // Nhấn để xem chi tiết
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, BookingDetailActivity::class.java)
             intent.putExtra("BOOKING_ID", bookingRoom.idBr)
@@ -84,10 +86,29 @@ class PaymentHistoryAdapter(private var items: List<DataBookingRoom>) :
         }
 
         val sharedPref = holder.itemView.context.getSharedPreferences("APP_PREFS", 0)
+        val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
         val role = sharedPref.getString("ROLE", "")
 
-        if(role?.contains("ROLE_USER") == true ){
-            holder.btnEdit.visibility = View.GONE
+        // Ẩn nút xóa nếu là user
+        if (role?.contains("ROLE_USER") == true) {
+            holder.btnDelete.visibility = View.GONE
+        }
+
+        holder.btnDelete.setOnClickListener {
+            apiService.deleteBookingRoom(bookingRoom.idBr).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Log.d("PaymentHistoryAdapter", "Xóa thành công")
+                        onDeleteSuccess() // Gọi callback để refresh danh sách
+                    } else {
+                        Log.d("PaymentHistoryAdapter", "Xóa thất bại: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Log.d("PaymentHistoryAdapter", "Xóa thất bại: ${t.message}")
+                }
+            })
         }
     }
 }
