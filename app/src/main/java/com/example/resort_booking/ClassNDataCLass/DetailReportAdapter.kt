@@ -14,7 +14,6 @@ class DetailReportAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     interface Listener {
-        fun onEdit(detail: ReportDetail)
         fun onDelete(detail: ReportDetail)
     }
 

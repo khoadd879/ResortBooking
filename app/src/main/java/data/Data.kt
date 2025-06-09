@@ -538,4 +538,3 @@ data class ReportDetail(
     val userId: String? = null,
     val category: String? = null
 )
-

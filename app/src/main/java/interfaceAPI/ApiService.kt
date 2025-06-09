@@ -56,6 +56,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -224,4 +225,14 @@ interface ApiService {
 
     @POST("api/report/inf_report")
     fun getReport(@Body request: ReportRequest): Call<ApiResponseWrapper<ReportResponse>>
+
+    @DELETE("/api/expense/delete_expense/{id}")
+    fun deleteExpense(@Path("id") id: String): Call<Void>
+
+    @DELETE("/api/booking_room/delete_bookingroom/{id}")
+    fun deleteBookingRoom(@Path("id") id: String): Call<Void>
+
+//    @GET("oauth2/authorization/google")
+//    fun loginWithGoogle(): Call<GoogleLoginResponse>
+
 }
