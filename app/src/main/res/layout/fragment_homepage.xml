@@ -44,7 +44,7 @@
 
             <!--Vi tri-->
             <TextView
-                android:id="@+id/positionHomePage"
+                android:id="@+id/textCurrentLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -53,11 +53,14 @@
                 android:focusable="true"
                 android:text="Hồ Chí Minh, Quận 10"
                 android:textColor="@color/black"
+                android:textSize="14sp"
                 android:textStyle="bold"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toBottomOf="@+id/imageAvatar"
                 app:layout_constraintStart_toStartOf="@+id/text_yourName"
                 app:layout_constraintTop_toBottomOf="@+id/text_yourName"
-                app:layout_constraintVertical_bias="1.0" />
+                 />
 
             <TextView
                 android:id="@+id/textView9"
@@ -68,7 +71,7 @@
                 android:text="Những khu nghỉ dưỡng tốt nhất"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/positionHomePage" />
+                app:layout_constraintTop_toBottomOf="@+id/textCurrentLocation" />
 
             <TextView
                 android:id="@+id/textViewAll"

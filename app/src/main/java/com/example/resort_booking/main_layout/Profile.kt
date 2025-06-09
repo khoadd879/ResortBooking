@@ -1,6 +1,8 @@
 package com.example.resort_booking.main_layout
 
 import android.app.AlertDialog
+import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,12 +10,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.resort_booking.AdminLayout.UpdateUserActivity
 import com.example.resort_booking.R
 import com.example.resort_booking.signIn_layout.HistoryTransactionActivity
+import com.example.resort_booking.signIn_layout.LoginActivity
 import data.UserResponse
 import data.UserResponseData
 import retrofit2.Call
@@ -36,15 +41,23 @@ class Profile : Fragment() {
         val textProfile = view.findViewById<TextView>(R.id.textView12)
         val textLogOut = view.findViewById<TextView>(R.id.textLogOut)
         val textHistoryTransaction = view.findViewById<TextView>(R.id.textHistoryTransaction)
+        val imageAvatar = view.findViewById<ImageButton>(R.id.imageViewAvatar)
+        val name = view.findViewById<TextView>(R.id.textName)
 
         val sharedPref = requireContext().getSharedPreferences("APP_PREFS", AppCompatActivity.MODE_PRIVATE)
         val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
-        val idUser = sharedPref.getString("ID_USER", "") ?: ""
 
         apiService.getUserByID().enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     currentUser = response.body()?.data
+
+                    Glide.with(imageAvatar.context)
+                        .load(currentUser?.avatar)
+                        .placeholder(R.drawable.load_error)
+                        .into(imageAvatar)
+
+                    name.text = currentUser?.nameuser
                 } else {
                     Log.e("Profile", "Lỗi lấy thông tin người dùng: ${response.code()}")
                     android.widget.Toast.makeText(requireContext(), "Lỗi lấy thông tin người dùng", android.widget.Toast.LENGTH_SHORT).show()
@@ -53,6 +66,7 @@ class Profile : Fragment() {
 
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 android.widget.Toast.makeText(requireContext(), "Lỗi kết nối: ${t.message}", android.widget.Toast.LENGTH_SHORT).show()
+                Log.e("Profile", "Lỗi kết nối: ${t.message}")
             }
         })
 
@@ -115,10 +129,14 @@ class Profile : Fragment() {
             apiService.logout(request).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     progressBar.visibility = View.VISIBLE
-                    val intent = android.content.Intent(requireContext(), com.example.resort_booking.signIn_layout.LoginActivity::class.java)
-                    intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    dialog.dismiss()
+                    val context = this@Profile.context
+                    if (context != null) {
+                        val intent = Intent(context, LoginActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        dialog.dismiss()
+                    }
+
                 }
 
                 override fun onFailure(call: Call<Void>, t: Throwable) {

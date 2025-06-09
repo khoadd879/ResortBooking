@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".MyApp"
@@ -84,10 +86,7 @@
         <activity android:name=".BookingDetailActivity" />
         <activity android:name=".AdminLayout.DetailReportActivity" />
         <activity android:name=".AdminLayout.ReportActivity" />
-
         <activity android:name=".AdminLayout.BookingRoomList" />
-
-        <activity android:name=".signIn_layout.GoogleLoginWebViewActivity" />
 
     </application>
 
