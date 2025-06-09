@@ -233,7 +233,12 @@ data class UserResponse(
 data class RoleUser(
     val name: String,
     val description: String,
-    val permissions: List<String> // Nếu permissions là [] thì vẫn hợp lệ
+    @Transient val permissions: List<Permission> = emptyList()
+)
+
+data class Permission(
+    val id: Int,
+    val name: String
 )
 
 

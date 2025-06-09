@@ -316,7 +316,6 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback, ReviewAdapt
         btnCancel.setOnClickListener {
             dialog.dismiss()
         }
-
         dialog.show()
     }
 

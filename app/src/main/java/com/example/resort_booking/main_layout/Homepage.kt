@@ -1,9 +1,13 @@
 package com.example.resort_booking.main_layout
 
+import android.Manifest
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +15,9 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -20,14 +27,14 @@ import com.example.resort_booking.ClassNDataCLass.HotelAdapter
 import com.example.resort_booking.ClassNDataCLass.HotelRecommendAdapter
 import com.example.resort_booking.HotelDetailActivity
 import com.example.resort_booking.R
-import data.FavoriteRequest
-import data.FavoriteResponse
-import data.FavouriteResponse
-import data.ListUserResponse
-import data.ResortResponse
+import com.google.android.gms.location.*
+import data.*
 import interfaceAPI.ApiService
-import retrofit2.*
-
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 class Homepage : Fragment() {
 
@@ -36,230 +43,269 @@ class Homepage : Fragment() {
     private lateinit var recyclerFavoriteResort: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var contentLayout: View
+    private lateinit var textCurrentLocation: TextView
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
+    private var currentLocation: Location? = null
 
-    private var pendingRequests = 0
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
+    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_homepage, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //Khởi tạo thành phần cho loading
+
         progressBar = view.findViewById(R.id.progressBar)
         contentLayout = view.findViewById(R.id.contentLayout)
+        textCurrentLocation = view.findViewById(R.id.textCurrentLocation)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        recyclerRecommendResort = view.findViewById(R.id.recyclerResortsRecommend)
         recyclerBestResort = view.findViewById(R.id.recyclerResortsBest)
+        recyclerRecommendResort = view.findViewById(R.id.recyclerResortsRecommend)
         recyclerFavoriteResort = view.findViewById(R.id.recyclerResortsFavorite)
 
         recyclerBestResort.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        recyclerRecommendResort.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        recyclerFavoriteResort.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        recyclerRecommendResort.layoutManager = LinearLayoutManager(requireContext())
+        recyclerFavoriteResort.layoutManager = LinearLayoutManager(requireContext())
 
-
-        val sharedPref = requireContext().getSharedPreferences("APP_PREFS", MODE_PRIVATE)
-        val userId = sharedPref.getString("ID_USER", null)
-
-        if (userId.isNullOrEmpty()) {
+        val userId = getUserId() ?: run {
             showToast("Chưa đăng nhập hoặc thiếu thông tin người dùng")
             return
         }
 
-        val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
-        refreshData(apiService, userId)
+        checkLocationPermission(userId)
 
-        val seeAll = view.findViewById<TextView>(R.id.textViewAll)
-        seeAll.setOnClickListener {
+        view.findViewById<TextView>(R.id.textViewAll).setOnClickListener {
             val intent = Intent(requireContext(), ResortUserActivity::class.java)
             intent.putExtra("ID_USER", userId)
             startActivity(intent)
         }
-
     }
-    //show progress bar
-    private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            progressBar.visibility = View.VISIBLE
-            contentLayout.visibility = View.GONE  // Ẩn layout
+
+    private fun getUserId(): String? {
+        return requireContext().getSharedPreferences("APP_PREFS", MODE_PRIVATE).getString("ID_USER", null)
+    }
+
+    private fun checkLocationPermission(userId: String) {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getCurrentLocation(userId)
         } else {
-            progressBar.visibility = View.GONE
-            contentLayout.visibility = View.VISIBLE   // Hiện layout
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
         }
     }
 
+    private fun getCurrentLocation(userId: String) {
 
 
-    override fun onResume() {
-        super.onResume()
-        val sharedPref = requireContext().getSharedPreferences("APP_PREFS", MODE_PRIVATE)
-        val userId = sharedPref.getString("ID_USER", null) ?: return
-        val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
-        refreshData(apiService, userId)
-    }
-
-    private fun refreshData(apiService: ApiService, userId: String) {
-        pendingRequests = 2
-        loadAvatar(apiService, userId)
-        fetchResortList(apiService, userId)
-        fetchFavouriteList(apiService, userId)
-    }
-
-    private fun showToast(message: String) {
-        if (isAdded) {
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        val locationRequest = LocationRequest.create().apply {
+            interval = 10000
+            fastestInterval = 5000
+            priority = Priority.PRIORITY_HIGH_ACCURACY
         }
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                currentLocation = result.lastLocation
+                currentLocation?.let {
+                    val addressText = getAddressFromLocation(it)
+                    textCurrentLocation.text = "$addressText"
+                    refreshDataWithLocation(userId, it)
+
+                    fusedLocationClient.removeLocationUpdates(this)
+                }
+            }
+        }
+
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) return
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
 
-    private fun fetchResortList(apiService: ApiService, userId: String) {
+    private fun refreshDataWithLocation(userId: String, location: Location) {
+        val apiService = com.example.resort_booking.ApiClient.create(requireContext().getSharedPreferences("APP_PREFS", MODE_PRIVATE))
         showLoading(true)
+
         apiService.getResortList(userId).enqueue(object : Callback<ResortResponse> {
             override fun onResponse(call: Call<ResortResponse>, response: Response<ResortResponse>) {
                 showLoading(false)
                 if (response.isSuccessful) {
-                    val resortList = response.body()?.data ?: emptyList()
-                    val top4Resorts = resortList.take(4)
+                    val resorts = response.body()?.data.orEmpty()
 
-                    recyclerBestResort.adapter = HotelAdapter(
-                        resortList = top4Resorts,
-                        onItemClick = { resort ->
-                            val intent = Intent(requireContext(), HotelDetailActivity::class.java)
-                            intent.putExtra("RESORT_ID", resort.idRs)
-                            startActivity(intent)
-                        },
-                        onFavoriteClick = { resort ->
+                    val resortsWithDistance = resorts.mapNotNull { resort ->
+                        val targetLoc = getLocationFromAddress(resort.location_rs)
+                        if (targetLoc != null) {
+                            val distanceKm = currentLocation?.distanceTo(targetLoc)?.div(1000)
+                            Pair(resort, distanceKm)
+                        } else null // Nếu không lấy được tọa độ thì bỏ qua resort đó
+                    }.sortedBy { it.second }
 
-                            val body = FavoriteRequest(resort.idRs, userId)
-                            apiService.createFavorite(body)
-                                .enqueue(object : Callback<FavoriteResponse> {
-                                    override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
 
-                                        if (response.isSuccessful) {
-                                            showToast("Đã thêm vào yêu thích")
-                                            refreshData(apiService, userId)
-                                        } else {
-                                            showToast("Thêm yêu thích thất bại: ${response.code()}")
-                                        }
-                                    }
+                    val topRated = resorts.sortedByDescending { it.star }.take(4)
 
-                                    override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
-                                            showLoading(false)
-                                        showToast("Lỗi mạng: ${t.message}")
-                                    }
-                                })
-                        }
-                    )
+                    recyclerBestResort.adapter = HotelAdapter(topRated, {
+                        startActivity(Intent(requireContext(), HotelDetailActivity::class.java).apply {
+                            putExtra("RESORT_ID", it.idRs)
+                        })
+                    }, { resort ->
+                        val body = FavoriteRequest(resort.idRs, userId)
+                        apiService.createFavorite(body).enqueue(object : Callback<FavoriteResponse> {
+                            override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
+                                if (response.isSuccessful) {
+                                    showToast("Đã thêm vào yêu thích")
+                                    refreshDataWithLocation(userId, location)
+                                } else showToast("Thêm yêu thích thất bại: ${response.code()}")
+                            }
+                            override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
+                                showLoading(false)
+                                showToast("Lỗi mạng: ${t.message}")
+                            }
+                        })
+                    })
 
-                    recyclerRecommendResort.adapter = HotelRecommendAdapter(top4Resorts) { resort ->
-                        val intent = Intent(requireContext(), HotelDetailActivity::class.java)
-                        intent.putExtra("RESORT_ID", resort.idRs)
-                        startActivity(intent)
+                    recyclerRecommendResort.adapter = HotelRecommendAdapter(resortsWithDistance.take(4).map { it.first }) {
+                        startActivity(Intent(requireContext(), HotelDetailActivity::class.java).apply {
+                            putExtra("RESORT_ID", it.idRs)
+                        })
                     }
-                } else {
-                    showToast("Lỗi response: ${response.code()}")
-                }
-
+                } else showToast("Lỗi response: ${response.code()}")
             }
 
             override fun onFailure(call: Call<ResortResponse>, t: Throwable) {
+                showLoading(false)
                 showToast("Lỗi khi kết nối server: ${t.message}")
-
             }
         })
+
+        fetchFavouriteList(apiService, userId)
+        loadAvatar(apiService, userId)
     }
 
     private fun fetchFavouriteList(apiService: ApiService, userId: String) {
         apiService.getListFavourite(userId).enqueue(object : Callback<FavouriteResponse> {
             override fun onResponse(call: Call<FavouriteResponse>, response: Response<FavouriteResponse>) {
                 if (response.isSuccessful) {
-                    val favouriteList = response.body()?.data?.take(4) ?: emptyList()
-
-                    recyclerFavoriteResort.adapter = FavouriteAdapter(
-                        favouriteList,
-                        onItemClick = { fav ->
-                            val intent = Intent(requireContext(), HotelDetailActivity::class.java)
-                            intent.putExtra("RESORT_ID", fav.resortId.toString())
-                            startActivity(intent)
-                        },
-                        onFavoriteClick = { fav ->
-
-                            apiService.deleteFavorite(userId, fav.resortId)
-                                .enqueue(object : Callback<Void> {
-                                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
-
-                                        if (response.isSuccessful) {
-                                            showToast("Đã xóa khỏi yêu thích")
-                                            fetchFavouriteList(apiService, userId)
-                                        } else {
-                                            showToast("Xóa yêu thích thất bại: ${response.code()}")
-                                        }
-                                    }
-
-                                    override fun onFailure(call: Call<Void>, t: Throwable) {
-
-                                        showToast("Lỗi khi kết nối server: ${t.message}")
-                                    }
-                                })
-                        }
-                    )
-                } else {
-                    showToast("Lỗi response: ${response.code()}")
-                }
-
+                    val favourites = response.body()?.data?.take(4).orEmpty()
+                    recyclerFavoriteResort.adapter = FavouriteAdapter(favourites, {
+                        startActivity(Intent(requireContext(), HotelDetailActivity::class.java).apply {
+                            putExtra("RESORT_ID", it.resortId.toString())
+                        })
+                    }, {
+                        apiService.deleteFavorite(userId, it.resortId).enqueue(object : Callback<Void> {
+                            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                if (response.isSuccessful) {
+                                    showToast("Đã xóa khỏi yêu thích")
+                                    fetchFavouriteList(apiService, userId)
+                                } else showToast("Xóa yêu thích thất bại: ${response.code()}")
+                            }
+                            override fun onFailure(call: Call<Void>, t: Throwable) {
+                                showToast("Lỗi khi kết nối server: ${t.message}")
+                            }
+                        })
+                    })
+                } else showToast("Lỗi response: ${response.code()}")
             }
 
             override fun onFailure(call: Call<FavouriteResponse>, t: Throwable) {
                 showToast("Lỗi khi kết nối server: ${t.message}")
-
             }
         })
     }
 
     private fun loadAvatar(apiService: ApiService, userId: String) {
         apiService.getListUser().enqueue(object : Callback<ListUserResponse> {
-            override fun onResponse(
-                call: Call<ListUserResponse?>,
-                response: Response<ListUserResponse?>
-            ) {
+            override fun onResponse(call: Call<ListUserResponse>, response: Response<ListUserResponse>) {
                 if (response.isSuccessful) {
-                    val listUser = response.body()?.data
-                    val user = listUser?.find { it.idUser == userId }
-
-                    val nameuser = view?.findViewById<TextView>(R.id.text_yourName)
-
-
-                    nameuser?.text = user?.nameuser
-
-                    if (user != null) {
-                        val avatarUrl = user.avatar
-                        if (!avatarUrl.isNullOrEmpty()) {
-                            val imageView = view?.findViewById<ImageView>(R.id.imageAvatar)
-                            Glide.with(requireContext())
-                                .load(avatarUrl)
-                                .error(R.drawable.load_error)
-                                .placeholder(R.drawable.load_error)
-                                .into(imageView!!)
-
-                        } else {
-                            showToast("Người dùng chưa có avatar.")
+                    val user = response.body()?.data?.find { it.idUser == userId }
+                    view?.findViewById<TextView>(R.id.text_yourName)?.text = user?.nameuser
+                    user?.avatar?.let {
+                        view?.findViewById<ImageView>(R.id.imageAvatar)?.let { imageView ->
+                            if (context != null && isAdded) {
+                                Glide.with(requireContext())
+                                    .load(it)
+                                    .error(R.drawable.load_error)
+                                    .placeholder(R.drawable.load_error)
+                                    .into(imageView)
+                            }
                         }
-                    } else {
-                        showToast("Không tìm thấy người dùng.")
                     }
-                } else {
-                    showToast("Lỗi phản hồi khi lấy danh sách user: ${response.code()}")
-                }
+                } else showToast("Lỗi phản hồi khi lấy danh sách user: ${response.code()}")
             }
 
-            override fun onFailure(call: Call<ListUserResponse?>, t: Throwable) {
+            override fun onFailure(call: Call<ListUserResponse>, t: Throwable) {
                 showToast("Lỗi kết nối khi lấy danh sách user: ${t.message}")
             }
         })
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        contentLayout.visibility = if (isLoading) View.GONE else View.VISIBLE
+    }
+
+    private fun showToast(message: String) {
+        if (isAdded) Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun Double.roundTo(decimals: Int): Double {
+        val factor = 10.0.pow(decimals)
+        return (this * factor).roundToInt() / factor
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            val userId = getUserId() ?: return
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation(userId)
+            } else {
+                showToast("Quyền truy cập vị trí bị từ chối")
+                refreshDataWithLocation(userId, Location("").apply {
+                    latitude = 10.762622
+                    longitude = 106.660172
+                })
+            }
+        }
+    }
+
+    private fun getLocationFromAddress(address: String): Location? {
+        return try {
+            val geocoder = Geocoder(requireContext())
+            val results = geocoder.getFromLocationName(address, 1)
+            if (results.isNullOrEmpty()) null else Location("").apply {
+                latitude = results[0].latitude
+                longitude = results[0].longitude
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun getAddressFromLocation(location: Location): String {
+        return try {
+            val geocoder = Geocoder(requireContext())
+            val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+            if (addresses.isNullOrEmpty()) {
+                "${location.latitude.roundTo(4)}, ${location.longitude.roundTo(4)}"
+            } else {
+                val address = addresses[0]
+                val addressLine = address.getAddressLine(0)
+                addressLine ?: "${location.latitude.roundTo(4)}, ${location.longitude.roundTo(4)}"
+            }
+        } catch (e: Exception) {
+            "${location.latitude.roundTo(4)}, ${location.longitude.roundTo(4)}"
+        }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        val userId = getUserId() ?: return
+        checkLocationPermission(userId)
     }
 }
