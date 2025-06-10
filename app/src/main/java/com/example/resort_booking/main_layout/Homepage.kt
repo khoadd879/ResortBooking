@@ -52,16 +52,24 @@ class Homepage : Fragment() {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_homepage, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize views
         progressBar = view.findViewById(R.id.progressBar)
         contentLayout = view.findViewById(R.id.contentLayout)
         textCurrentLocation = view.findViewById(R.id.textCurrentLocation)
+
+        // Show loading immediately and hide content
+        showLoading(true)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
@@ -75,16 +83,18 @@ class Homepage : Fragment() {
 
         val userId = getUserId() ?: run {
             showToast("Chưa đăng nhập hoặc thiếu thông tin người dùng")
+            showLoading(false)
             return
         }
 
-        checkLocationPermission(userId)
-
+        // Set up "View All" click listener
         view.findViewById<TextView>(R.id.textViewAll).setOnClickListener {
             val intent = Intent(requireContext(), ResortUserActivity::class.java)
             intent.putExtra("ID_USER", userId)
             startActivity(intent)
         }
+
+        checkLocationPermission(userId)
     }
 
     private fun getUserId(): String? {
@@ -92,16 +102,22 @@ class Homepage : Fragment() {
     }
 
     private fun checkLocationPermission(userId: String) {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             getCurrentLocation(userId)
         } else {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
         }
     }
 
     private fun getCurrentLocation(userId: String) {
-
-
         val locationRequest = LocationRequest.create().apply {
             interval = 10000
             fastestInterval = 5000
@@ -110,30 +126,39 @@ class Homepage : Fragment() {
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
+                if (!isAdded) return
+
                 currentLocation = result.lastLocation
                 currentLocation?.let {
                     val addressText = getAddressFromLocation(it)
-                    textCurrentLocation.text = "$addressText"
+                    textCurrentLocation.text = addressText
                     refreshDataWithLocation(userId, it)
-
                     fusedLocationClient.removeLocationUpdates(this)
                 }
             }
         }
 
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) return
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            showLoading(false)
+            return
+        }
 
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
 
     private fun refreshDataWithLocation(userId: String, location: Location) {
         val apiService = com.example.resort_booking.ApiClient.create(requireContext().getSharedPreferences("APP_PREFS", MODE_PRIVATE))
-        showLoading(true)
 
         apiService.getResortList(userId).enqueue(object : Callback<ResortResponse> {
             override fun onResponse(call: Call<ResortResponse>, response: Response<ResortResponse>) {
-                showLoading(false)
                 if (response.isSuccessful) {
                     val resorts = response.body()?.data.orEmpty()
 
@@ -142,9 +167,8 @@ class Homepage : Fragment() {
                         if (targetLoc != null) {
                             val distanceKm = currentLocation?.distanceTo(targetLoc)?.div(1000)
                             Pair(resort, distanceKm)
-                        } else null // Nếu không lấy được tọa độ thì bỏ qua resort đó
+                        } else null
                     }.sortedBy { it.second }
-
 
                     val topRated = resorts.sortedByDescending { it.star }.take(4)
 
@@ -155,14 +179,17 @@ class Homepage : Fragment() {
                     }, { resort ->
                         val body = FavoriteRequest(resort.idRs, userId)
                         apiService.createFavorite(body).enqueue(object : Callback<FavoriteResponse> {
-                            override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
+                            override fun onResponse(
+                                call: Call<FavoriteResponse>,
+                                response: Response<FavoriteResponse>
+                            ) {
                                 if (response.isSuccessful) {
                                     showToast("Đã thêm vào yêu thích")
                                     refreshDataWithLocation(userId, location)
                                 } else showToast("Thêm yêu thích thất bại: ${response.code()}")
                             }
+
                             override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
-                                showLoading(false)
                                 showToast("Lỗi mạng: ${t.message}")
                             }
                         })
@@ -173,7 +200,13 @@ class Homepage : Fragment() {
                             putExtra("RESORT_ID", it.idRs)
                         })
                     }
-                } else showToast("Lỗi response: ${response.code()}")
+
+                    fetchFavouriteList(apiService, userId)
+                    loadAvatar(apiService, userId)
+                } else {
+                    showToast("Lỗi response: ${response.code()}")
+                }
+                showLoading(false)
             }
 
             override fun onFailure(call: Call<ResortResponse>, t: Throwable) {
@@ -181,9 +214,6 @@ class Homepage : Fragment() {
                 showToast("Lỗi khi kết nối server: ${t.message}")
             }
         })
-
-        fetchFavouriteList(apiService, userId)
-        loadAvatar(apiService, userId)
     }
 
     private fun fetchFavouriteList(apiService: ApiService, userId: String) {
@@ -203,12 +233,15 @@ class Homepage : Fragment() {
                                     fetchFavouriteList(apiService, userId)
                                 } else showToast("Xóa yêu thích thất bại: ${response.code()}")
                             }
+
                             override fun onFailure(call: Call<Void>, t: Throwable) {
                                 showToast("Lỗi khi kết nối server: ${t.message}")
                             }
                         })
                     })
-                } else showToast("Lỗi response: ${response.code()}")
+                } else {
+                    showToast("Lỗi response: ${response.code()}")
+                }
             }
 
             override fun onFailure(call: Call<FavouriteResponse>, t: Throwable) {
@@ -234,7 +267,9 @@ class Homepage : Fragment() {
                             }
                         }
                     }
-                } else showToast("Lỗi phản hồi khi lấy danh sách user: ${response.code()}")
+                } else {
+                    showToast("Lỗi phản hồi khi lấy danh sách user: ${response.code()}")
+                }
             }
 
             override fun onFailure(call: Call<ListUserResponse>, t: Throwable) {
@@ -244,8 +279,13 @@ class Homepage : Fragment() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        contentLayout.visibility = if (isLoading) View.GONE else View.VISIBLE
+        if (isLoading) {
+            progressBar.visibility = View.VISIBLE
+            contentLayout.visibility = View.GONE
+        } else {
+            progressBar.visibility = View.GONE
+            contentLayout.visibility = View.VISIBLE
+        }
     }
 
     private fun showToast(message: String) {
@@ -257,7 +297,11 @@ class Homepage : Fragment() {
         return (this * factor).roundToInt() / factor
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             val userId = getUserId() ?: return
@@ -302,10 +346,18 @@ class Homepage : Fragment() {
         }
     }
 
-
     override fun onResume() {
         super.onResume()
         val userId = getUserId() ?: return
         checkLocationPermission(userId)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        try {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        } catch (e: Exception) {
+            // Ignore if callback wasn't registered
+        }
     }
 }
