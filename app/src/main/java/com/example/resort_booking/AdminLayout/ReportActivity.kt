@@ -160,8 +160,8 @@ class ReportActivity : AppCompatActivity() {
                     }
 
                     val dataSetRevenue = LineDataSet(entriesRevenue, "Tổng thu").apply {
-                        color = Color.BLUE
-                        valueTextColor = Color.BLUE
+                        color = Color.GREEN
+                        valueTextColor = Color.GREEN
                         circleRadius = 4f
                         setDrawValues(false)
                     }
@@ -174,8 +174,8 @@ class ReportActivity : AppCompatActivity() {
                     }
 
                     val dataSetProfit = LineDataSet(entriesProfit, "Lợi nhuận").apply {
-                        color = Color.GREEN
-                        valueTextColor = Color.GREEN
+                        color = Color.BLUE
+                        valueTextColor = Color.BLUE
                         circleRadius = 4f
                         setDrawValues(false)
                     }

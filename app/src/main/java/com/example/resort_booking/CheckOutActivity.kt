@@ -1,5 +1,6 @@
 package com.example.resort_booking
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.resort_booking.main_layout.Explore
+import com.example.resort_booking.signIn_layout.BookingRoomActivity
 import com.google.gson.Gson
 import data.CreateCheckOutRequest
 import data.CreateCheckOutResponse
@@ -145,6 +148,8 @@ class CheckOutActivity: AppCompatActivity() {
             ) {
                 if(response.isSuccessful){
                     Toast.makeText(this@CheckOutActivity, "Thanh toán thành công", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@CheckOutActivity, Explore::class.java)
+                    startActivity(intent)
                 }else{
                     Log.e("CheckOutActivity", "Error: ${response.code()}")
                     Toast.makeText(this@CheckOutActivity, "Thanh toán thất bại", Toast.LENGTH_SHORT).show()

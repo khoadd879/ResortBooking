@@ -38,6 +38,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
 import java.math.BigDecimal
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.Locale
 
 class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -58,8 +60,8 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var checkoutday: TextView
     private lateinit var total: TextView
     private lateinit var serviceRecyclerView: RecyclerView
-    private lateinit var statusSpinner: Spinner // <<< THÊM: Khai báo Spinner ở cấp lớp
-    private var currentBookingStatus: String? = null // <<< THAY ĐỔI: Đổi tên để rõ ràng hơn
+    private lateinit var statusSpinner: Spinner
+    private var currentBookingStatus: String? = null
 
     // Activity Result Launcher for getting result from ServiceActivity
     private val updateServiceLauncher = registerForActivityResult(
@@ -115,18 +117,19 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         checkoutday = findViewById(R.id.DateBookingCheckout)
         total = findViewById(R.id.total)
         statusSpinner = findViewById(R.id.statusOption)
-        val linearStatus = findViewById<View>(R.id.linearStatus)
 
+        // === YÊU CẦU 1: VÔ HIỆU HÓA SPINNER CHO ROLE_USER ===
+        // Logic này đã có và hoạt động đúng.
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val role = sharedPref.getString("ROLE", "")
         if (role?.contains("ROLE_USER") == true) {
-            linearStatus.visibility = View.GONE
+            statusSpinner.isEnabled = false // Spinner sẽ không thể click để chọn
         }
 
         val options = listOf("Chờ xác nhận", "Đã xác nhận", "Hủy")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, options)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        statusSpinner.adapter = adapter // <<< THAY ĐỔI: Sử dụng biến lớp
+        statusSpinner.adapter = adapter
 
         btnEdit.visibility = View.GONE
         btnDelete.visibility = View.GONE
@@ -147,7 +150,6 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                     val bookingRoomDetail = response.body()!!.data!!
 
                     tvRoomName.text = bookingRoomDetail.roomResponse.name_room
-                    tvPrice.text = bookingRoomDetail.roomResponse.price.toString()
                     tvTyperoom.text = bookingRoomDetail.roomResponse.type_room
                     Glide.with(imageRoom.context)
                         .load(bookingRoomDetail.roomResponse.image)
@@ -156,14 +158,33 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                         .into(imageRoom)
 
                     showAddressOnMap(bookingRoomDetail.resortResponse.location_rs)
-                    checkinday.text = bookingRoomDetail.checkinday
-                    checkoutday.text = bookingRoomDetail.checkoutday
-                    total.text = bookingRoomDetail.total_amount.toString()
                     idResort = bookingRoomDetail.idResort
 
-                    currentBookingStatus = bookingRoomDetail.status ?: "PENDING" // Lấy status hiện tại
+                    // === BẮT ĐẦU SỬA ĐỔI ===
+                    // YÊU CẦU 2: ĐỊNH DẠNG NGÀY THÁNG
+                    checkinday.text = formatDateString(bookingRoomDetail.checkinday)
+                    checkoutday.text = formatDateString(bookingRoomDetail.checkoutday)
 
-                    // CORE FIX: Filter out services with null/blank IDs and map them
+                    // YÊU CẦU 3: ĐỊNH DẠNG TIỀN TỆ
+                    tvPrice.text = formatCurrency(bookingRoomDetail.roomResponse.price)
+                    total.text = formatCurrency(bookingRoomDetail.total_amount)
+                    // === KẾT THÚC SỬA ĐỔI ===
+
+                    // Cập nhật trạng thái cho Spinner
+                    currentBookingStatus = bookingRoomDetail.status ?: "Chờ Xác Nhận"
+                    val displayStatus = when (currentBookingStatus) {
+                        "Đã Xác Nhận" -> "Đã xác nhận"
+                        "Hủy" -> "Hủy"
+                        "Chờ Xác Nhận", "PENDING" -> "Chờ xác nhận"
+                        else -> "Chờ xác nhận"
+                    }
+                    val adapter = statusSpinner.adapter as ArrayAdapter<String>
+                    val spinnerPosition = adapter.getPosition(displayStatus)
+                    if (spinnerPosition >= 0) {
+                        statusSpinner.setSelection(spinnerPosition)
+                    }
+
+                    // Xử lý services
                     val validServices = bookingRoomDetail.services
                         .filter { !it.idService.isNullOrBlank() }
                         .map { sbRoom ->
@@ -175,12 +196,10 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                                 price = BigDecimal.ZERO
                             )
                         }
-
                     val invalidServiceCount = bookingRoomDetail.services.size - validServices.size
                     if (invalidServiceCount > 0) {
                         Log.w("BookingDetailActivity", "$invalidServiceCount dịch vụ từ API đã bị loại bỏ do thiếu ID.")
                     }
-
                     selectedServices.clear()
                     selectedServices.addAll(validServices)
                     serviceAdapter.notifyDataSetChanged()
@@ -197,6 +216,36 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
     }
+
+    // === HÀM HỖ TRỢ MỚI ===
+    /**
+     * YÊU CẦU 2: Định dạng chuỗi ngày tháng từ "yyyy-MM-dd" sang "dd/MM/yyyy"
+     */
+    private fun formatDateString(inputDateStr: String?): String {
+        if (inputDateStr.isNullOrEmpty()) return ""
+        // Giả sử định dạng ngày từ API là "yyyy-MM-dd"
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return try {
+            val date = inputFormat.parse(inputDateStr)
+            date?.let { outputFormat.format(it) } ?: inputDateStr
+        } catch (e: Exception) {
+            Log.e("BookingDetailActivity", "Lỗi định dạng ngày: $inputDateStr", e)
+            inputDateStr // Trả về chuỗi gốc nếu có lỗi để tránh crash
+        }
+    }
+
+    /**
+     * YÊU CẦU 3: Định dạng số thành tiền tệ Việt Nam (vd: 1.500.000 đ)
+     */
+    private fun formatCurrency(amount: BigDecimal?): String {
+        if (amount == null) return "0 đ"
+        val localeVN = Locale("vi", "VN")
+        val currencyFormatter = NumberFormat.getCurrencyInstance(localeVN)
+        // Mặc định formatter sẽ dùng ký hiệu "₫". Thay thế bằng "đ" theo yêu cầu.
+        return currencyFormatter.format(amount).replace("₫", "đ").trim()
+    }
+    // === KẾT THÚC HÀM HỖ TRỢ ===
 
     private fun setupClickListeners(apiService: ApiService) {
         findViewById<TextView>(R.id.btnUpdateService).setOnClickListener {
@@ -226,22 +275,20 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             else -> currentBookingStatus ?: "Chờ xác nhận"
         }
 
-
         val updateRequest = UpdateBookingRoom(
             idBr = bookingId!!,
+            // Khi gửi đi, bạn có thể muốn gửi định dạng gốc yyyy-MM-dd
+            // Nếu API chấp nhận dd/MM/yyyy thì không cần thay đổi
             checkinday = checkinday.text.toString(),
             checkoutday = checkoutday.text.toString(),
             services = serviceRequests,
             status = apiStatus
         )
 
-
-
         apiService.updateBookingRoom(bookingId!!, updateRequest).enqueue(object : Callback<CreateBookingRoomResponse> {
             override fun onResponse(call: Call<CreateBookingRoomResponse>, response: Response<CreateBookingRoomResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@BookingDetailActivity, "Cập nhật booking thành công", Toast.LENGTH_SHORT).show()
-                    // Tải lại chi tiết để hiển thị dữ liệu mới nhất
                     fetchBookingDetails(apiService)
                 } else {
                     Log.e("BookingDetailActivity", "Lỗi khi cập nhật: ${response.code()} - ${response.message()}")
