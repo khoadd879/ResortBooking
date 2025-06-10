@@ -50,6 +50,12 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     private var idResort: String? = null
     private var bookingId: String? = null
 
+    // === THAY ĐỔI 1: KHAI BÁO BIẾN LƯU TRỮ NGÀY GỐC ===
+    // Lưu trữ ngày check-in và check-out gốc từ API (định dạng yyyy-MM-dd)
+    private var originalCheckInDate: String? = null
+    private var originalCheckOutDate: String? = null
+    // === KẾT THÚC THAY ĐỔI 1 ===
+
     // UI Elements
     private lateinit var tvRoomName: TextView
     private lateinit var tvPrice: TextView
@@ -73,6 +79,8 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                 selectedServices.clear()
                 selectedServices.addAll(updatedServices)
                 serviceAdapter.notifyDataSetChanged()
+                // NOTE: Sau khi cập nhật dịch vụ, bạn có thể muốn tính toán lại tổng tiền và hiển thị
+                // Tuy nhiên, logic này nên được thực hiện sau khi nhấn nút "Cập nhật" và nhận phản hồi từ server
             }
         }
     }
@@ -100,7 +108,6 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         val apiService = ApiClient.create(sharedPref)
 
         fetchBookingDetails(apiService)
-
         setupClickListeners(apiService)
     }
 
@@ -118,12 +125,10 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         total = findViewById(R.id.total)
         statusSpinner = findViewById(R.id.statusOption)
 
-        // === YÊU CẦU 1: VÔ HIỆU HÓA SPINNER CHO ROLE_USER ===
-        // Logic này đã có và hoạt động đúng.
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val role = sharedPref.getString("ROLE", "")
         if (role?.contains("ROLE_USER") == true) {
-            statusSpinner.isEnabled = false // Spinner sẽ không thể click để chọn
+            statusSpinner.isEnabled = false
         }
 
         val options = listOf("Chờ xác nhận", "Đã xác nhận", "Hủy")
@@ -160,15 +165,19 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                     showAddressOnMap(bookingRoomDetail.resortResponse.location_rs)
                     idResort = bookingRoomDetail.idResort
 
-                    // === BẮT ĐẦU SỬA ĐỔI ===
-                    // YÊU CẦU 2: ĐỊNH DẠNG NGÀY THÁNG
-                    checkinday.text = formatDateString(bookingRoomDetail.checkinday)
-                    checkoutday.text = formatDateString(bookingRoomDetail.checkoutday)
+                    // === THAY ĐỔI 2: LƯU LẠI NGÀY GỐC VÀ FORMAT ĐỂ HIỂN THỊ ===
+                    // 1. Lưu lại giá trị ngày gốc từ API
+                    originalCheckInDate = bookingRoomDetail.checkinday
+                    originalCheckOutDate = bookingRoomDetail.checkoutday
 
-                    // YÊU CẦU 3: ĐỊNH DẠNG TIỀN TỆ
+                    // 2. Format ngày để hiển thị cho người dùng (dd/MM/yyyy)
+                    checkinday.text = formatDateString(originalCheckInDate)
+                    checkoutday.text = formatDateString(originalCheckOutDate)
+                    // === KẾT THÚC THAY ĐỔI 2 ===
+
+                    // Định dạng tiền tệ
                     tvPrice.text = formatCurrency(bookingRoomDetail.roomResponse.price)
                     total.text = formatCurrency(bookingRoomDetail.total_amount)
-                    // === KẾT THÚC SỬA ĐỔI ===
 
                     // Cập nhật trạng thái cho Spinner
                     currentBookingStatus = bookingRoomDetail.status ?: "Chờ Xác Nhận"
@@ -193,7 +202,7 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                                 name = sbRoom.nameService ?: "Không rõ",
                                 quantity = sbRoom.quantity ?: 0,
                                 describe_service = "",
-                                price = BigDecimal.ZERO
+                                price = BigDecimal.ZERO // Giá được tính ở tổng, không cần ở đây
                             )
                         }
                     val invalidServiceCount = bookingRoomDetail.services.size - validServices.size
@@ -217,35 +226,31 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         })
     }
 
-    // === HÀM HỖ TRỢ MỚI ===
     /**
-     * YÊU CẦU 2: Định dạng chuỗi ngày tháng từ "yyyy-MM-dd" sang "dd/MM/yyyy"
+     * Định dạng chuỗi ngày tháng từ "yyyy-MM-dd" sang "dd/MM/yyyy" để hiển thị
      */
     private fun formatDateString(inputDateStr: String?): String {
         if (inputDateStr.isNullOrEmpty()) return ""
-        // Giả sử định dạng ngày từ API là "yyyy-MM-dd"
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val date = inputFormat.parse(inputDateStr)
             date?.let { outputFormat.format(it) } ?: inputDateStr
         } catch (e: Exception) {
             Log.e("BookingDetailActivity", "Lỗi định dạng ngày: $inputDateStr", e)
-            inputDateStr // Trả về chuỗi gốc nếu có lỗi để tránh crash
+            inputDateStr // Trả về chuỗi gốc nếu có lỗi
         }
     }
 
     /**
-     * YÊU CẦU 3: Định dạng số thành tiền tệ Việt Nam (vd: 1.500.000 đ)
+     * Định dạng số thành tiền tệ Việt Nam (vd: 1.500.000 đ)
      */
     private fun formatCurrency(amount: BigDecimal?): String {
         if (amount == null) return "0 đ"
         val localeVN = Locale("vi", "VN")
         val currencyFormatter = NumberFormat.getCurrencyInstance(localeVN)
-        // Mặc định formatter sẽ dùng ký hiệu "₫". Thay thế bằng "đ" theo yêu cầu.
         return currencyFormatter.format(amount).replace("₫", "đ").trim()
     }
-    // === KẾT THÚC HÀM HỖ TRỢ ===
 
     private fun setupClickListeners(apiService: ApiService) {
         findViewById<TextView>(R.id.btnUpdateService).setOnClickListener {
@@ -267,28 +272,31 @@ class BookingDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         val selectedStatusVietnamese = statusSpinner.selectedItem.toString()
-
         val apiStatus = when (selectedStatusVietnamese) {
             "Chờ xác nhận" -> "Chờ Xác Nhận"
             "Đã xác nhận" -> "Đã Xác Nhận"
             "Hủy" -> "Hủy"
-            else -> currentBookingStatus ?: "Chờ xác nhận"
+            else -> currentBookingStatus ?: "Chờ Xác Nhận"
         }
 
+        // === THAY ĐỔI 3: SỬ DỤNG NGÀY GỐC ĐỂ GỬI LÊN API ===
+        // Sử dụng các biến đã lưu trữ ngày gốc (định dạng yyyy-MM-dd)
+        // để đảm bảo API nhận được định dạng đúng.
+        // Sử dụng toán tử elvis (?:) để tránh lỗi NullPointerException nếu giá trị là null.
         val updateRequest = UpdateBookingRoom(
             idBr = bookingId!!,
-            // Khi gửi đi, bạn có thể muốn gửi định dạng gốc yyyy-MM-dd
-            // Nếu API chấp nhận dd/MM/yyyy thì không cần thay đổi
-            checkinday = checkinday.text.toString(),
-            checkoutday = checkoutday.text.toString(),
+            checkinday = originalCheckInDate ?: "",
+            checkoutday = originalCheckOutDate ?: "",
             services = serviceRequests,
             status = apiStatus
         )
+        // === KẾT THÚC THAY ĐỔI 3 ===
 
         apiService.updateBookingRoom(bookingId!!, updateRequest).enqueue(object : Callback<CreateBookingRoomResponse> {
             override fun onResponse(call: Call<CreateBookingRoomResponse>, response: Response<CreateBookingRoomResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@BookingDetailActivity, "Cập nhật booking thành công", Toast.LENGTH_SHORT).show()
+                    // Sau khi cập nhật thành công, gọi lại fetchBookingDetails để làm mới toàn bộ dữ liệu
                     fetchBookingDetails(apiService)
                 } else {
                     Log.e("BookingDetailActivity", "Lỗi khi cập nhật: ${response.code()} - ${response.message()}")

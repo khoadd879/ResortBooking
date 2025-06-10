@@ -27,6 +27,7 @@ class verificationCodeActivity : AppCompatActivity() {
     private lateinit var textCountDown: TextView
     private lateinit var resendOTPEditText: TextView
     private lateinit var userEmail: String
+    private lateinit var countDownTimer: CountDownTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +72,7 @@ class verificationCodeActivity : AppCompatActivity() {
     }
 
     private fun startOTPTimer() {
-        object : CountDownTimer(120000, 1000) {
+        countDownTimer = object : CountDownTimer(120000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val seconds = millisUntilFinished / 1000
                 textCountDown.text = "$seconds s"
@@ -81,7 +82,7 @@ class verificationCodeActivity : AppCompatActivity() {
                 textCountDown.text = "0 s"
                 sendOTP(userEmail)
                 Toast.makeText(this@verificationCodeActivity, "Đã tự động gửi lại OTP", Toast.LENGTH_SHORT).show()
-                startOTPTimer()
+                startOTPTimer() // This creates a new timer - you might want to remove this
             }
         }.start()
     }
@@ -120,14 +121,15 @@ class verificationCodeActivity : AppCompatActivity() {
         apiService.verifyOTP(otp, email).enqueue(object : Callback<VerifyOTPResponse>  {
             override fun onResponse(call: Call<VerifyOTPResponse>, response: Response<VerifyOTPResponse>) {
                 if (response.isSuccessful) {
+                    // Cancel the timer before proceeding
+                    if (::countDownTimer.isInitialized) {
+                        countDownTimer.cancel()
+                    }
+
                     val intent = Intent(this@verificationCodeActivity, ChangePasswordActivity::class.java)
-                    intent.putExtra("email", userEmail)  // Truyền lại email
+                    intent.putExtra("email", userEmail)
                     startActivity(intent)
-                    Toast.makeText(this@verificationCodeActivity, "Xác thực OTP thành công", Toast.LENGTH_SHORT).show()
-
-                    startActivity(Intent(this@verificationCodeActivity, ChangePasswordActivity::class.java))
                     finish()
-
                 } else {
                     Toast.makeText(this@verificationCodeActivity, "OTP không đúng hoặc đã hết hạn", Toast.LENGTH_SHORT).show()
                 }
