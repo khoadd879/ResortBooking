@@ -223,6 +223,13 @@ class UpdateUserActivity : AppCompatActivity() {
 
         val imagePart: MultipartBody.Part? = selectedImageUri?.let {
             prepareFilePart("file", it)
+        } ?: run {
+            // Nếu không có ảnh mới chọn, vẫn giữ ảnh cũ
+            if (!avatarUrl.isNullOrEmpty()) {
+                prepareFilePartFromUrl(avatarUrl)
+            } else {
+                null
+            }
         }
 
         val resortJson = Gson().toJson(requestUser)
@@ -231,13 +238,18 @@ class UpdateUserActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
 
-        apiService.updateUser(idUser, resortRequestBody, imagePart?: null).enqueue(object :
+        apiService.updateUser(idUser, resortRequestBody, imagePart).enqueue(object :
             retrofit2.Callback<CreateUserResponse> {
             override fun onResponse(
                 call: Call<CreateUserResponse?>,
                 response: Response<CreateUserResponse?>
             ) {
                 if (response.isSuccessful) {
+                    // Cập nhật ảnh mới nếu có
+                    selectedImageUri?.let {
+                        imgAvatar.setImageURI(it)
+                    }
+
                     Toast.makeText(this@UpdateUserActivity, "Cập nhật thành công", Toast.LENGTH_SHORT).show()
                     finish()
                 } else {

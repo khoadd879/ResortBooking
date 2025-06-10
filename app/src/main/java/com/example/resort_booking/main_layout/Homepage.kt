@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.resort_booking.AdminLayout.ResortUserActivity
@@ -33,6 +34,8 @@ import interfaceAPI.ApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -47,6 +50,13 @@ class Homepage : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private var currentLocation: Location? = null
+    //start Declare variables for auto-scrolling management
+    private var timer: Timer? = null
+    private var timerTask: TimerTask? = null
+    private var currentPosition: Int = Integer.MAX_VALUE / 2
+    private lateinit var layoutManager: LinearLayoutManager
+    private var originalResortList: List<Resort> = emptyList()
+    //end Declare variables for auto-scrolling management
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -66,20 +76,44 @@ class Homepage : Fragment() {
         // Initialize views
         progressBar = view.findViewById(R.id.progressBar)
         contentLayout = view.findViewById(R.id.contentLayout)
-        textCurrentLocation = view.findViewById(R.id.textCurrentLocation)
+        textCurrentLocation = view.findViewById(R.id.positionHomePage)
 
         // Show loading immediately and hide content
         showLoading(true)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
+        //start Set up layout manager and scroll listener for recyclerBestResort
         recyclerBestResort = view.findViewById(R.id.recyclerResortsBest)
         recyclerRecommendResort = view.findViewById(R.id.recyclerResortsRecommend)
         recyclerFavoriteResort = view.findViewById(R.id.recyclerResortsFavorite)
 
-        recyclerBestResort.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        recyclerBestResort.layoutManager = layoutManager
         recyclerRecommendResort.layoutManager = LinearLayoutManager(requireContext())
         recyclerFavoriteResort.layoutManager = LinearLayoutManager(requireContext())
+
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(recyclerBestResort)
+
+        recyclerBestResort.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                updateItemScale()
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                when (newState) {
+                    RecyclerView.SCROLL_STATE_DRAGGING -> stopAutoScrollBanner()
+                    RecyclerView.SCROLL_STATE_IDLE -> {
+                        currentPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+                        runAutoScrollBanner()
+                    }
+                }
+            }
+        })
+        //end Set up layout manager and scroll listener for recyclerBestResort
 
         val userId = getUserId() ?: run {
             showToast("Chưa đăng nhập hoặc thiếu thông tin người dùng")
@@ -96,6 +130,39 @@ class Homepage : Fragment() {
 
         checkLocationPermission(userId)
     }
+
+    //start Stop auto-scrolling timer and update current position
+    private fun stopAutoScrollBanner() {
+        timerTask?.cancel()
+        timer?.cancel()
+        timer = null
+        timerTask = null
+        currentPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+    }
+    //end Stop auto-scrolling timer and update current position
+
+    //start Start auto-scrolling timer to scroll recyclerBestResort every 4 seconds
+    private fun runAutoScrollBanner() {
+        if (timer == null && timerTask == null && originalResortList.isNotEmpty()) {
+            timer = Timer()
+            timerTask = object : TimerTask() {
+                override fun run() {
+                    activity?.runOnUiThread {
+                        if (currentPosition >= Integer.MAX_VALUE - 1) {
+                            currentPosition = Integer.MAX_VALUE / 2
+                            recyclerBestResort.scrollToPosition(currentPosition)
+                            recyclerBestResort.smoothScrollBy(5, 0) // Small nudge to trigger snap
+                        } else {
+                            currentPosition++
+                            recyclerBestResort.smoothScrollToPosition(currentPosition)
+                        }
+                    }
+                }
+            }
+            timer?.schedule(timerTask, 4000, 4000) // Scroll every 4 seconds
+        }
+    }
+    //end Start auto-scrolling timer to scroll recyclerBestResort every 4 seconds
 
     private fun getUserId(): String? {
         return requireContext().getSharedPreferences("APP_PREFS", MODE_PRIVATE).getString("ID_USER", null)
@@ -172,34 +239,51 @@ class Homepage : Fragment() {
 
                     val topRated = resorts.sortedByDescending { it.star }.take(4)
 
-                    recyclerBestResort.adapter = HotelAdapter(topRated, {
-                        startActivity(Intent(requireContext(), HotelDetailActivity::class.java).apply {
-                            putExtra("RESORT_ID", it.idRs)
-                        })
-                    }, { resort ->
-                        val body = FavoriteRequest(resort.idRs, userId)
-                        apiService.createFavorite(body).enqueue(object : Callback<FavoriteResponse> {
-                            override fun onResponse(
-                                call: Call<FavoriteResponse>,
-                                response: Response<FavoriteResponse>
-                            ) {
-                                if (response.isSuccessful) {
-                                    showToast("Đã thêm vào yêu thích")
-                                    refreshDataWithLocation(userId, location)
-                                } else showToast("Thêm yêu thích thất bại: ${response.code()}")
-                            }
+                    recyclerBestResort.adapter = HotelAdapter(
+                        topRated,
+                        {
+                            startActivity(Intent(requireContext(), HotelDetailActivity::class.java).apply {
+                                putExtra("RESORT_ID", it.idRs)
+                            })
+                        },
+                        { resort ->
+                            val body = FavoriteRequest(resort.idRs, userId)
+                            apiService.createFavorite(body).enqueue(object : Callback<FavoriteResponse> {
+                                override fun onResponse(
+                                    call: Call<FavoriteResponse>,
+                                    response: Response<FavoriteResponse>
+                                ) {
+                                    if (response.isSuccessful) {
+                                        showToast("Đã thêm vào yêu thích")
+                                        refreshDataWithLocation(userId, location)
+                                    } else showToast("Thêm yêu thích thất bại: ${response.code()}")
+                                }
 
-                            override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
-                                showToast("Lỗi mạng: ${t.message}")
-                            }
-                        })
-                    })
+                                override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
+                                    showToast("Lỗi mạng: ${t.message}")
+                                }
+                            })
+                        }
+                    )
+
+                    //start Set initial scroll position and trigger snap for centering
+                    recyclerBestResort.post {
+                        recyclerBestResort.scrollToPosition(currentPosition)
+                        recyclerBestResort.smoothScrollBy(5, 0)
+                        updateItemScale()
+                    }
+                    //end Set initial scroll position and trigger snap for centering
 
                     recyclerRecommendResort.adapter = HotelRecommendAdapter(resortsWithDistance.take(4).map { it.first }) {
                         startActivity(Intent(requireContext(), HotelDetailActivity::class.java).apply {
                             putExtra("RESORT_ID", it.idRs)
                         })
                     }
+
+                    //start Start auto-scrolling after data is loaded
+                    originalResortList = topRated // Ensure originalResortList is set
+                    runAutoScrollBanner()
+                    //end Start auto-scrolling after data is loaded
 
                     fetchFavouriteList(apiService, userId)
                     loadAvatar(apiService, userId)
@@ -346,12 +430,32 @@ class Homepage : Fragment() {
         }
     }
 
+    private fun updateItemScale() {
+        val layoutManager = recyclerBestResort.layoutManager as? LinearLayoutManager ?: return
+        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+        val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
+
+        for (i in firstVisiblePosition..lastVisiblePosition) {
+            val view = layoutManager.findViewByPosition(i) ?: continue
+            val centerX = recyclerBestResort.width / 2f
+            val itemCenterX = (view.left + view.right) / 2f
+            val distanceFromCenter = kotlin.math.abs(centerX - itemCenterX)
+            val scale = 1f - (distanceFromCenter / centerX) * 0.2f
+            view.scaleX = scale.coerceIn(0.8f, 1.2f) // Phóng to tối đa 1.2x
+            view.scaleY = scale.coerceIn(0.8f, 1.2f)
+        }
+    }
+
+    //start Resume auto-scrolling when fragment becomes visible
     override fun onResume() {
         super.onResume()
         val userId = getUserId() ?: return
         checkLocationPermission(userId)
+        runAutoScrollBanner()
     }
+    //end Resume auto-scrolling when fragment becomes visible
 
+    //start Stop auto-scrolling when fragment is paused
     override fun onPause() {
         super.onPause()
         try {
@@ -359,5 +463,7 @@ class Homepage : Fragment() {
         } catch (e: Exception) {
             // Ignore if callback wasn't registered
         }
+        stopAutoScrollBanner()
     }
+    //end Stop auto-scrolling when fragment is paused
 }

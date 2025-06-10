@@ -17,6 +17,22 @@ class HotelAdapter(
     private val onFavoriteClick: (Resort) -> Unit
 ) : RecyclerView.Adapter<HotelAdapter.HotelViewHolder>() {
 
+    //start Enable infinite scrolling by returning large item count
+    override fun getItemCount(): Int = if (resortList.isEmpty()) 0 else Integer.MAX_VALUE
+    //end Enable infinite scrolling by returning large item count
+
+    //start Bind data using modulo to cycle through resortList for infinite scrolling
+    override fun onBindViewHolder(holder: HotelViewHolder, position: Int) {
+        holder.bind(resortList[position % resortList.size]) // Use modulo for infinite loop
+    }
+    //end Bind data using modulo to cycle through resortList for infinite scrolling
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HotelViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_hotel_history, parent, false)
+        return HotelViewHolder(view)
+    }
+
     inner class HotelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvResortName: TextView = itemView.findViewById(R.id.tvResortName)
         private val tvLocation: TextView = itemView.findViewById(R.id.tvLocation)
@@ -50,16 +66,4 @@ class HotelAdapter(
             }
         }
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HotelViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_hotel_history, parent, false)
-        return HotelViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: HotelViewHolder, position: Int) {
-        holder.bind(resortList[position])
-    }
-
-    override fun getItemCount(): Int = resortList.size
 }
