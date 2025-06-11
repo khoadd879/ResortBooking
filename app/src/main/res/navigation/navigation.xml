@@ -25,11 +25,11 @@
         android:name="com.example.resort_booking.main_layout.Profile"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
-    <fragment
+    <activity
         android:id="@+id/reportFragment"
-        android:name="com.example.resort_booking.AdminLayout.ReportFragment"
+        android:name="com.example.resort_booking.AdminLayout.ReportActivity"
         android:label="fragment_report"
-        tools:layout="@layout/fragment_report" />
+        tools:layout="@layout/activity_report" />
     <fragment
         android:id="@+id/managementFragment"
         android:name="com.example.resort_booking.AdminLayout.ManagementFragment"

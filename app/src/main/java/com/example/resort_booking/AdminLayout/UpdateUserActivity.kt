@@ -155,7 +155,13 @@ class UpdateUserActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
             selectedImageUri = data.data
-            findViewById<ImageView>(R.id.imgAvatar).setImageURI(selectedImageUri)
+            selectedImageUri?.let {
+                Glide.with(this)
+                    .load(it)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.load_error)
+                    .into(findViewById(R.id.imgAvatar))
+            }
         }
     }
 
