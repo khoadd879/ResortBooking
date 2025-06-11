@@ -97,6 +97,14 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
     </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="#0000FF"
+        android:visibility="gone"/>
+
 
     <!-- RecyclerView -->
     <ScrollView

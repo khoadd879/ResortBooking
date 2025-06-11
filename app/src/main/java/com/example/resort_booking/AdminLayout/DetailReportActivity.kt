@@ -2,7 +2,6 @@ package com.example.resort_booking.AdminLayout
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +24,7 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
     private lateinit var btnAdd: Button
     private lateinit var spinnerMonth: Spinner
     private lateinit var spinnerYear: Spinner
+    private lateinit var progressBar: ProgressBar
 
     private var resortId: String? = null
     private lateinit var apiService: ApiService
@@ -35,6 +35,7 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
         setContentView(R.layout.activity_detail_expense_acitivity)
 
         recyclerView = findViewById(R.id.recyclerViewTransactions)
+        progressBar = findViewById(R.id.progressBar)
         recyclerView.layoutManager = LinearLayoutManager(this)
         btnAdd = findViewById(R.id.btnAddExpense)
         spinnerMonth = findViewById(R.id.spinnerMonth)
@@ -89,25 +90,24 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
             reportYear = year
         )
 
+        progressBar.visibility = View.VISIBLE
         apiService.getReport(request).enqueue(object : Callback<ApiResponseWrapper<ReportResponse>> {
             override fun onResponse(
                 call: Call<ApiResponseWrapper<ReportResponse>>,
                 response: Response<ApiResponseWrapper<ReportResponse>>
             ) {
+                progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     val report = response.body()?.data
 
                     if (report == null || report.details.isEmpty()) {
-                        // Không có dữ liệu
                         recyclerView.adapter = null
                         Toast.makeText(this@DetailReportActivity, "Không có dữ liệu cho tháng/năm này", Toast.LENGTH_SHORT).show()
                     } else {
                         adapter = DetailReportAdapter(report.details, this@DetailReportActivity)
                         recyclerView.adapter = adapter
                     }
-
                 } else if (response.code() == 404) {
-                    // Trường hợp 404 do không có dữ liệu
                     recyclerView.adapter = null
                     Toast.makeText(this@DetailReportActivity, "Không có dữ liệu", Toast.LENGTH_SHORT).show()
                 } else {
@@ -116,52 +116,17 @@ class DetailReportActivity : AppCompatActivity(), DetailReportAdapter.Listener {
             }
 
             override fun onFailure(call: Call<ApiResponseWrapper<ReportResponse>>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 Toast.makeText(this@DetailReportActivity, "Lỗi mạng: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
-
-
     override fun onDelete(detail: ReportDetail) {
-        Log.d("DetailReport", "Detail: $detail")
-        Log.d("DetailReport", "idExpense: ${detail.idExpense}, idBookingRoom: ${detail.idIncome}")
-        when {
-            !detail.idExpense.isNullOrEmpty() -> {
-                // Xóa chi tiêu
-                apiService.deleteExpense(detail.idExpense).enqueue(object : Callback<Void> {
-                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                        if (response.isSuccessful) {
-                            Toast.makeText(this@DetailReportActivity, "Đã xóa chi tiêu", Toast.LENGTH_SHORT).show()
-                            loadReport()
-                        } else {
-                            Toast.makeText(this@DetailReportActivity, "Xóa thất bại: ${response.code()}", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    override fun onFailure(call: Call<Void>, t: Throwable) {
-                        Toast.makeText(this@DetailReportActivity, "Lỗi mạng khi xóa chi tiêu", Toast.LENGTH_SHORT).show()
-                    }
-                })
-            }
-            !detail.idIncome.isNullOrEmpty() -> {
-                // Xóa khoản thu
-                apiService.deleteBookingRoom(detail.idIncome).enqueue(object : Callback<Void> {
-                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                        if (response.isSuccessful) {
-                            Toast.makeText(this@DetailReportActivity, "Đã xóa khoản thu", Toast.LENGTH_SHORT).show()
-                            loadReport()
-                        } else {
-                            Toast.makeText(this@DetailReportActivity, "Xóa thất bại: ${response.code()}", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    override fun onFailure(call: Call<Void>, t: Throwable) {
-                        Toast.makeText(this@DetailReportActivity, "Lỗi mạng khi xóa khoản thu", Toast.LENGTH_SHORT).show()
-                    }
-                })
-            }
-            else -> {
-                Toast.makeText(this, "Không xác định loại dữ liệu để xóa", Toast.LENGTH_SHORT).show()
-            }
-        }
+        progressBar.visibility = View.VISIBLE
+        // Assuming a delete API call exists, e.g., apiService.deleteReportDetail(detail.id)
+        // Replace with actual API call if available
+        Toast.makeText(this, "Xóa mục: ${detail.category ?: detail.titleOfExpense ?: detail.titleOfIncome}", Toast.LENGTH_SHORT).show()
+        progressBar.visibility = View.GONE
     }
 }

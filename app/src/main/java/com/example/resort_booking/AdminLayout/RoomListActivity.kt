@@ -26,6 +26,9 @@ class RoomListActivity : AppCompatActivity() {
     private var resortId: String? = null
     private var isSelectMode: Boolean = false
 
+    // Khai báo btnDichVu ở đây để có thể truy cập trong cả class
+    private lateinit var btnDichVu: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRoomListBinding.inflate(layoutInflater)
@@ -36,7 +39,8 @@ class RoomListActivity : AppCompatActivity() {
         resortId = intent.getStringExtra("RESORT_ID")
         isSelectMode = intent.getBooleanExtra("SELECT_MODE", false)
 
-        val btnDichVu = findViewById<Button>(R.id.ServiceList)
+        // Khởi tạo btnDichVu ở đây
+        btnDichVu = findViewById(R.id.ServiceList)
         val role = sharedPref.getString("ROLE", "")
 
         // Hiển thị nút theo role
@@ -76,7 +80,7 @@ class RoomListActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        loadRoomData()
+        // Không cần gọi loadRoomData() ở đây vì đã có trong onResume()
     }
 
     override fun onResume() {
@@ -85,9 +89,19 @@ class RoomListActivity : AppCompatActivity() {
     }
 
     private fun loadRoomData() {
+        // --- HIỂN THỊ PROGRESSBAR VÀ VÔ HIỆU HÓA NÚT ---
+        binding.progressBar.visibility = View.VISIBLE
+        binding.btnAddRoom.isEnabled = false
+        btnDichVu.isEnabled = false
+
         resortId?.let { id ->
             apiService.getListRoomById(id).enqueue(object : Callback<RoomResponse> {
                 override fun onResponse(call: Call<RoomResponse>, response: Response<RoomResponse>) {
+                    // --- ẨN PROGRESSBAR VÀ KÍCH HOẠT LẠI NÚT ---
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnAddRoom.isEnabled = true
+                    btnDichVu.isEnabled = true
+
                     if (response.isSuccessful && response.body() != null) {
                         roomAdapter.updateData(response.body()!!.data ?: emptyList())
                     } else {
@@ -97,6 +111,11 @@ class RoomListActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<RoomResponse>, t: Throwable) {
+                    // --- ẨN PROGRESSBAR VÀ KÍCH HOẠT LẠI NÚT ---
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnAddRoom.isEnabled = true
+                    btnDichVu.isEnabled = true
+
                     Toast.makeText(this@RoomListActivity, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })

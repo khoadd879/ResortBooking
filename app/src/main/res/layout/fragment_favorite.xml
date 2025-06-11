@@ -14,12 +14,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints">
-        <View
-            android:id="@+id/header"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:alpha="0.5"
-            android:background="@drawable/header_gradient" />
+            <View
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:alpha="0.5"
+                android:background="@drawable/header_gradient" />
         </RelativeLayout>
         <TextView
             android:id="@+id/textViewMyFavorite"
@@ -53,13 +53,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewMyFavorite" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewFavourite"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/search_mybooking"/>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="#0000FF"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/search_mybooking"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFavourite"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_mybooking"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

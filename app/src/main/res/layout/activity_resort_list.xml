@@ -6,56 +6,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<LinearLayout
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:orientation="vertical">
     <LinearLayout
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <View
-            android:id="@+id/header"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:alpha="0.5"
-            android:background="@drawable/header_gradient" />
-        <TextView
+        android:layout_width="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="20dp"
-            android:text="DANH SÁCH RESORT"
-            android:textColor="@color/black"
-            android:textSize="25dp"
-            android:textStyle="bold"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View
+                    android:id="@+id/header"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:alpha="0.5"
+                    android:background="@drawable/header_gradient" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="20dp"
+                    android:text="DANH SÁCH RESORT"
+                    android:textColor="@color/black"
+                    android:textSize="25dp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    tools:ignore="MissingConstraints" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnThemResort"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Thêm Resort"
+            android:background="@drawable/button_border"
+            android:drawableLeft="@drawable/baseline_add_24"
+            android:layout_gravity="left"
             android:gravity="center"
-            tools:ignore="MissingConstraints" />
-        </RelativeLayout>
+            android:padding="10dp"
+            android:layout_marginStart="10dp"
+            tools:ignore="RtlCompat" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="#0000FF"
+            android:visibility="gone" />
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvResortList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:padding="8dp" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnThemResort"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="Thêm Resort"
-        android:background="@drawable/button_border"
-        android:drawableLeft="@drawable/baseline_add_24"
-        android:layout_gravity="left"
-        android:gravity="center"
-        android:padding="10dp"
-        android:layout_marginStart="10dp"
-        tools:ignore="RtlCompat" />
-
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvResortList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:padding="8dp" />
-</LinearLayout>
 </ScrollView>
