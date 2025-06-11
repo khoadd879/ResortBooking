@@ -19,25 +19,32 @@
                 android:layout_height="60dp"
                 android:alpha="0.5"
                 android:background="@drawable/header_gradient" />
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="DANH SÁCH RESORT"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingBottom="24dp"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:layout_marginVertical="10dp"
-            android:layout_marginEnd="30dp"/>
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DANH SÁCH RESORT"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingBottom="24dp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:layout_marginVertical="10dp"
+                android:layout_marginEnd="30dp"/>
         </RelativeLayout>
     </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="#0000FF"
+        android:visibility="gone" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/resortRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-/>
+        />
 </LinearLayout>

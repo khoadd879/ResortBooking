@@ -3,7 +3,9 @@ package com.example.resort_booking.AdminLayout
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View // Thêm import này
 import android.widget.Button
+import android.widget.ProgressBar // Thêm import này
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +20,10 @@ class ResortListActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var resortAdapter: ResortAdapter
 
+    // Thêm các biến cho ProgressBar và Button
+    private lateinit var progressBar: ProgressBar
+    private lateinit var btnThemResort: Button
+
     private var userId: String? = null
     private lateinit var apiService: ApiService
     private var isSelectMode: Boolean = false
@@ -26,7 +32,11 @@ class ResortListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_resort_list)
 
+        // Khởi tạo các view
         recyclerView = findViewById(R.id.rvResortList)
+        progressBar = findViewById(R.id.progressBar) // Khởi tạo ProgressBar
+        btnThemResort = findViewById(R.id.btnThemResort) // Khởi tạo Button
+
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
@@ -34,7 +44,6 @@ class ResortListActivity : AppCompatActivity() {
 
         isSelectMode = intent.getBooleanExtra("SELECT_MODE", false)
 
-        val btnThemResort = findViewById<Button>(R.id.btnThemResort)
         btnThemResort.setOnClickListener {
             startActivity(Intent(this, CreateResortActivity::class.java))
         }
@@ -45,9 +54,8 @@ class ResortListActivity : AppCompatActivity() {
         }
 
         apiService = com.example.resort_booking.ApiClient.create(sharedPref)
-        fetchResortsFromServer()
+        // Bỏ fetch ở đây và chuyển vào onResume để tránh gọi 2 lần lúc đầu
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -56,9 +64,18 @@ class ResortListActivity : AppCompatActivity() {
     }
 
     private fun fetchResortsFromServer() {
+        // --- HIỂN THỊ PROGRESSBAR ---
+        progressBar.visibility = View.VISIBLE
+        // Vô hiệu hóa nút để tránh người dùng nhấn trong lúc tải
+        btnThemResort.isEnabled = false
+
         apiService.getResortListCreated(userId!!)
             .enqueue(object : Callback<ResortResponse> {
                 override fun onResponse(call: Call<ResortResponse>, response: Response<ResortResponse>) {
+                    // --- ẨN PROGRESSBAR ---
+                    progressBar.visibility = View.GONE
+                    btnThemResort.isEnabled = true // Kích hoạt lại nút
+
                     if (response.isSuccessful && response.body() != null) {
                         val resortList = response.body()?.data ?: emptyList()
                         resortAdapter = ResortAdapter(
@@ -80,10 +97,13 @@ class ResortListActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<ResortResponse>, t: Throwable) {
+                    // --- ẨN PROGRESSBAR ---
+                    progressBar.visibility = View.GONE
+                    btnThemResort.isEnabled = true // Kích hoạt lại nút
+
                     Log.e("ResortListActivity", "Lỗi kết nối: ${t.message}", t)
                     Toast.makeText(this@ResortListActivity, "Lỗi kết nối: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
     }
-
 }

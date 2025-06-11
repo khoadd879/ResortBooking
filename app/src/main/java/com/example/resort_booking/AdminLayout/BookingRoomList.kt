@@ -28,6 +28,7 @@ class BookingRoomList : AppCompatActivity() {
 
     private lateinit var resortSpinner: Spinner
     private lateinit var recyclerView: RecyclerView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +36,8 @@ class BookingRoomList : AppCompatActivity() {
 
         resortSpinner = findViewById(R.id.ResortSpinner)
         recyclerView = findViewById(R.id.recyclerBookingRoomOfResort)
+        progressBar = findViewById(R.id.progressBar)
+
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
@@ -45,9 +48,11 @@ class BookingRoomList : AppCompatActivity() {
     }
 
     private fun loadResorts() {
+        progressBar.visibility = View.VISIBLE
         userId?.let { uid ->
             apiService.getResortListCreated(uid).enqueue(object : Callback<ResortResponse> {
                 override fun onResponse(call: Call<ResortResponse>, response: Response<ResortResponse>) {
+                    progressBar.visibility = View.GONE
                     if (response.isSuccessful) {
                         resortList = response.body()?.data ?: emptyList()
                         if (resortList.isNotEmpty()) {
@@ -74,6 +79,7 @@ class BookingRoomList : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<ResortResponse>, t: Throwable) {
+                    progressBar.visibility = View.GONE
                     Log.e("BookingRoomList", "Lỗi kết nối khi load resort: ${t.message}")
                 }
             })
@@ -81,8 +87,10 @@ class BookingRoomList : AppCompatActivity() {
     }
 
     private fun fetchBookingRoomList(resortId: String) {
+        progressBar.visibility = View.VISIBLE
         apiService.getBookingsOfResort(resortId).enqueue(object : Callback<GetListBookingRoomResponse> {
             override fun onResponse(call: Call<GetListBookingRoomResponse>, response: Response<GetListBookingRoomResponse>) {
+                progressBar.visibility = View.GONE
                 if (response.isSuccessful && response.body() != null) {
                     val bookingRoomList = response.body()?.data ?: emptyList()
                     paymentHistoryAdapter = PaymentHistoryAdapter(bookingRoomList) {
@@ -96,6 +104,7 @@ class BookingRoomList : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<GetListBookingRoomResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 Log.e("BookingRoomList", "Lỗi kết nối: ${t.message}", t)
             }
         })

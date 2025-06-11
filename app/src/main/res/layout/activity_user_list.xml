@@ -3,35 +3,35 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <View
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:alpha="0.5"
-        android:background="@drawable/header_gradient" />
-
-    <TextView
-        android:id="@+id/tvTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="DANH SÁCH NGƯỜI DÙNG"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:paddingBottom="12dp"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:layout_marginVertical="10dp"
-        android:layout_marginEnd="30dp"/>
-    </RelativeLayout>
-</LinearLayout>
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <View
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:alpha="0.5"
+                android:background="@drawable/header_gradient" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DANH SÁCH NGƯỜI DÙNG"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingBottom="12dp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:layout_marginVertical="10dp"
+                android:layout_marginEnd="30dp"/>
+        </RelativeLayout>
+    </LinearLayout>
     <Button
         android:id="@+id/btnThemUser"
         android:layout_width="wrap_content"
@@ -41,7 +41,13 @@
         android:drawableLeft="@drawable/baseline_add_24"
         android:padding="10dp"
         android:layout_marginEnd="35dp"/>
-
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="#0000FF"
+        android:visibility="gone" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewUsers"
         android:layout_width="match_parent"

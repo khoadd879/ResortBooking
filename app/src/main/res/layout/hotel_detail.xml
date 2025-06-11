@@ -74,9 +74,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
+
                 android:drawableLeft="@drawable/baseline_location_on_24"
                 android:drawablePadding="5dp"
-                android:drawableTint="@color/nav_item_color"
+                android:drawableTint="@color/red"
                 android:text="Location"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/NameHotel" />
@@ -159,6 +160,7 @@
                     android:stepSize="1"
                     android:rating="0"
                     android:isIndicator="false"
+                    android:progressTint="@color/rating_yellow"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"/>
 
