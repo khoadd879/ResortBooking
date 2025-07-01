@@ -136,28 +136,36 @@ class CheckOutActivity: AppCompatActivity() {
         dialog.show()
     }
 
-    private fun fetchPayMent(id_br:String, selectedPayment: String){
+    private fun fetchPayMent(id_br: String, selectedPayment: String) {
         val sharedPref = getSharedPreferences("APP_PREFS", MODE_PRIVATE)
         val apiService = ApiClient.create(sharedPref)
 
         val createCheckOut = CreateCheckOutRequest(id_br, selectedPayment)
-        apiService.createCheckOut(createCheckOut).enqueue(object: Callback<CreateCheckOutResponse>{
+        apiService.createCheckOut(createCheckOut).enqueue(object : Callback<CreateCheckOutResponse> {
             override fun onResponse(
                 call: Call<CreateCheckOutResponse>,
                 response: Response<CreateCheckOutResponse>
             ) {
-                if(response.isSuccessful){
+                if (response.isSuccessful) {
                     Toast.makeText(this@CheckOutActivity, "Thanh toán thành công", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@CheckOutActivity, Explore::class.java)
+
+                    // Điều hướng về MainActivity và chuyển sang tab Explore
+                    val intent = Intent(this@CheckOutActivity, MainActivity::class.java)
+                    intent.putExtra("tab", "explore")
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
-                }else{
+                    finish()
+
+                } else {
                     Log.e("CheckOutActivity", "Error: ${response.code()}")
                     Toast.makeText(this@CheckOutActivity, "Thanh toán thất bại", Toast.LENGTH_SHORT).show()
                 }
             }
+
             override fun onFailure(call: Call<CreateCheckOutResponse>, t: Throwable) {
                 Toast.makeText(this@CheckOutActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
+
 }

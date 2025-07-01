@@ -254,9 +254,16 @@ class Homepage : Fragment() {
                                     response: Response<FavoriteResponse>
                                 ) {
                                     if (response.isSuccessful) {
-                                        showToast("Đã thêm vào yêu thích")
+                                        val isFavorite = response.body()?.data ?: false
+                                        if (isFavorite) {
+                                            showToast("Đã thêm vào yêu thích")
+                                        } else {
+                                            showToast("Đã xóa khỏi yêu thích")
+                                        }
                                         refreshDataWithLocation(userId, location)
-                                    } else showToast("Thêm yêu thích thất bại: ${response.code()}")
+                                    } else {
+                                        showToast("Lỗi: ${response.code()}")
+                                    }
                                 }
 
                                 override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
@@ -304,25 +311,41 @@ class Homepage : Fragment() {
         apiService.getListFavourite(userId).enqueue(object : Callback<FavouriteResponse> {
             override fun onResponse(call: Call<FavouriteResponse>, response: Response<FavouriteResponse>) {
                 if (response.isSuccessful) {
-                    val favourites = response.body()?.data?.take(4).orEmpty()
-                    recyclerFavoriteResort.adapter = FavouriteAdapter(favourites, {
-                        startActivity(Intent(requireContext(), HotelDetailActivity::class.java).apply {
-                            putExtra("RESORT_ID", it.resortId.toString())
-                        })
-                    }, {
-                        apiService.deleteFavorite(userId, it.resortId).enqueue(object : Callback<Void> {
-                            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                                if (response.isSuccessful) {
-                                    showToast("Đã xóa khỏi yêu thích")
-                                    fetchFavouriteList(apiService, userId)
-                                } else showToast("Xóa yêu thích thất bại: ${response.code()}")
-                            }
+                    val favourites = response.body()?.data.orEmpty()
 
-                            override fun onFailure(call: Call<Void>, t: Throwable) {
-                                showToast("Lỗi khi kết nối server: ${t.message}")
-                            }
-                        })
-                    })
+                    recyclerFavoriteResort.adapter = FavouriteAdapter(
+                        favourites,
+                        onItemClick = { favourite ->
+                            startActivity(Intent(requireContext(), HotelDetailActivity::class.java).apply {
+                                putExtra("RESORT_ID", favourite.resortId)
+                            })
+                        },
+                        onFavoriteClick = { favourite ->
+                            val request = FavoriteRequest(
+                                idRs = favourite.resortId,
+                                idUser = userId
+                            )
+                            apiService.createFavorite(request).enqueue(object : Callback<FavoriteResponse> {
+                                override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
+                                    if (response.isSuccessful) {
+                                        val isFavorite = response.body()?.data ?: false
+                                        if (isFavorite) {
+                                            showToast("Đã thêm vào yêu thích")
+                                        } else {
+                                            showToast("Đã xóa khỏi yêu thích")
+                                        }
+                                        fetchFavouriteList(apiService, userId)
+                                    } else {
+                                        showToast("Lỗi: ${response.code()}")
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
+                                    showToast("Lỗi khi kết nối server: ${t.message}")
+                                }
+                            })
+                        }
+                    )
                 } else {
                     showToast("Lỗi response: ${response.code()}")
                 }
@@ -333,6 +356,7 @@ class Homepage : Fragment() {
             }
         })
     }
+
 
     private fun loadAvatar(apiService: ApiService, userId: String) {
         apiService.getListUser().enqueue(object : Callback<ListUserResponse> {

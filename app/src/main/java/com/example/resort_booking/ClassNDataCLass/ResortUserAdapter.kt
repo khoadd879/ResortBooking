@@ -77,8 +77,9 @@ class ResortUserAdapter(
 
             if (selectedResort.favorite) {
                 // Gọi API xoá yêu thích
-                apiService.deleteFavorite(userId, selectedResort.idRs).enqueue(object : Callback<Void> {
-                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                val body = FavoriteRequest(resort.idRs, userId)
+                apiService.createFavorite(body).enqueue(object : Callback<FavoriteResponse> {
+                    override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
                         if (response.isSuccessful) {
                             Toast.makeText(context, "Đã xoá khỏi yêu thích", Toast.LENGTH_SHORT).show()
                             selectedResort.favorite = false
@@ -89,7 +90,7 @@ class ResortUserAdapter(
                         }
                     }
 
-                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                    override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
                         Toast.makeText(context, "Lỗi mạng: ${t.message}", Toast.LENGTH_SHORT).show()
                     }
                 })

@@ -320,7 +320,7 @@ data class FavoriteRequest(
 
 data class FavoriteResponse(
     val message: String,
-    val data: CreatedAt?
+    val data: Boolean
 )
 
 

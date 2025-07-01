@@ -169,12 +169,12 @@ interface ApiService {
 
     @POST("api/favorite_resort/create_favorite")
     fun createFavorite(@Body favoriteRequest: FavoriteRequest): Call<FavoriteResponse>
-
-    @DELETE("api/favorite_resort/delete_favorite/{idUser}/{idResort}")
-    fun deleteFavorite(
-        @Path("idUser") idUser: String,
-        @Path("idResort") idResort: String
-    ): Call<Void>
+//
+//    @DELETE("api/favorite_resort/delete_favorite/{idUser}/{idResort}")
+//    fun deleteFavorite(
+//        @Path("idUser") idUser: String,
+//        @Path("idResort") idResort: String
+//    ): Call<Void>
 
     @GET("/api/room/list_room/{idResort}")
     fun getListRoomById(@Path("idResort") idResort: String): Call<RoomResponse>

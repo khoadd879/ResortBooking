@@ -93,8 +93,14 @@ class HotelDetailActivity : AppCompatActivity(), OnMapReadyCallback, ReviewAdapt
                     response: Response<FavoriteResponse>
                 ) {
                     if (response.isSuccessful) {
-                        btnFavorite.setImageResource(R.drawable.baseline_favorite_24)
-                        showToast("Đã thêm vào yêu thích")
+                        val isFavourite = response.body()?.data ?: false
+                        if(isFavourite){
+                            btnFavorite.setImageResource(R.drawable.baseline_favorite_24)
+                            showToast("Đã thêm vào yêu thích")
+                        }else{
+                            btnFavorite.setImageResource(R.drawable.baseline_favorite_border_24)
+                            showToast("Đã xóa khỏi yêu thích")
+                        }
                     } else {
                         showToast("Thêm yêu thích thất bại: ${response.code()}")
                     }

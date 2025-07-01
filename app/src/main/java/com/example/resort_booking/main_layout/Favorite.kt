@@ -15,6 +15,7 @@ import com.example.resort_booking.ClassNDataCLass.FavouriteAdapter
 import com.example.resort_booking.ClassNDataCLass.HotelAdapter
 import com.example.resort_booking.HotelDetailActivity
 import com.example.resort_booking.R
+import data.FavoriteRequest
 import data.FavoriteResponse
 import data.FavouriteResponse
 import data.FavouriteListData
@@ -77,6 +78,7 @@ class Favorite : Fragment() {
                 if (response.isSuccessful) {
                     val favoriteList = response.body()?.data
                     if (favoriteList != null) {
+
                         val adapter = FavouriteAdapter(favoriteList,
                             onItemClick = { favourite ->
                                 val intent = Intent(requireContext(), HotelDetailActivity::class.java)
@@ -84,10 +86,11 @@ class Favorite : Fragment() {
                                 startActivity(intent)
                             },
                             onFavoriteClick = { favourite ->
-                                apiService.deleteFavorite(userId, favourite.resortId).enqueue(object : Callback<Void>{
+                                val body = FavoriteRequest(favourite.resortId, userId)
+                                apiService.createFavorite(body).enqueue(object : Callback<FavoriteResponse>{
                                     override fun onResponse(
-                                        call: Call<Void>,
-                                        response: Response<Void>
+                                        call: Call<FavoriteResponse>,
+                                        response: Response<FavoriteResponse>
                                     ) {
                                         if (response.isSuccessful){
                                             Toast.makeText(context, "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show()
@@ -95,7 +98,7 @@ class Favorite : Fragment() {
                                             Toast.makeText(context, "Xóa yêu thích thất bại", Toast.LENGTH_SHORT).show()
                                         }
                                     }
-                                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                                    override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
                                         Toast.makeText(context, "Lỗi khi kết nối server: ${t.message}", Toast.LENGTH_SHORT).show()
                                     }
                                 })
