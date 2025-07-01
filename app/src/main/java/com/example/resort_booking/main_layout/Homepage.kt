@@ -18,6 +18,7 @@ import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +29,7 @@ import com.example.resort_booking.ClassNDataCLass.HotelAdapter
 import com.example.resort_booking.ClassNDataCLass.HotelRecommendAdapter
 import com.example.resort_booking.HotelDetailActivity
 import com.example.resort_booking.R
+import com.example.resort_booking.SharedViewModel
 import com.google.android.gms.location.*
 import data.*
 import interfaceAPI.ApiService
@@ -48,6 +50,7 @@ class Homepage : Fragment() {
     private lateinit var contentLayout: View
     private lateinit var textCurrentLocation: TextView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var sharedViewModel: SharedViewModel
 
     private var currentLocation: Location? = null
     private lateinit var layoutManager: LinearLayoutManager
@@ -58,6 +61,24 @@ class Homepage : Fragment() {
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+    }
+
+    private fun handleFavoriteClick(resort: Resort, api: ApiService, userId: String) {
+        val request = FavoriteRequest(resort.idRs, userId)
+        api.createFavorite(request).enqueue(object : Callback<FavoriteResponse> {
+            override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
+                showToast(if (response.body()?.data == true) "Đã thêm vào yêu thích" else "Đã xóa khỏi yêu thích")
+                sharedViewModel.triggerUpdate()
+            }
+            override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
+                showToast("Lỗi: ${t.message}")
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -226,6 +247,7 @@ class Homepage : Fragment() {
             api.createFavorite(request).enqueue(object : Callback<FavoriteResponse> {
                 override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
                     showToast(if (response.body()?.data == true) "Đã thêm vào yêu thích" else "Đã xóa khỏi yêu thích")
+                    sharedViewModel.triggerUpdate()
                     fetchAllData(userId, location)
                 }
 
@@ -266,6 +288,7 @@ class Homepage : Fragment() {
                     override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
                         showToast(if (response.body()?.data == true) "Đã thêm vào yêu thích" else "Đã xóa khỏi yêu thích")
                         fetchAllData(userId, currentLocation ?: Location(""))
+                        sharedViewModel.triggerUpdate()
                     }
 
                     override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {

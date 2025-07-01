@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resort_booking.ClassNDataCLass.FavouriteAdapter
@@ -15,10 +16,12 @@ import com.example.resort_booking.ClassNDataCLass.FavouriteAdapter
 import com.example.resort_booking.ClassNDataCLass.HotelAdapter
 import com.example.resort_booking.HotelDetailActivity
 import com.example.resort_booking.R
+import com.example.resort_booking.SharedViewModel
 import data.FavoriteRequest
 import data.FavoriteResponse
 import data.FavouriteResponse
 import data.FavouriteListData
+import interfaceAPI.ApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,106 +37,95 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class Favorite : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var sharedViewModel: SharedViewModel
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: FavouriteAdapter
+    private lateinit var apiService: ApiService
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
+        val sharedPref = requireContext().getSharedPreferences("APP_PREFS", MODE_PRIVATE)
+        apiService = com.example.resort_booking.ApiClient.create(sharedPref)
+        userId = sharedPref.getString("ID_USER", null)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_favorite, container, false)
-        return view
+        return inflater.inflate(R.layout.fragment_favorite, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewFavourite)
+        recyclerView = view.findViewById(R.id.recyclerViewFavourite)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val sharedPref = requireContext().getSharedPreferences("APP_PREFS", MODE_PRIVATE)
-        val userId = sharedPref.getString("ID_USER", null)
+        // Khởi tạo adapter với danh sách rỗng ban đầu
+        adapter = FavouriteAdapter(emptyList(),
+            onItemClick = { favourite ->
+                val intent = Intent(requireContext(), HotelDetailActivity::class.java)
+                intent.putExtra("RESORT_ID", favourite.resortId.toString())
+                startActivity(intent)
+            },
+            onFavoriteClick = { favourite ->
+                userId?.let { uid ->
+                    val body = FavoriteRequest(favourite.resortId, uid)
+                    apiService.createFavorite(body).enqueue(object : Callback<FavoriteResponse> {
+                        override fun onResponse(
+                            call: Call<FavoriteResponse>,
+                            response: Response<FavoriteResponse>
+                        ) {
+                            if (response.isSuccessful) {
+                                Toast.makeText(context, "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show()
+                                sharedViewModel.triggerUpdate() // Thông báo cập nhật
+                            }
+                        }
+                        override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
+                            Toast.makeText(context, "Lỗi: ${t.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
+            }
+        )
+        recyclerView.adapter = adapter
 
-        if (userId.isNullOrEmpty()) {
-            Toast.makeText(context, "Chưa đăng nhập hoặc thiếu thông tin người dùng", Toast.LENGTH_SHORT).show()
-            return
+        // Quan sát sự thay đổi từ ViewModel
+        sharedViewModel.favoritesUpdated.observe(viewLifecycleOwner) { updated ->
+            if (updated) {
+                loadFavorites()
+                sharedViewModel.resetUpdate()
+            }
         }
 
-        val apiService = com.example.resort_booking.ApiClient.create(sharedPref)
-
-        apiService.getListFavourite(userId).enqueue(object: Callback<FavouriteResponse>{
-            override fun onResponse(
-                call: Call<FavouriteResponse>,
-                response: Response<FavouriteResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val favoriteList = response.body()?.data
-                    if (favoriteList != null) {
-
-                        val adapter = FavouriteAdapter(favoriteList,
-                            onItemClick = { favourite ->
-                                val intent = Intent(requireContext(), HotelDetailActivity::class.java)
-                                intent.putExtra("RESORT_ID", favourite.resortId.toString())  // convert nếu cần
-                                startActivity(intent)
-                            },
-                            onFavoriteClick = { favourite ->
-                                val body = FavoriteRequest(favourite.resortId, userId)
-                                apiService.createFavorite(body).enqueue(object : Callback<FavoriteResponse>{
-                                    override fun onResponse(
-                                        call: Call<FavoriteResponse>,
-                                        response: Response<FavoriteResponse>
-                                    ) {
-                                        if (response.isSuccessful){
-                                            Toast.makeText(context, "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show()
-                                        }else{
-                                            Toast.makeText(context, "Xóa yêu thích thất bại", Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
-                                    override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
-                                        Toast.makeText(context, "Lỗi khi kết nối server: ${t.message}", Toast.LENGTH_SHORT).show()
-                                    }
-                                })
-                            }
-                        )
-                        recyclerView.adapter = adapter
-                    }else{
-                        Toast.makeText(context, "Không có dữ liệu yêu thích", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-            override fun onFailure(call: Call<FavouriteResponse>, t: Throwable) {
-                Toast.makeText(context, "Lỗi khi kết nối server: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        // Tải dữ liệu ban đầu
+        loadFavorites()
     }
 
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Favorite.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Favorite().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun loadFavorites() {
+        userId?.let { uid ->
+            apiService.getListFavourite(uid).enqueue(object : Callback<FavouriteResponse> {
+                override fun onResponse(
+                    call: Call<FavouriteResponse>,
+                    response: Response<FavouriteResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        response.body()?.data?.let { favorites ->
+                            adapter.updateData(favorites) // Cập nhật dữ liệu mới
+                        }
+                    }
                 }
-            }
+                override fun onFailure(call: Call<FavouriteResponse>, t: Throwable) {
+                    Toast.makeText(context, "Lỗi: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        } ?: run {
+            Toast.makeText(context, "Chưa đăng nhập", Toast.LENGTH_SHORT).show()
+        }
     }
 }

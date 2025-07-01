@@ -18,7 +18,7 @@ import retrofit2.Call
 import retrofit2.Response
 
 class FavouriteAdapter(
-    private val favouriteList: List<FavouriteListData>,
+    private var favouriteList: List<FavouriteListData>,
     private val onItemClick: (FavouriteListData) -> Unit,
     private val onFavoriteClick: (FavouriteListData) -> Unit
 ) : RecyclerView.Adapter<FavouriteAdapter.FavouriteViewHolder>() {
@@ -81,8 +81,15 @@ class FavouriteAdapter(
 
         holder.favoriteButton.setOnClickListener {
             onFavoriteClick(favourite)
-            holder.favoriteButton.setImageResource(R.drawable.baseline_favorite_border_24)
+            // Xóa item khỏi danh sách ngay lập tức
+            val newList = favouriteList.toMutableList().apply { removeAt(position) }
+            updateData(newList)
         }
+    }
+
+    fun updateData(newData: List<FavouriteListData>) {
+        this.favouriteList = newData
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int = favouriteList.size
