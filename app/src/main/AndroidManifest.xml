@@ -49,10 +49,10 @@
             android:exported="false" /> <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB2Zn79Pp9pqo5N8iF9SeRo9gVHkf6CEYo" />
+            android:value="" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB2Zn79Pp9pqo5N8iF9SeRo9gVHkf6CEYo" />
+            android:value="" />
 
         <activity
             android:name=".AdminLayout.CreateResortActivity"
