@@ -35,10 +35,4 @@ Dự án này hướng đến việc xây dựng một hệ thống **quản lý
 ### Yêu cầu
 - JDK 17+  
 - Android Studio (nếu chạy app mobile)  
-- PostgreSQL / MySQL đã cài đặt sẵn  
 
-### Backend
-```bash
-git clone https://github.com/khoadd879/ResortBooking.git
-cd ResortBooking/backend
-./gradlew bootRun
